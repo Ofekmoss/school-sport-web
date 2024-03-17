@@ -1,0 +1,520 @@
+<style type="text/css">
+    .tabs.variation_2 .tabs_container .tabs_nav li a {
+        font-size:  18px !important;
+    }
+
+    .tabs_container {
+        float: right !important;
+        margin-top: 10px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .tabs.variation_2 .section_title {
+        color: #3e454c !important;
+    }
+
+    .tabs.variation_2 {
+        border-top-color: #3e454c !important;
+    }
+
+    .selected-tab, .selected-tab a {
+        background: #00ADEE !important;
+        color: #fff !important;
+    }
+
+    .technical-win {
+        color: black;
+        font-size: 15px;
+        border: dashed 1px black;
+        padding: 3px;
+        margin-right: 5px;
+    }
+
+    .hover-button-blue:hover {
+        background-color: #00ADEE;
+    }
+
+    .group-list-caption, .group-list-caption li {
+        font-weight: bold;
+    }
+
+    .group-list-caption {
+        list-style: none;
+    }
+
+    .group-list-caption li:before {
+        content: "#";
+        padding-right: 5px;
+    }
+
+    .part-score {
+        /* float: left; */
+        font-size: 15px;
+        line-height: 15px;
+    }
+
+    .part-score div {
+        /* border-left: 1px solid black;
+        border-right: 1px solid black;
+        border-top: 1px solid black; */
+        height: 15px;
+        line-height: 15px !important;
+    }
+
+    .part-score div:last-child {
+        /* border-bottom: 1px solid black; */
+    }
+</style>
+<!-- GAMES -->
+<div class="row" ng-if="category && category.Name && category.Pages" ng-show="!IsMobileDevice" style="margin-bottom: 45px;">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="section_2"  style="height:230px">
+            <h3 class="section_title">
+                תוכן
+            </h3>
+            <owl-carousel loop="3" data-arrows-top="115">
+                <owl-item ng-repeat="page in category.Pages">
+                    <div class="scale_image_container article_thumbnail">
+                        <div class="row">
+                            <div class="panel">
+                                <div class="panel-body">
+                                    <a ui-sref="article({page: page.Seq})"><img ng-src="{{page.DefaultImagePath}}" alt="" class="scale_image"></a>
+                                    <div class="caption_type_1">
+                                        <div class="caption_inner">
+                                            <div class="clearfix">
+                                                <a ui-sref="article({page: page.Seq})" class="{{page.BannerButtonClass}}">{{page.HebrewType}}</a>
+                                                <div class="event_date">{{page.Date | date : 'dd/MM/yyyy'}}</div>
+                                            </div>
+                                            <a ui-sref="article({page: page.Seq})"><h3>{{page.Description}}</h3></a>
+                                            <p ng-bind-html="page.ShortSubCaption"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </owl-item>
+            </owl-carousel>
+        </div>
+    </div>
+</div>
+<!-- PHASES -->
+<div id="pnlCategoryChooseFilters" class="row mobile-reverse-order" ng-if="category && category.Phases && category.Phases.length > 0" ng-show="category.SportType != 1 && !IsMobileDevice">
+    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+        <div class="section_3" style="margin-bottom: 3px;" ng-show="category.SelectedMatchesGroup && category.SelectedMatchesPhase && category.SelectedMatchesPhase.Index >= 0 && category.SelectedMatchesPhase.Rounds.length > 0">
+            <h3 id="lblChooseRound" class="section_title" style="margin-bottom: 3px;">
+                בחירת סיבוב -
+                {{category.SelectedMatchesPhase.Name}}, {{category.SelectedMatchesGroup.Name}}
+            </h3>
+        </div>
+        <div class="tabs variation_2" style="border-top: none;" ng-hide="category.SelectedMatchesPhase.Index < 0">
+            <div class="clearfix tabs_container" style="line-height: 30px;">
+                <ul class="tabs_nav clearfix">
+                    <li ng-class="{'selected-tab': round.Selected}" ng-repeat="round in category.SelectedMatchesPhase.Rounds" ng-click="changeMatchesRound(round)">
+                        <a href="#tab-matches-phase-{{category.SelectedMatchesPhase.Index}}-round-{{round.Index}}" onclick="return false;">
+                            {{round.Name}}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+        <div class="section_3" style="margin-bottom: 3px;" ng-show="category.SelectedMatchesPhase && category.SelectedMatchesPhase.Index >= 0 && category.SelectedMatchesPhase.AllGroups.length > 0">
+            <h3 id="lblChooseGroup" class="section_title" style="margin-bottom: 3px;">
+                בחירת בית -
+                {{category.SelectedMatchesPhase.Name}}
+            </h3>
+        </div>
+        <div class="tabs variation_2" style="border-top: none;" ng-hide="category.SelectedMatchesPhase.Index < 0">
+            <div class="clearfix tabs_container" style="line-height: 30px;">
+                <ul class="tabs_nav clearfix">
+                    <li ng-class="{'selected-tab': group.SelectedForMatches}" ng-repeat="group in category.SelectedMatchesPhase.AllGroups" ng-click="changeGroup(group)">
+                        <a href="#tab-matches-phase-{{category.SelectedMatchesPhase.Index}}-group-{{group.Index}}" onclick="return false;">
+                            {{group.Name}}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+        <div class="section_3" style="margin-bottom: 3px;">
+            <h3 id="lblChoosePhase" class="section_title"  style="margin-bottom: 3px;">
+                בחירת שלב
+            </h3>
+        </div>
+        <div class="tabs variation_2" style="border-top: none;">
+            <div class="clearfix tabs_container" style="line-height: 30px;">
+                <ul id="phasesList" class="tabs_nav clearfix">
+                    <li ng-class="{'selected-tab': phase.SelectedForMatches}" ng-repeat="phase in category.Phases" ng-click="changeMatchesPhase(phase)" ng-show="!phase.TreePhase">
+                        <a href="#tab-matches-phase-{{phase.Index}}" onclick="return false;">
+                            {{phase.Name}}
+                        </a>
+                    </li>
+                    <li ng-if="category.FinalsTree != null" style="margin-right: 10px; color: green; font-size: 8px;" ng-click="category.ShowFinalsTree = !category.ShowFinalsTree">
+                        <i class="fa fa-tree"></i>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="pnlGamesAndTeams" class="row" ng-if="category && category.Name" style="margin-bottom: 75px;">
+    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+        <div class="section_2" ng-if="category.SelectedMatchesPhase && category.SelectedMatchesGroup" ng-show="!IsMobileDevice && category.SelectedMatchesPhase.Index >= 0">
+            <h3 class="section_title">
+                <span id="lblRankingTable">
+טבלת דירוג
+                </span>
+                <div id="pnlFullTableButton" class="pull-left">
+                    <a href="#" ng-click="openFullRankingTable()"
+                       class="button button_orange" onclick="return false;">
+                        <span id="lblFullTableButton">
+טבלה מלאה
+                        </span>
+                        <i class="fa fa-table"></i>
+                    </a>
+                </div>
+            </h3>
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div id="pnlGroupTeams" style="border: 1px solid black; padding: 5px 5px 5px 5px;">
+                        <div>
+                            <ul class="group-list-caption" style="margin-top: 10px;">
+                                <li>
+                                    <span id="lblRankingTableTeamName">
+                                    שם קבוצה
+                                    </span>
+                                    <div id="lblRankingTableScore" class="pull-left" style="margin-left: 10px;">
+                                        ניקוד
+                                    </div>
+                                </li>
+                            </ul>
+                            <ol style="margin-top: 10px; list-style-type: decimal; margin-right: 20px;">
+                                <li ng-repeat="team in category.SelectedMatchesGroup.Teams">
+                                    <a href="#" class="category-team" ng-click="category.setSelectedTeam(team)" onclick="return false;" style="color: #3e454c;">{{team.Name}}</a>
+                                    <div class="pull-left" style="margin-left: 10px;">
+                                        {{team.SCORE}}
+                                    </div>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="section_2" ng-if="category.AllTeams && category.AllTeams.length > 0" ng-show="!IsMobileDevice">
+            <div ng-show="category.selectedTeam">
+                <h3 class="section_title">
+                    קבוצה
+                </h3>
+                <div>
+                    <span class="label label-info" style="color: white; font-size: 18px;">{{category.selectedTeam.Name}}</span>
+                </div>
+                <div style="margin-top: 10px;">
+                    <button type="button" class="button button_grey button.button_type_icon_small" style="font-size: 14px; " ng-click="category.setSelectedTeam(null)">
+                        ניקוי בחירה
+                    </button>
+                </div>
+                <div ng-show="category.selectedPlayers && category.selectedPlayers.length > 0">
+                    <h3 class="section_title" style="margin-top: 30px;">
+                        רשימת שחקנים
+                    </h3>
+                    <div ng-repeat="player in category.selectedPlayers" style="font-weight: bold; margin-bottom: 5px;">
+                        <span style="color: #3e454c;">{{player.FIRST_NAME}} {{player.LAST_NAME}}</span>
+                    </div>
+                </div>
+                <div ng-show="category.selectedCompetitor">
+                    <h3 class="section_title" style="margin-top: 30px;">
+מתמודד
+                    </h3>
+                    <div>
+                        <span class="label label-info" style="color: white; font-size: 18px;">{{category.selectedCompetitor.Name}}</span>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <button type="button" class="button button_grey button.button_type_icon_small" style="font-size: 14px; " ng-click="category.setSelectedCompetitor(null)">
+                            ניקוי בחירה
+                        </button>
+                    </div>
+                </div>
+                <div ng-show="!category.selectedCompetitor && category.selectedTeam && category.selectedTeam.Competitors">
+                    <h3 class="section_title" style="margin-top: 30px;">
+                        רשימת מתמודדים
+                    </h3>
+                    <div ng-repeat="competitor in category.selectedTeam.Competitors" style="font-weight: bold; margin-bottom: 5px;">
+                        <a href="#" class="category-team" ng-click="category.setSelectedCompetitor(competitor)" onclick="return false;" style="color: #3e454c;">{{competitor.Name}}</a>
+                    </div>
+                </div>
+            </div>
+            <div id="pnlTeamsList" ng-show="!category.selectedTeam">
+                <h3 id="lblTeamsList" class="section_title">
+                    רשימת קבוצות
+                </h3>
+                <div ng-repeat="team in category.AllTeams" style="font-weight: bold; margin-bottom: 5px;">
+                    <a href="#" class="category-team" ng-click="category.setSelectedTeam(team)" onclick="return false;" style="color: #3e454c;">{{team.Name}}</a>
+                </div>
+            </div>
+        </div>
+        <div class="section_2" ng-if="category.AllFacilities &&     category.AllFacilities.length > 0" ng-show="!IsMobileDevice">
+            <div ng-show="!category.selectedTeam && category.selectedFacility">
+                <h3 class="section_title">
+                    מתקן
+                </h3>
+                <span class="label label-info" style="color: white; font-size: 18px;">{{category.selectedFacility.Name}}</span>
+                <div ng-show="category.selectedFacility.FullAddress" style="margin-top: 10px;">
+                    {{category.selectedFacility.FullAddress}}
+                    <a href="waze://?q={{category.selectedFacility.FullAddress}}"><img src="images/waze.png" style="width: 30px; height: 30px;" /></a>
+                </div>
+                <div style="margin-top: 10px;">
+                    <button type="button" class="button button_grey button.button_type_icon_small" style="font-size: 14px; " ng-click="category.setSelectedFacility(null)">
+                        ניקוי בחירה
+                    </button>
+                </div>
+            </div>
+            <div id="pnlFacilitiesList" ng-show="!category.selectedTeam && !category.selectedFacility">
+                <h3 id="lblFacilitiesList" class="section_title">
+                    רשימת מתקנים
+                </h3>
+                <div ng-repeat="facility in category.AllFacilities" style="font-weight: bold; margin-bottom: 5px;">
+                    <a href="#" class="category-facility" ng-click="category.setSelectedFacility(facility)" onclick="return false;" style="color: #3e454c;">{{facility.Name}}</a>
+                </div>
+            </div>
+        </div>
+        <div class="section_2" ng-if="category.AllCompetitions && category.AllCompetitions.length > 0" ng-show="!IsMobileDevice">
+            <div ng-show="category.selectedCompetition">
+                <h3 class="section_title">
+                    מקצוע נבחר
+                </h3>
+                <div>
+                    <span class="label label-info" style="color: white; font-size: 18px;">{{category.selectedCompetition.Name}}</span>
+                </div>
+                <div style="margin-top: 10px;">
+                    <button type="button" class="button button_grey button.button_type_icon_small" style="font-size: 14px; " ng-click="category.setSelectedCompetition(null)">
+                        ניקוי בחירה
+                    </button>
+                </div>
+            </div>
+            <div ng-show="!category.selectedCompetition">
+                <h3 class="section_title">
+                    רשימת מקצועות
+                </h3>
+                <div ng-repeat="competition in category.AllCompetitions" style="font-weight: bold; margin-bottom: 5px;">
+                    <a href="#" class="category-team" ng-click="category.setSelectedCompetition(competition, true)" onclick="return false;" style="color: #3e454c;">{{competition.Name}}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+        <div class="row" style="margin-bottom: 25px;">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <!-- Sport Flowers -->
+                <div class="section_2" ng-show="category && category.SportFlowersData">
+                    <h3>{{category.SportFlowersData.Description}}</h3>
+                    <br />
+                    <span>
+                        {{category.SportFlowersData.Date | date : 'dd/MM/yyyy HH:mm'}}
+                    </span>
+                        <br />
+                    <span>
+                        מתקן:
+                        {{category.SportFlowersData.FacilityName}}
+                    </span>
+                </div>
+
+                <!-- MATCHES -->
+                <div id="pnlAllMatches"> <!--  style="max-height: 600px; overflow-y: auto;" -->
+                    <div class="section_2" style="margin-bottom: 3px;">
+                        <h3 id="lblGamesPlan" class="section_title" style="margin-bottom: 3px;">
+                            תכנית משחקים
+                        </h3>
+                    </div>
+                    <div ng-if="category.SelectedMatchesRound"
+                     ng-repeat="matchGroup in category.SelectedMatchesRound.MatchGroups"
+                     style="margin-top: 5px; margin-bottom: 5px; clear: both;">
+                        <h3 ng-show="category.SelectedMatchesPhase.Index < 0 && !matchGroup.SameDetails">
+                            {{matchGroup.GameDetails}}
+                        </h3>
+                        <h3 ng-show="category.SelectedMatchesPhase.Index >= 0 && !matchGroup.SameCycle">
+                            {{matchGroup.CycleName}}
+                        </h3>
+                        <div class="match-group" data-date="{{matchGroup.Date}}">
+                            <div class="match-date-label">
+                                תאריך:
+                                {{matchGroup.Date}}
+                            </div>
+                            <div class="group-match" ng-repeat="match in matchGroup.Matches | orderBy:['FacilityName', 'Date']">
+                                <div class="alternating-colors col-lg-12 col-md-12 col-sm-12 col-xs-12" data-colors="#e0e0e0,#c0c0c0">
+                                    <div class="row mobile-reverse-order match-row">
+                                        <div class="col-lg-4 col-md-4 col-sm-5 col-xs-5" style="text-align: center;">
+                                            <div class="team_name" style="cursor: pointer; text-align: center;" onclick="$('#autoSelectionTeam').html($.trim($(this).text()));">
+                                                {{match.TeamB}}
+                                            </div>
+                                            <h2 style="{{getScoreStyle(match, 'B')}}">
+                                                {{match.TeamB_Score | isNull : '&nbsp;'}}
+                                                            <span class="technical-win" ng-show="match.Result == 4">
+                                                                טכני
+                                                            </span>
+                                            </h2>
+                                            <div class="part-score" ng-if="match.PartsData && match.Result < 3" style="color: #2d6697; text-align: center;">
+                                                <div ng-repeat="points in match.PartsData.TeamB track by $index" style="{{getScoreStyle(match, 'B', $index)}}">{{points}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-5 col-xs-5">
+                                            <div class="team_name" style="cursor: pointer; text-align: center;" onclick="$('#autoSelectionTeam').html($.trim($(this).text()));">
+                                                {{match.TeamA}}
+                                            </div>
+                                            <h2 style="{{getScoreStyle(match, 'A')}}">
+                                                {{match.TeamA_Score | isNull : '&nbsp;'}}
+                                                            <span class="technical-win" ng-show="match.Result == 3">
+                                                                טכני
+                                                            </span>
+                                            </h2>
+                                            <div class="part-score" ng-if="match.PartsData && match.Result < 3" style="color: #2d6697; text-align: center;">
+                                                <div ng-repeat="points in match.PartsData.TeamA track by $index" style="{{getScoreStyle(match, 'A', $index)}}">{{points}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                            <div ng-show="category.SelectedMatchesGroup && category.SelectedMatchesGroup.Index < 0">
+                                                בית:
+                                                {{match.GROUP_NAME}}
+                                            </div>
+                                            <div class="match-facility-container" style="text-align: right;">
+                                                <span class="facility-label">
+                                                מתקן:
+                                                </span>
+                                                <a href="#" ng-show="match.FacilityName" class="category-facility" ng-click="category.setSelectedFacility(null, match)" onclick="return false;" style="color: #3e454c;">{{match.FacilityName}}</a>
+                                                <div ng-show="match.ShowFacilityDetails && category.selectedFacility && category.selectedFacility.FullAddress" style="margin-top: 5px;">
+                                                    {{category.selectedFacility.FullAddress}}
+                                                    <a href="waze://?q={{category.selectedFacility.FullAddress}}"><img src="images/waze.png" style="width: 30px; height: 30px;" /></a>
+                                                </div>
+                                            </div>
+                                            <div class="match-time-container" style="text-align: right;">
+                                                <span class="time-label">
+                                                שעה:
+                                                </span>
+                                                {{match.Date | formatDateTime : 'HH:mm'}}
+                                            </div>
+                                            <div class="match-delayed-game" ng-show="match.IsDelayed" style="font-weight: bold; border: 2px dashed #ff0000; text-align: center;">
+                                                משחק דחוי מתאריך
+                                                <span ng-show="match.OriginalDate">
+                                                    {{match.OriginalDate}}
+                                                </span>
+                                                <span ng-show="!match.OriginalDate">
+                                                    אחר
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tables -->
+        <div class="row" ng-if="category && category.LoadingPhases && (!category.Phases || category.Phases.length == 0)">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                מערכת טוענת נתונים, נא להמתין...
+            </div>
+        </div>
+
+        <!-- FINALS TREE -->
+        <div class="row" ng-if="category.SportType == 2 && category.ShowFinalsTree">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <finals-tree tree="category.FinalsTree"></finals-tree>
+            </div>
+        </div>
+
+        <div class="row" ng-if="category && category.Phases && category.Phases.length > 0" ng-show="category.SportType == 1">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="section_3">
+                    <div class="tabs variation_2">
+                        <!--tabs navigation-->
+                        <div class="clearfix">
+                            <h3 class="section_title">{{getTableSectionTitle()}}</h3>
+                            <div style="clear: both;"></div>
+                            <div class="clearfix tabs_container">
+                                <ul class="tabs_nav clearfix">
+                                    <li ng-class="{'selected-tab': phase.Selected}" ng-repeat="phase in category.Phases" ng-click="changePhase(phase)" ng-show="!phase.Hidden">
+                                        <a href="#tab-phase-{{phase.Index}}" onclick="return false;">
+                                            {{phase.Name}}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div style="clear: both;"></div>
+                            <div ng-if="category.SelectedPhase">
+                                <div ng-repeat="group in category.SelectedPhase.AllGroups" class="section_3" ng-show="isGroupVisible(group)">
+                                    <h3 class="section_title section_title_medium">{{group.Name}}</h3>
+                                    <div ng-if="category.selectedTeam.FullReportTables">
+                                        <table class="table_type_1" ng-repeat="dataTable in category.selectedTeam.FullReportTables" ng-show="isTeamFullReportTableVisible(dataTable)">
+                                            <caption style="text-align: center;">{{dataTable.Caption}}</caption>
+                                            <tr class="f_size_large">
+                                                <th ng-repeat="header in dataTable.Headers">{{header}}</th>
+                                            </tr>
+                                            <tr ng-repeat="row in dataTable.Rows" style="{{(category.getCompetitorRowStyle(row))}}">
+                                                <td ng-repeat="value in row.CellValues track by $index">
+                                                    <span ng-if="$index == 3">{{getCompetitorGrade(row)}}</span>
+                                                    <span ng-if="$index != 3">{{value}}</span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        סך הכל נקודות:
+                                        {{category.selectedTeam.TotalScore}}
+                                    </div>
+                                    <table class="table_type_1" ng-if="!category.selectedTeam.FullReportTables && category.selectedCompetition.GroupCompetitions[group.Index.toString()].CompetitorsRanking">
+                                        <tr class="f_size_large">
+                                            <th ng-repeat="header in category.selectedCompetition.GroupCompetitions[group.Index.toString()].CompetitorsRanking.Headers">{{header}}</th>
+                                        </tr>
+                                        <tr ng-repeat="row in category.selectedCompetition.GroupCompetitions[group.Index.toString()].CompetitorsRanking.Rows">
+                                            <td ng-repeat="value in row.CellValues track by $index">
+                                                {{value}}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table class="table_type_1" ng-if="!category.selectedTeam.FullReportTables && !category.selectedCompetition.GroupCompetitions[group.Index.toString()].CompetitorsRanking">
+                                        <tr class="f_size_large" ng-if="!group.ColumnTitles">
+                                            <th>#</th>
+                                            <th>שם הקבוצה</th>
+                                            <th>נצ'</th>
+                                            <th>תי'</th>
+                                            <th>הפ'</th>
+                                            <th>נק'</th>
+                                        </tr>
+                                        <tr class="f_size_large" ng-if="group.ColumnTitles">
+                                            <th ng-repeat="title in group.ColumnTitles">{{title}}</th>
+                                        </tr>
+                                        <tr ng-repeat="team in group.Teams" style="{{(category.getTeamRowStyle(team, false))}}" ng-if="!group.ColumnTitles">
+                                            <td>{{team.RESULT_POSITION + 1}}</td>
+                                            <td>
+                                                <div style="cursor: pointer;" onclick="$('#autoSelectionTeam').html($.trim($(this).text()));">{{team.Name}}</div>
+                                            </td>
+                                            <td>{{team.Wins}}</td>
+                                            <td>{{team.Draws}}</td>
+                                            <td>{{team.Loses}}</td>
+                                            <td>{{team.SCORE}}</td>
+                                        </tr>
+                                        <tr ng-repeat="row in group.Rows | orderBy:'Position'" style="{{(category.getTeamRowStyle(row.Values[1], true))}}" ng-if="group.ColumnTitles">
+                                            <td ng-repeat="value in row.Values track by $index" style="{{($index == 1) ? 'cursor: pointer;' : ''}}" ng-click="category.setSelectedTeam(row, $index)">
+                                                {{value == '???' ? '&nbsp;' : value}}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END Tables -->
+    </div>
+</div>
+<div id="autoSelectionTeam" style="display: none;"></div>
+<div id="autoSelectionFacility" style="display: none;"></div>

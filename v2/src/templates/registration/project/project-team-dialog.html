@@ -1,0 +1,195 @@
+<div class="dialog wide">
+    <div class="float-left clickable" v-on:click="cancel">&#x2715;</div>
+    <div class="caption">
+        {{newTeam ? "כיתה חדשה" : "עריכת כיתה"}}
+    </div>
+    <form id="validated-form" style="overflow: auto;">
+        <div class="ph-md">
+            <table class="pb-sm">
+                <tr>
+                    <td><div class="label">שכבה</div></td>
+                    <td><div class="label">כיתה</div></td>
+                    <td><div class="label">סוג כיתה</div></td>
+                    <td><div class="label">מס' תלמידים בכיתה</div></td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <select v-model="gradeIndex" style="min-width: 50px;" autofocus required>
+                            <option v-for="(grade, index) in grades" v-bind:value="index">{{grade.name}}</option>
+                        </select>
+                    </td>
+                    <td class="pl-sm">
+                        <select v-if="gradeIndex != null" v-model="gradeClass" style="min-width: 70px;" required>
+                            <option v-for="gradeClass in gradeClasses" v-bind:value="gradeClass.value">{{gradeClass.name}}</option>
+                        </select>
+                        <select v-if="gradeIndex == null" disabled="true" style="min-width: 70px;"></select>
+                    </td>
+                    <td class="pl-sm">
+                        <select v-if="gradeIndex != null" v-model="gradeClassType" style="min-width: 70px;" required>
+                            <option v-for="gradeClassType in gradeClassesTypes" v-bind:value="gradeClassType.value">{{gradeClassType.name}}</option>
+                        </select>
+                        <select v-if="gradeIndex == null" disabled="true" style="min-width: 70px;"></select>
+                    </td>
+                    <td>
+                        <input v-bind:disabled="gradeIndex == null" type="number" style="width: 100%;" v-model="studentCount" required name="studentCount" min="1">
+                    </td>
+                </tr>
+            </table>
+            <table class="pb-sm">
+                <thead>
+                <tr>
+                    <th>שליש א'</th>
+                    <th>שליש ב'</th>
+                    <th>שליש ג'</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><strong></strong>ענף</td>
+                    <td><strong></strong>ענף</td>
+                    <td><strong></strong>ענף</td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <select v-bind:disabled="gradeIndex == null" v-model="part1.sport" style="min-width: 100px;" autofocus required>
+                            <option v-for="item in items" v-bind:value="item.value">{{item.name}}</option>
+                        </select>
+                    </td>
+                    <td class="pl-sm">
+                        <select v-bind:disabled="gradeIndex == null" v-model="part2.sport" style="min-width: 100px;" autofocus required>
+                            <option v-for="item in items" v-bind:value="item.value">{{item.name}}</option>
+                        </select>
+                    </td>
+                    <td class="pl-sm">
+                        <select v-bind:disabled="gradeIndex == null" v-model="part3.sport" style="min-width: 100px;" autofocus required>
+                            <option v-for="item in items" v-bind:value="item.value">{{item.name}}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong></strong>הסמכה</td>
+                    <td><strong></strong>הסמכה</td>
+                    <td><strong></strong>הסמכה</td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <select v-model="part1.type" v-bind:disabled="part1.sport == null" style="min-width: 100px;" autofocus required v-on:change="typeChanged($event, 1)">
+                            <option v-for="certification in certifications" v-bind:value="certification.value">{{certification.name}}</option>
+                        </select>
+                    </td>
+                    <td class="pl-sm">
+                        <select v-model="part2.type"  v-bind:disabled="part2.sport == null" style="min-width: 100px;" autofocus required v-on:change="typeChanged($event, 2)">
+                            <option v-for="certification in certifications" v-bind:value="certification.value">{{certification.name}}</option>
+                        </select>
+                    </td>
+                    <td class="pl-sm">
+                        <select v-model="part3.type"  v-bind:disabled="part3.sport == null" style="min-width: 100px;" autofocus required v-on:change="typeChanged($event, 3)">
+                            <option v-for="certification in certifications" v-bind:value="certification.value">{{certification.name}}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>פרטים</strong></td>
+                    <td><strong>פרטים</strong></td>
+                    <td><strong>פרטים</strong></td>
+                </tr>
+                <tr>
+                    <td>שם</td>
+                    <td>שם</td>
+                    <td>שם</td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <input type="text" style="width: 100%;" v-model="part1.name" v-bind:disabled="part1.type == null" required>
+                    </td>
+                    <td class="pl-sm">
+                        <input type="text" style="width: 100%;" v-model="part2.name" v-bind:disabled="part2.type == null" required>
+                    </td>
+                    <td class="pl-sm">
+                        <input type="text" style="width: 100%;" v-model="part3.name" v-bind:disabled="part3.type == null" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td>טלפון</td>
+                    <td>טלפון</td>
+                    <td>טלפון</td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <input pattern="(0[0-9]{2}-[0-9]{7}|0[0-9]{1}-[0-9]{7}|0[0-9]{2}[0-9]{7}|0[0-9]{1}[0-9]{7})" required
+                               type="text" style="width: 100%;" v-model="part1.phoneNumber" v-bind:disabled="part1.type == null">
+                    </td>
+                    <td class="pl-sm">
+                        <input pattern="(0[0-9]{2}-[0-9]{7}|0[0-9]{1}-[0-9]{7}|0[0-9]{2}[0-9]{7}|0[0-9]{1}[0-9]{7})" required
+                               type="text" style="width: 100%;" v-model="part2.phoneNumber" v-bind:disabled="part2.type == null">
+                    </td>
+                    <td class="pl-sm">
+                        <input pattern="(0[0-9]{2}-[0-9]{7}|0[0-9]{1}-[0-9]{7}|0[0-9]{2}[0-9]{7}|0[0-9]{1}[0-9]{7})" required
+                               type="text" style="width: 100%;" v-model="part3.phoneNumber" v-bind:disabled="part3.type == null">
+                    </td>
+                </tr>
+                <tr>
+                    <td>מייל</td>
+                    <td>מייל</td>
+                    <td>מייל</td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <input pattern="^\S+@\S+$" required
+                               type="text" style="width: 100%;" v-model="part1.email" v-bind:disabled="part1.type == null">
+                    </td>
+                    <td class="pl-sm">
+                        <input pattern="^\S+@\S+$" required
+                               type="text" style="width: 100%;" v-model="part2.email" v-bind:disabled="part2.type == null">
+                    </td>
+                    <td class="pl-sm">
+                        <input pattern="^\S+@\S+$" required
+                               type="text" style="width: 100%;" v-model="part3.email" v-bind:disabled="part3.type == null">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <template>
+                            <label style="position: relative;">האם עבר השתלמות מאמן ללא תעודת הוראה?</label>
+                            <div>
+                                כן
+                                <input type="radio" name="certification1" v-model="part1.certification" value="1" v-bind:disabled="part1.type == 3  || part1.type === undefined">
+                                לא
+                                <input type="radio" name="certification1" v-model="part1.certification" value="0" v-bind:disabled="part1.type == 3  || part1.type === undefined">
+                            </div>
+                        </template>
+                    </td>
+                    <td class="pl-sm">
+                        <template>
+                            <label style="position: relative;">האם עבר השתלמות מאמן ללא תעודת הוראה?</label>
+                            <div>
+                                כן
+                                <input type="radio" name="certification2" v-model="part2.certification" value="1" v-bind:disabled="part2.type == 3  || part2.type === undefined">
+                                לא
+                                <input type="radio" name="certification2" v-model="part2.certification" value="0" v-bind:disabled="part2.type == 3  || part2.type === undefined">
+                            </div>
+                        </template>
+                    </td>
+                    <td class="pl-sm">
+                        <template>
+                            <label style="position: relative;">האם עבר השתלמות מאמן ללא תעודת הוראה?</label>
+                            <div>
+                                כן
+                                <input type="radio" name="certification3" v-model="part3.certification" value="1"
+                                       v-bind:disabled="part3.type == 3 || part3.type === undefined">
+                                לא
+                                <input type="radio" name="certification3" v-model="part3.certification" value="0"
+                                       v-bind:disabled="part3.type == 3 || part3.type === undefined">
+                            </div>
+                        </template>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="pb-md pt-md" style="text-align: center;">
+            <button type="button" class="btn wide" v-on:click="confirm()" v-bind:disabled="!formValidated">אישור</button>
+        </div>
+    </form>
+</div>

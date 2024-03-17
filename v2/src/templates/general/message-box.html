@@ -1,0 +1,12 @@
+<div class="dialog" v-bind:class="{wide: wide}">
+    <div class="caption">
+        {{caption}}
+    </div>
+    <div class="pb-md ph-sm" style="max-height: 400px; overflow: auto;">
+        <p v-html="message"></p>
+    </div>
+    <div class="pb-md" style="text-align: center;">
+        <button v-if="cancelText != null" class="btn" v-bind:class="{red: alert, wide: confirmText == null, medium: confirmText != null}" v-on:click="cancel()">{{cancelText}}</button>
+        <button v-if="confirmText != null" class="btn" v-bind:class="{wide: cancelText == null, medium: cancelText != null}" v-on:click="confirm()">{{confirmText}}</button>
+    </div>
+</div>

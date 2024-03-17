@@ -1,0 +1,33 @@
+<div>
+    <div class="panel p-sm"  style="width: auto; position: absolute; left: 39px; right: 39px; top: 13px; bottom: 0px;">
+        <data-table v-bind:enableExport="true"
+                    v-bind:title="'רשויות'"
+                    v-bind:columns="columns"
+                    v-bind:data="cities"
+                    v-bind:filter="filter"
+                    selection="single"
+                    v-on:selection-change="handleSelectionChange">
+            <div>
+                <label>מחוז</label>
+                <select  style="width: 100%;" v-model="region">
+                    <option value="">כל המחוזות</option>
+                    <option v-for="region in regions" v-bind:value="region.id">{{region.name}}</option>
+                </select>
+            </div>
+            <div class="flex-fill">
+            </div>
+            <div>
+                <label style="color: white">&nbsp</label>
+                <button type="button" class="btn small" v-on:click="editUser()" v-bind:disabled="city == null">עדכון משתמש</button>
+            </div>
+<!--
+            <div class="tool-bar pt-sm">
+                <div class="float-left button-group pb-md">
+                    <button type="button" v-bind:disabled="updating" v-on:click="addRegistration"><span class="icon">&#x1F7A1;</span> הוספה</button>
+                    <button type="button" v-bind:disabled="updating || selectedRegistration == null" v-on:click="removeRegistration"><span class="icon">&#x2715;</span> מחיקה</button>
+                </div>
+            </div>
+-->
+        </data-table>
+    </div>
+</div>

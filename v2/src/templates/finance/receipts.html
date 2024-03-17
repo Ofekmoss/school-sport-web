@@ -1,0 +1,88 @@
+<div class="vertical-flex" style="position: absolute; left: 0px; right: 0px;">
+    <div class="flex-fill ph-lg pv-sm">
+        <div class="panel p-sm"  style="width: auto; position: absolute; left: 39px; right: 39px; top: 13px; bottom: 0px;">
+            <data-table v-bind:columns="columns" v-bind:data="receipts" v-bind:enableExport="true"
+                        v-bind:clickToTick="true"
+                        v-on:search-change="handleSearchChange()"
+                        v-on:selection-change="handleSelectionChange()">
+                <template v-if="selectedRowCount !== 1">
+                    <div>
+                        <label>עונה</label>
+                        <select v-model="season">
+                            <option v-for="(season, index) in seasons" v-bind:value="season.id">{{season.name}}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>מחוז</label>
+                        <select class="auto-select" v-model="region" v-bind:disabled="getAccountId() > 0">
+                            <option :value="-1">כל המחוזות</option>
+                            <option v-for="(region, index) in regions" v-bind:value="region.id">{{region.name}}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>ענף ספורט</label>
+                        <select class="auto-select" v-model="sport" v-bind:disabled="getAccountId() > 0">
+                            <option :value="null">כל ענפי הספורט</option>
+                            <option v-for="(sport, index) in sports" v-bind:value="sport.id">{{sport.name}}</option>
+                        </select>
+                    </div>
+                    <div v-if="sport">
+                        <label>אליפות</label>
+                        <select class="auto-select" v-model="championship" v-bind:disabled="getAccountId() > 0">
+                            <option :value="null">כל  האליפויות</option>
+                            <option v-for="(championship, index) in championships" v-bind:value="championship.id">{{championship.name}}</option>
+                        </select>
+                    </div>
+                    <div v-if="championship">
+                        <label>קטגורייה</label>
+                        <select class="auto-select" v-model="category" v-bind:disabled="getAccountId() > 0">
+                            <option :value="null">כל  הקטגוריות</option>
+                            <option v-for="(category, index) in categories" v-bind:value="category.id">{{category.name}}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>סוג אליפות</label>
+                        <select class="auto-select" v-model="type"  v-bind:disabled="getAccountId() > 0">
+                            <option :value="null">כל סוגי האליפות</option>
+                            <option v-for="(t, index) in types" v-bind:value="t.id">{{t.name}}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>חשבון</label>
+                        <select class="auto-select" v-model="account">
+                            <option :value="null">כל החשבונות</option>
+                            <option v-for="(account, index) in accounts" v-bind:value="account.id">{{account.name}}</option>
+                        </select>
+                    </div>
+                </template>
+                <div v-if="selectedRowCount === 1">
+                    <label style="color: white">&nbsp</label>
+                    <button class="btn small" v-on:click="printReceipt(false)">הדפסת קבלה</button>
+                </div>
+                <div v-if="selectedRowCount === 1">
+                    <label style="color: white">&nbsp</label>
+                    <button class="btn small" v-on:click="printReceipt(true)">הורדת קובץ PDF</button>
+                </div>
+                <div style="margin-right: 10px;" v-if="true">
+                    <!-- initialAccount != null || selectedRegionId() >= 0 -->
+                    <label style="font-weight: bold;">סה"כ סכום</label>
+                    <div style="font-weight: bold; color: blue;">
+                        {{sumAll()}}
+                    </div>
+                </div>
+                <div v-if="false">
+                    <label>רשות</label>
+                    <select v-model="city">
+                        <option :value="null">כל הרשויות</option>
+                        <option v-for="(city, index) in cities" v-bind:value="city.id">{{city.name}}</option>
+                    </select>
+                </div>
+                <div style="margin-right: 10px; color: red; font-weight: bold;" v-if="false">
+                    <!-- initialAccount == null && selectedRegionId() < 0 -->
+                    על מנת לראות קבלות יש לבחור מחוז
+                </div>
+            </data-table>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,114 @@
+<div class="vertical-flex" style="position: absolute; left: 0px; right: 0px;">
+    <div class="ph-lg pt-lg">
+        <div class="float-right">
+            <strong>
+                אישור פרטי קבוצות
+            </strong>
+        </div>
+        <div class="float-left" v-bind:style="{border: user.delegatedUser != null ? '1px dashed black' : '',
+            padding: user.delegatedUser != null ? '5px 5px 5px 5px' : 'inherit'}">
+            <strong v-if="user.delegatedUser">
+                {{user.delegatedUser.name}}
+                &larr;
+                מחובר בתור
+                &larr;
+            </strong>
+            <strong>
+                {{user.name}}
+            </strong>
+            <strong style="color: blue; cursor: pointer" v-on:click="logout()">
+                התנתק
+            </strong>
+        </div>
+    </div>
+
+    <div class="flex-fill ph-lg pv-sm" style="overflow-x: hidden; overflow-y: auto;">
+        <div class="panel mt-lg">
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" v-model="selectAll" /></th>
+                        <!-- th>פעיל</th -->
+                        <th>שם בית ספר</th>
+                        <th>רשות</th>
+                        <th>ענף</th>
+                        <th>אליפות</th>
+                        <th>קטגוריה</th>
+                        <th>מתקן</th>
+                        <th>זמני פעילות</th>
+                        <th>עלות</th>
+                        <th>תאריך הוספת קבוצה</th>
+                        <th>תאריך אישור</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(team, index) in teams" v-bind:class="{selected: team.selected, disabled: !team.active, green: isApproved(team)}" class="table-row">
+                            <td><input type="checkbox" v-model="team.selected" v-if="!isApproved(team)" /></td>
+                            <!-- td><span v-if="team.active">&#x2714</span></td -->
+                            <td>{{team.school.name}}</td>
+                            <td>{{team.school.cityName}}</td>
+                            <td>{{team.sport.name}}</td>
+                            <td>{{team.championship.name}}</td>
+                            <td>{{team.category.name}}</td>
+                            <td>{{getFacilityName(team.facility)}}</td>
+                            <td>{{getActivityText(team.activity)}}</td>
+                            <td>
+                                {{team.price}} <span v-if="team.payment !== null">נשלחה דרישת תשלום</span>
+                            </td>
+                            <td>
+                                {{team.createdAt | date}}
+                            </td>
+                            <td>
+                                <span v-if="isApproved(team)">
+                                    {{team.DateConfirmed | date}}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="panel mt-lg">
+            <div class="panel-header">
+                אישור מנהל/ת בית הספר
+            </div>
+            <div class="panel-body">
+                <p>
+                    באמצעות חתימותינו האלקטרוניות על גבי מסמך זה הרינו מבקשים בזאת להקים/להפעיל מועדון ספורט בית ספרי במסגרת התאחדות הספורט לבתי-הספר בישראל ובכלל זה לבצע את הפעולות הנדרשות במהלך רישום המועדון ורישום הספורטאים/ות כפי שמופיע במבחני התמיכה לאגודות ואיגודי ספורט.
+                    <br /><br />
+                    אנו מתחייבים לפעול ולארח את המשחקים/תחרויות בהתאם לנהלים ולהוראות המפורסמים בתקנון לאירועי החנ"ג, מידע ועקרונות פעולה התאחדות הספורט לבתי הספר וכל ההוראות בחוזרי מנכ"ל, משרד החינוך והנחיות משרד התרבות והספורט (חוק הספורט).<br />
+                    ידוע לנו כי עלינו להעמיד מתקן תקני וראוי לאירוח טורנירים/אירועים. במידה ואין באפשרותנו לארח באולם ראוי ותקני, אנו מתחייבים להתארח בכל הטורנירים/אירועים בליגת מועדוני הספורט הבית ספריים כפי שייקבע בתוכנית המשחקים של התאחדות הספורט לבתי הספר.<br />
+                    כמו כן אנו מתחייבים לעמוד במספר האימונים הנדרש ובהכשרת מאמנים / מדריכים.
+                    <br /><br />
+                    הריני לאשר כי וידאתי שהמאמנים ו/או המדריכים בקבוצות המשתייכות למועדון הבית ספרי, שאינם מועסקים כמורים במערכת החינוך, מחזיקים באישור משטרה בדבר העדר עבירות מין וזאת לפני תחילת הפעילות של שנת הלימודים.
+                </p>
+
+                <template v-if="approveCount > 0">
+                    <div>
+                        <input id="chkConfirmation" type="checkbox" v-model="confirmation">
+                        <label for="chkConfirmation">
+                            <span class="label">אישור קריאת ההצהרה</span>
+                        </label>
+                    </div>
+
+                    <div style="text-align: left;">
+                        <button class="btn green" v-on:click="confirm()" v-bind:disabled="!confirmation || selectionCount() === 0">
+                            אישור
+                        </button>
+                    </div>
+                </template>
+
+                <template v-if="approveCount === 0 && confirmedAt">
+                    <div style="font-weight: bold;">
+                        הצהרה אושרה בתאריך
+                        {{confirmedAt.Date}}
+                        בשעה
+                        {{confirmedAt.Time}}
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+</div>

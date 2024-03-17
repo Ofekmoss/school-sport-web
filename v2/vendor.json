@@ -1,0 +1,8 @@
+[
+  "src/lib/jquery-3.4.0.min.js",
+  "node_modules/vue/dist/vue.min.js",
+  "node_modules/vue-resource/dist/vue-resource.min.js",
+  "node_modules/chart.js/dist/Chart.min.js",
+  "src/lib/require.min.js",
+  "src/lib/equation.js"
+]

@@ -1,0 +1,25 @@
+<div class="dialog" style="min-height: 10rem; margin: 5% auto; max-height: 80%; display: flex; justify-content: space-between; flex-direction: column; min-width: 200px;">
+    <div class="caption">
+        סידור משחקים - {{phase.name}}
+    </div>
+    <div>
+        <table style="width: 100%;">
+            <tr v-for="(level, index) in levels">
+                <td>רמה {{index + 1}}</td>
+                <td style="padding-left:6px;">
+                    <input type="text" v-model="level.name" v-on:input="onLevelInput" placeholder="הכנס שם לרמת סידור משחקים" style="width: 100%;">
+                </td>
+                <td style="padding-left:6px;">
+                    <input type="number" min="0" v-model="level.count" v-on:input="onLevelInput" style="width: 100%;">
+                </td>
+            </tr>
+        </table>
+    </div>
+    <span v-if="error" style="color: red; font-weight: bold; font-size: 12px; display: inline-block; max-width: 100px; padding-left: 10px;">
+        {{error}}
+    </span>
+    <div class="horizontal-flex" style="justify-content: center">
+        <button class="btn gray ml-sm" style="width: 5rem" v-on:click="cancel()">ביטול</button>
+        <button v-bind:disabled="error.length > 0" class="btn mr-sm" style="width: 5rem" v-on:click="confirm()">אישור</button>
+    </div>
+</div>

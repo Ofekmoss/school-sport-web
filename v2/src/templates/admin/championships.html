@@ -1,0 +1,41 @@
+<div class="panel p-sm"  style="width: auto; position: absolute; left: 39px; right: 39px; top: 13px; bottom: 0px;">
+    <data-table ref="championshipsTable" v-bind:enableExport="true" v-bind:title="'אליפויות'" v-bind:columns="columns" v-bind:data="championships" v-on:selection-change="handleSelectionChange()">
+        <div>
+            <label>עונה</label>
+            <select  style="width: 100%;" v-model="season">
+                <option v-for="season in seasons" v-bind:value="season.Id">{{season.Name}}</option>
+            </select>
+        </div>
+        <div>
+            <label>סוג אליפות</label>
+            <select  style="width: 100%;" v-model="competitionType">
+                <option value="">הכל </option>
+                <option value="1">מועדונים</option>
+                <option value="2">ליגות תיכוניים</option>
+                <option value="0">לא מוגדר </option>
+            </select>
+        </div>
+        <div>
+            <label>מחוז</label>
+            <select  style="width: 100%;" v-model="region">
+                <option v-for="region in regions" v-bind:value="region.id">{{region.name}}</option>
+            </select>
+        </div>
+        <div>
+            <label>ענף ספורט</label>
+            <select  style="width: 100%;" v-model="competitionSport">
+                <template v-for="(sport, index) in sports">
+                    <option :value="sport.id">{{sport.name}}</option>
+                </template>
+            </select>
+        </div>
+        <div>
+            <label>קטגוריה</label>
+            <select  style="width: 100%;" v-model="competitionCategory">
+                <template v-for="(category, index) in allCategories">
+                    <option :value="category">{{category}}</option>
+                </template>
+            </select>
+        </div>
+    </data-table>
+</div>

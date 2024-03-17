@@ -1,0 +1,48 @@
+<div class="vertical-flex" style="position: absolute; left: 0px; right: 0px;">
+    <div class="ph-lg pt-lg">
+        <div class="float-right">
+            <strong>
+                תכנית פל"א -
+                {{getSeason()}}
+            </strong>
+        </div>
+        <div class="float-left" v-bind:style="{border: user.delegatedUser != null ? '1px dashed black' : '',
+            padding: user.delegatedUser != null ? '5px 5px 5px 5px' : 'inherit'}">
+            <strong v-if="user.delegatedUser">
+                {{user.delegatedUser.name}}
+                &larr;
+                מחובר בתור
+                &larr;
+            </strong>
+            <strong>
+                {{user.name}}
+            </strong>
+            <strong style="color: blue; cursor: pointer" v-on:click="logout()">
+                התנתק
+            </strong>
+        </div>
+    </div>
+    <div class="step-progress">
+        <div class="step-bar"></div>
+        <div class="step-mark p1-3" v-bind:class="{active: currentPage == 0, enabled: true}" v-on:click="goToPage(0)">
+            <span>פרטי הרשות</span>
+        </div>
+        <div class="step-mark p2-3" v-bind:class="{active: currentPage == 1}" v-on:click="goToPage(1)">
+            <span>רישום קבוצות</span>
+        </div>
+        <div class="step-mark p3-3" v-bind:class="{active: currentPage == 2}" v-on:click="goToPage(2)">
+            <span>רישום ספורטאים/ות</span>
+        </div>
+
+          <!--ההרשמה נסגרה -->
+        <!--<div class="step-mark p2-3" v-bind:class="{active: currentPage == 1, enabled: stage >= 1}" v-on:click="goToPage(1)">-->
+        <!--<span>רישום קבוצות</span>-->
+        <!--</div>-->
+        <!--<div class="step-mark p3-3" v-bind:class="{active: currentPage == 2, enabled: stage >= 2}" v-on:click="goToPage(2)">-->
+        <!--<span>רישום ספורטאים/ות</span>-->
+        <!--</div>-->
+    </div>
+    <div class="flex-fill ph-lg pv-sm" style="overflow-x: hidden; overflow-y: auto;">
+        <component v-bind:is="page" v-on:next="handlePage"></component>
+    </div>
+</div>

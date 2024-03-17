@@ -1,0 +1,84 @@
+<div class="dialog wide" style="height: 500px; display: flex; justify-content: space-between">
+    <div class="horizontal-flex" style="justify-content: space-between; flex-direction: column;">
+        <div v-if="state == states.new" class="panel-header" style="display: flex; justify-content: center"> הוספת שחקן</div>
+        <div v-if="state == states.edit" class="panel-header" style="display: flex; justify-content: center">עריכת שחקן</div>
+
+        <div style="display: flex; justify-content: space-between; flex-direction: column;
+        position: relative; overflow-y: auto; height: 410px; padding: 5px;">
+            <div style="width: 100%; box-sizing: border-box; padding-top: 15px;">
+                <form id="validated-form" v-if="record">
+
+                    <div class="panel">
+                        <div class="panel-header" style="display: flex; align-items: center;">
+                            <span></span>
+                        </div>
+                        <div class="panel-body" style="overflow: visible;">
+                            <div class="label">מספר חולצה</div>
+                            <input type="text" style="width: 100%;" v-model="record.Player.ShirtNumber" name="ShirtNumber">
+
+                            <div class="label">סטטוס</div>
+                            <select v-model="record.AdminStatus" style="width: 100%;" autofocus name="status">
+                                <option v-for="(s, index) in adminStatuses" v-bind:value="s.Id">{{s.Name}}</option>
+                            </select>
+
+<!--                            <div class="label">תאריך לידה</div>-->
+<!--                            &lt;!&ndash;<input type="text" style="width: 100%;" v-model="record.Student.BirthDate" name="BirthDate">&ndash;&gt;-->
+<!--                            <datepicker :language="Hebrew" v-on:selected="setBirthDate($event)"-->
+<!--                                        :value="studentBirthDate" name="BirthDate"></datepicker>-->
+
+<!--                            <div class="label">סמל בית הספר</div>-->
+<!--                            <input type="text" style="width: 100%;" v-model="record.Student.School.Symbol" name="Symbol">-->
+
+<!--                            <div class="label">מחוז</div>-->
+<!--                            <input type="text" style="width: 100%;" v-model="record.Student.Region.Name" name="name">-->
+
+
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-header" style="display: flex; align-items: center;">
+                            <span>מסמכים</span>
+                        </div>
+                        <div class="panel-body" style="overflow: visible; display: flex; justify-content: space-between">
+
+                            <label style="background-image: url('img/photo.png')" class="file-button"
+                                   v-on:click="uploadPicture()"
+                            >תמונה</label>
+                            <input id="fiPicture" type="file" name="picture" v-on:change="handlePicture()">
+
+                            <label style="background-image: url('img/article.png')" class="file-button"
+                                   v-on:click="uploadIdSlip()">ספח ת"ז</label>
+                            <input id="fiIdSlip" type="file" name="id-slip" v-on:change="handleIdSlip()">
+
+                            <label style="background-image: url('img/user-id.png')" class="file-button"
+                                   v-on:click="uploadMedicalApproval()"
+                            >בדיקה רפואית</label>
+                            <input id="fiMedicalApproval" type="file" name="medical-approval" v-on:change="handleMedicalApproval()">
+
+                            <label style="background-image: url('img/attention.png')" class="file-button"
+                                   v-on:click="uploadFile()"
+                            >טופס חריגים</label>
+                            <input id="fiMedicalApproval" type="file" name="medical-approval" v-on:change="handleFile()">
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div style="display: flex; justify-content: space-evenly;">
+        <button class="btn"
+                style="width: 100px;"
+                v-on:click="saveRecord()"
+                v-bind:disabled="!isValid || !changed"
+        >
+            שמור
+        </button>
+        <button class="btn"
+                style="width: 100px; background-color: rgba(217, 1, 17, 0.82); white-space: nowrap"
+                v-on:click="cancel()"
+        >
+            צא ללא שמירה
+        </button>
+    </div>
+</div>

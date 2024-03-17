@@ -1,0 +1,13 @@
+<div class="clearfix tabs_container" style="margin-bottom: 20px;">
+    <select id="ddlMobileManageMenu" class="form-control" ng-change="mobileMenuChanged()" ng-model="mobileMenu" ng-show="IsMobileDevice">
+        <option ng-repeat="tab in tabs" data-state="{{tab.State}}" data-link="{{tab.Link}}">
+            {{tab.Description}}
+        </option>
+    </select>
+    <ul class="tabs_nav clearfix" ng-show="!IsMobileDevice">
+        <li ng-repeat="tab in tabs" style="{{tab.ListItemStyle}}">
+            <a ng-if="tab.State" ui-sref="{{tab.State}}" onclick="return false;" style="{{tab.LinkStyle}}">{{tab.Description}}</a>
+            <a ng-if="tab.Link" href="{{tab.Link}}" style="{{tab.LinkStyle}}">{{tab.Description}}</a>
+        </li>
+    </ul>
+</div>

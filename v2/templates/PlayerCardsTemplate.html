@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+	<meta charset="utf-8">
+	<style type="text/css">
+		div, body { margin: 0; padding: 0; }
+		table { margin: 0; }
+		#captions td, #tblFooter td { line-height: 12px; font-size: 15px; }
+		div, body, td, th, span, p, a { font-family: Arial; font-size: 14px; text-align: center; }
+		img { border: none; }
+		h1 { margin: 0; }
+		h2 { margin: 0; padding: 0; text-decoration: underline; }
+		.header_caption { font-weight: bold; }
+		.dashed_border { border-style: dashed; border-width: 2px; border-color: black; }
+		#captions td { font-family: Tahoma; font-weight: bold; }
+		#players { width: 100%; border-width: 3px; border-color: black; border-style: solid; }
+		#players th { background-color: #e9e9e9; padding: 0px 0px 5px 0px; }
+		#players th, #players td { width: 14%; border-style: solid; border-width: 1px; border-color: black; }
+        .playerCardsTable  td {
+            height: 50px;
+            vertical-align: middle;
+        }
+        .playerCardsTable  td, .playerCardsTable  th {
+            padding: 5px 5px 5px 5px;
+        }
+	</style>
+	<style type="text/css" media="print">
+		#btnPrint, #btnConfirm, #btnCancel { display: none; }
+	</style>
+	<title></title>
+</head>
+<body>
+{{#pages}}
+<div align="right" dir="rtl" style="text-align: center;">
+    <table border="0" style="width: 100%; margin-top: 10px; padding: 10px 10px 10px 10px;">
+        <tr>
+            <td align="right" style="text-align: right;" class="header_caption">
+                משרד החינוך
+                <br />
+                הפיקוח על החינוך הגופני
+            </td>
+            <td align="center" style="text-align: center;" class="header_caption">
+                מחוז {{schoolRegion}}
+                <br />
+                {{season}} {{years}}
+            </td>
+            <td align="left" style="text-align: left;" class="header_caption">
+                <div style="text-align: left;">
+                    התאחדות הספורט לבתי הספר
+                </div>
+                <div style="text-align: left; margin-left: 35px;">
+                    תאריך: {{today}}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                &nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td align="right" style="text-align: right;" class="header_caption">
+                תלמידים הרשומים בקבוצה:
+            </td>
+            <td align="center" style="text-align: center;" class="header_caption">
+                {{schoolSymbol}} {{teamDisplayName}}
+            </td>
+            <td align="left" style="text-align: left;" class="header_caption">
+                <div style="{{pagerStyle}}">
+                    עמוד
+                    {{pageIndex}}
+                    מתוך
+                    {{pageCount}}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td align="right" style="text-align: right;" class="header_caption">
+                באליפות:
+            </td>
+            <td align="center" style="text-align: center;" class="header_caption" nowrap="nowrap">
+                {{championshipName}} {{category}}
+            </td>
+            <td align="left" style="text-align: left;" class="header_caption">
+                &nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td align="right" style="text-align: right;" class="header_caption">
+                ורשאים לשחק בשנת הלימודים:
+            </td>
+            <td align="center" style="text-align: center;" class="header_caption" nowrap="nowrap">
+                {{currentSeason}}
+            </td>
+            <td align="left" style="text-align: left;" class="header_caption">
+                &nbsp;
+            </td>
+        </tr>
+    </table>
+    <table class="playerCardsTable" cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+        <tr>
+            <th>מס' שחקן</th>
+            <th>שם פרטי</th>
+            <th>שם משפחה</th>
+            <th>ת.ז.</th>
+            <th>תאריך לידה</th>
+            <th>כיתה</th>
+            <th>תמונה</th>
+            <th>חריג גיל</th>
+            <th>סטטוס</th>
+        </tr>
+        {{#players}}
+        <tr style="{{rowStyle}}">
+            <td>{{shirtNumber}}</td>
+            <td>{{firstName}}</td>
+            <td>{{lastName}}
+            <td>{{idNumber}}</td>
+            <td>{{birthDate}}</td>
+            <td>{{grade}}</td>
+            <td><!-- data:image/png;base64,{{picture}} -->
+                <img src="{{pictureUrl}}" style="height: 50px;" alt="תמונת שחקן" />
+            </td>
+            <td>{{overMaxAge}}</td>
+            <td>{{status}}</td>
+        </tr>
+        {{/players}}
+    </table>
+    <table border="0" style="width: 100%; position: fixed; bottom: 25px; left: 0; padding: 5px 5px 5px 5px;">
+        <tr>
+            <td align="right" style="text-align: right;" class="header_caption">
+                שם הרכז המאשר
+                _______________
+            </td>
+            <td align="center" style="text-align: center;" class="header_caption">
+                חתימה:
+                _______________
+            </td>
+            <td align="left" style="text-align: left;" class="header_caption">
+                חותמת:
+                _______________
+            </td>
+        </tr>
+    </table>
+</div>
+<p style="{{pageBreakStyle}}"></p>
+{{/pages}}
+<script type="text/javascript" language="JavaScript">
+		var images = document.querySelectorAll(".playerCardsTable img");
+		var totalImages = images.length;
+		var loadedImages = 0;
+		images.forEach(image => {
+			image.onload = function() {
+				loadedImages++;
+				console.log(loadedImages);
+			};
+		});
+		var checkAllImagesLoaded = function() {
+			if (loadedImages === totalImages) {
+				window.print();
+				window.close();
+			} else {
+				window.setTimeout(checkAllImagesLoaded, 500);
+			}
+		};
+		window.setTimeout(checkAllImagesLoaded, 500);
+    </script>
+</body>
+</html>

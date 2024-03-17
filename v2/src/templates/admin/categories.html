@@ -1,0 +1,44 @@
+<div class="panel p-sm"  style="width: auto; position: absolute; left: 39px; right: 39px; top: 13px; bottom: 0px;">
+    <data-table ref="categoriesTable" v-bind:enableExport="true" v-bind:title="'קטגוריות אליפות'"
+                v-bind:columns="columns" v-bind:data="categories"
+                v-bind:clickToTick="true"
+                selection="single"
+                v-on:selection-change="handleSelectionChange()">
+        <div>
+            <label>עונה</label>
+            <select  style="width: 100%;" v-model="season">
+                <option v-for="season in seasons" v-bind:value="season.Id">{{season.Name}}</option>
+            </select>
+        </div>
+        <div>
+            <label>מחוז</label>
+            <select  style="width: 100%;" v-model="region">
+                <option v-for="region in regions" v-bind:value="region.id">{{region.name}}</option>
+            </select>
+        </div>
+        <div>
+            <label>ענף ספורט</label>
+            <select  style="width: 100%;" v-model="competitionSport">
+                <template v-for="(sport, index) in sports">
+                    <option :value="sport.id">{{sport.name}}</option>
+                </template>
+            </select>
+        </div>
+        <div>
+            <label>אליפות</label>
+            <select  style="width: 100%;" v-model="competitionChampionship">
+                <template v-for="(championship, index) in championships">
+                    <option :value="championship.id">{{championship.name}}</option>
+                </template>
+            </select>
+        </div>
+        <div v-if="selectedCategories.length === 1">
+            <label style="color: white">&nbsp</label>
+            <button class="btn small" v-on:click="editSelectedCategory()">עריכת תחרות מסומנת</button>
+        </div>
+        <div v-if="selectedCategories.length === 1 && selectedCategories[0].sport.id == 24">
+            <label style="color: white">&nbsp</label>
+            <button class="btn small" v-on:click="linkLogligCompetition()">קישור ללוגליג</button>
+        </div>
+    </data-table>
+</div>

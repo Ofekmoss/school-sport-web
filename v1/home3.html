@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<!--[if IE 9 ]><html class="ie9" lang="en" ng-app="sport.home"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html lang="en" ng-app="sport"><!--<![endif]-->
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,500,700">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic">
+    <meta property="fb:app_id" content="683703801781785"/>
+    <meta property="og:url" content="http://www.schoolsport.co.il:8080/sport/#/home"/>
+    <meta property="og:title" content="התאחדות הספורט לבתי ספר בישראל"/>
+    <meta property="og:image" content="http://www.schoolsport.co.il:8080/sport/images/logo_main_white.png"/>
+    <title>התאחדות הספורט לבתי ספר</title>
+    <meta name = "format-detection" content = "telephone=no" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!--meta info-->
+    <meta name="author" content="">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <link rel="shortcut icon" type="image/x-icon" href="images/fav_icon.ico">
+    <!--stylesheet include-->
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" media="all" href="css/responsive.css">
+    <link rel="stylesheet" type="text/css" media="all" href="css/animate.css">
+    <!--revolution stylesheet-->
+    <link rel="stylesheet" href="rs-plugin/css/settings.css">
+    <!--modernizr-->
+    <script src="js/jquery.modernizr.js"></script>
+    <!-- dropzone-->
+    <script type="text/javascript" src="plugins/dropzone-4.0.1/dropzone.js"></script>
+    <script type="text/javascript" src="plugins/xlsx/xlsx.core.min.js"></script>
+    <link rel="stylesheet" href="plugins/dropzone-4.0.1/dropzone.css" />
+
+    <!-- Vendors style sheets -->
+    <link href="css/vendor.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="all" href="css/style.min.css">
+    <!--RTL-->
+    <link rel="stylesheet" type="text/css" media="all" href="css/rtl.css">
+    <style type="text/css">
+        .custom_select, .custom_select div, .custom_select span, .sorting_block, .sorting_block span, .sorting_block div {
+            color: #3e454c !important;
+        }
+
+        .sub_menu_wrap {
+            background-color: #3A539B !important;
+        }
+    </style>
+</head>
+<body class="wide_layout" style="background-color: rgb(226, 226, 226);">
+<div id="fb-root"></div>
+<script>(function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "https://connect.facebook.net/he_IL/sdk.js#xfbml=1&version=v2.8";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<div class="loader"></div>
+<!--[if (lt IE 9) | IE 9]>
+<div class="ie_message_block">
+    <div class="container">
+        <div class="wrapper">
+            <div class="clearfix"><i class="fa fa-exclamation-triangle f_left"></i><b>Attention!</b> This page may   not display correctly. You are using an outdated version of Internet Explorer. For a faster, safer browsing experience.<a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode" class="button button_type_3 button_grey_light f_right" target="_blank">Update Now!</a></div>
+        </div>
+    </div>
+</div>
+<![endif]-->
+
+<!--cookie-->
+<!-- <div class="cookie">
+        <div class="container">
+          <div class="clearfix">
+            <span>Please note this website requires cookies in order to function correctly, they do not store any specific information about you personally.</span>
+            <div class="f_right"><a href="#" class="button button_type_3 button_grey">Accept Cookies</a><a href="#" class="button button_type_3 button_grey_light">Read More</a></div>
+          </div>
+        </div>
+      </div>-->
+<div ng-controller="SportMainCtrl as main" class="wrapper_container">
+    <!--==============================header=================================-->
+    <header role="banner" class="header">
+        <div class="h_top_part" style="background-color: #23527C;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="header_top mobile_menu">
+                            <nav>
+                                <ul  style="height: 30px;">
+                                    <li><a href="#">מנהלות</a></li>
+                                    <li><a href="#">קישורים</a></li>
+                                    <li><a href="#">יצירת קשר</a></li>
+                                    <li><a href="#">אודות</a></li>
+                                </ul>
+                            </nav>
+                            <div class="login_block" style="margin-top: 7px;">
+                                <ul>
+                                    <!--Season-->
+                                    <li class="season_button">
+                                        <a href="#" role="button" onclick="return false;">
+                                            <i class="fa fa-calendar"></i>
+                                            {{currentSeason.Name}}
+                                        </a>
+                                        <div class="popup">
+                                            <form>
+                                                <ul>
+                                                    <li>
+                                                        בחירת עונה
+                                                        <div class="pull-left" ng-show="defaultSeason.Season && defaultSeason.Season != currentSeason.Season">
+                                                            <button type="button" class="button button_type_icon_small button_grey" ng-click="resetSeason()"
+                                                                    style="width: 100px; text-align: center; padding: 0; height: 25px; padding-left: 5px;">
+ניקוי בחירה
+                                                            </button>
+                                                        </div>
+                                                    </li>
+                                                    <li style="text-align: center;">
+                                                        <a href="#" class="button button_grey" ng-click="changeSeason(1)" onclick="return false;" ng-show="gotNextSeason()"
+                                                           style="float: left; width: 50px;">
+                                                            <span class="glyphicon glyphicon-chevron-left"></span>
+                                                        </a>
+                                                        <span style="font-size: 24px;">
+                                                            {{selectedSeason.Name}}
+                                                        </span>
+                                                        <a href="#" class="button button_grey" ng-click="changeSeason(-1)" onclick="return false;" ng-show="gotPrevSeason()"
+                                                           style="float: right; width: 50px;">
+                                                            <span class="glyphicon glyphicon-chevron-right"></span>
+                                                        </a>
+                                                    </li>
+                                                    <li ng-show="selectedSeason.Season && selectedSeason.Season != currentSeason.Season">
+                                                        <a id="btnChangeSeason" href="#" class="button button_grey" ng-click="applySeason()" onclick="return false;">
+                                                            שינוי עונה
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </form>
+                                        </div>
+                                    </li>
+                                    <!--Login-->
+                                    <li class="login_button">
+                                        <a href="#" role="button" onclick="return false;">
+                                            <i class="fa fa-user login_icon"></i>
+                                            <span ng-if="loggedUser">
+                                                {{loggedUser.DisplayName}}
+                                            </span>
+                                            <span ng-if="!loggedUser">
+                                            אורח
+                                            </span>
+                                        </a>
+                                        <div class="popup">
+                                            <form>
+                                                <ul ng-show="!loggedUser">
+                                                    <li>
+                                                        <label for="username">שם משתמש</label><br>
+                                                        <input type="text" class="auto-click" data-button-id="btnLogin" name="username" id="username" ng-model="username" />
+                                                    </li>
+                                                    <li>
+                                                        <label for="password">סיסמא</label><br>
+                                                        <input type="password" class="auto-click" data-button-id="btnLogin" name="password" id="password" ng-model="password" />
+                                                    </li>
+                                                    <!-- li>
+                                                        <input type="checkbox" id="checkbox_10"><label for="checkbox_10">זכור אותי</label>
+                                                    </li -->
+                                                    <li>
+                                                        <a id="btnLogin" href="#" class="button button_grey" ng-click="login()" onclick="return false;">
+                                                            התחברות
+                                                        </a>
+                                                        <!-- div class="t_align_c">
+                                                            <a href="#" class="color_dark">שכחת את הסיסמא?</a><br>
+                                                            <a href="#" class="color_dark">שכחת את השם משתמש?</a>
+                                                        </div -->
+                                                    </li>
+                                                    <li>
+                                                        <div class="alert alert-danger" role="alert" ng-show="errorMessage">
+                                                            {{errorMessage}}
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                                <ul ng-show="loggedUser">
+                                                    <li>
+                                                        <a href="#" class="button button_grey" ng-click="logout()" onclick="return false;">
+התנתק
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </form>
+                                        </div>
+                                    </li>
+                                    <!--language settings-->
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--main menu container-->
+        <div class="menu_wrap" style="background-color: #768FD3;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-2 col-md-12">
+                        <a ui-sref="home" class="logo">
+                            <img src="images/logo_main_white.png" alt=""></a>
+                    </div>
+                    <div class="col-lg-10 col-md-12">
+                        <div class="clearfix">
+                            <!--button for responsive menu-->
+                            <button id="menu_button">
+                                תפריט
+                            </button>
+                            <!--main menu-->
+                            <nav role="navigation" class="main_menu">
+                                <ul>
+                                    <li ui-sref-active="current"><a ui-sref="home">דף הבית<span class="plus"><i class="fa fa-plus-square-o"></i><i class="fa fa-minus-square-o"></i></span></a>
+                                    </li>
+                                    <li class="menu_1"><a href="#">מועדון ספורט בית סיפרי<span class="plus"><i class="fa fa-plus-square-o"></i><i class="fa fa-minus-square-o"></i></span></a>
+                                        <!--sub menu-->
+                                        <div class="sub_menu_wrap type_2 clearfix">
+                                            <ul>
+                                                <li><a href="#">רישום למועדון</a></li>
+                                                <li><a href="#">רישום קבוצות ו/או שחקנים</a></li>
+                                                <li><a href="#">טפסים</a></li>
+                                                <li>
+                                                    <a href="#">מחוזות</a>
+                                                    <div class="sub_menu_wrap sub_menu_inner type_2 clearfix">
+                                                        <ul class="clearfix">
+                                                            <li ng-repeat="region in regions" ng-if="region.REGION_ID > 0"><a ui-sref="championships({region: region.REGION_ID, clubs: 1})">{{region.REGION_NAME}}</a></li>
+                                                        </ul>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li ui-sref-active="current">
+                                        <a href="#">אירועי ספורט משרד החינוך<span class="plus"><i class="fa fa-plus-square-o"></i><i class="fa fa-minus-square-o"></i></span></a>
+                                        <div class="sub_menu_wrap type_2 clearfix" style="padding-left: 0px; padding-right: 0px;">
+                                            <ul class="clearfix">
+                                                <li class=""><a ui-sref="championships({region: 0, clubs: 0})">אליפויות ארציות</a></li>
+                                                <li class="">
+                                                    <a href="#">מחוזות</a>
+                                                    <div class="sub_menu_wrap sub_menu_inner type_2 clearfix">
+                                                        <ul class="clearfix">
+                                                            <li ng-repeat="region in regions" ng-if="region.REGION_ID > 0"><a ui-sref="championships({region: region.REGION_ID, clubs: 0})">{{region.REGION_NAME}}</a></li>
+                                                        </ul>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li class="menu_4"><a href="#">פרחי ספורט<span class="plus"><i class="fa fa-plus-square-o"></i><i class="fa fa-minus-square-o"></i></span></a>
+                                        <!--sub menu-->
+                                    </li>
+                                    <li class="menu_5"><a href="#">היחידה לספורטאים צעירים<span class="plus"><i class="fa fa-plus-square-o"></i><i class="fa fa-minus-square-o"></i></span></a>
+                                        <!--sub menu-->
+                                        <div class="sub_menu_wrap type_2 clearfix">
+                                            <ul>
+                                                <li><a href="#">מידע כללי</a></li>
+                                                <li><a href="#">רישום למחנה אימון</a></a></li>
+
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li class="menu_7" ng-show="loggedUser">
+                                        <a href="#">פעולות<span class="plus"><i class="fa fa-plus-square-o"></i><i class="fa fa-minus-square-o"></i></span></a>
+                                        <!--sub menu-->
+                                        <div class="sub_menu_wrap type_2 clearfix">
+                                            <ul>
+                                                <li><a ui-sref="pages.manage">ניהול כתבות וגלריות<span class="plus"><i class="fa fa-angle-down"></i><i class="fa fa-angle-up"></i></span></a></li>
+                                                <li><a ui-sref="gallery.edit({page: 'new'})">העלאת אלבום תמונות<span class="plus"><i class="fa fa-angle-down"></i><i class="fa fa-angle-up"></i></span></a></li>
+                                                <li><a ui-sref="article.edit({page: 'new'})">יצירת כתבה חדשה<span class="plus"><i class="fa fa-angle-down"></i><i class="fa fa-angle-up"></i></span></a></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+</div>
+
+<div class="wrapper_container" style="background-color: #EEEEEE" ui-view="main" autoscroll="true">
+</div>
+
+<!--==============================footer=================================-->
+<!--markup footer-->
+<footer class="footer footer-main">
+    <div class="footer_top_part">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-3">
+                    <div class="widget widget_text appear-animation fadeInDown appear-animation-visible" data-appear-animation="fadeInDown" data-appear-animation-delay="500" style="-webkit-animation: 500ms;">
+                        <a href="home_5.html" class="logo"><img src="images/logo_main.png" alt=""></a>
+                        <p>התאחדות הספורט לבתיה"ס</p> <br>
+                        <p>ע"ר 580242220</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-3">
+                    <div class="widget widget_categories appear-animation fadeInDown appear-animation-visible" data-appear-animation="fadeInDown" data-appear-animation-delay="500" style="-webkit-animation: 500ms;">
+                        <h3 class="widget_title">צרו קשר</h3>
+                        <ul class="categories_list">
+                            <li>
+                                <ul>
+                                    <li><i class="fa fa-phone"></i> 03-5619080</li>
+                                    <li><i class="fa fa-map-marker"></i> המסגר 59 תל אביב</li>
+                                    <li><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3381.041760326472!2d34.789436785417294!3d32.06811922709944!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x151d4b77c88eb5b1%3A0xf861639c769480b3!2z15TXnteh15LXqCA1OSwg16rXnCDXkNeR15nXkSDXmdek15U!5e0!3m2!1siw!2sil!4v1469910294860" width="400" height="300" frameborder="0" style="border:0" allowfullscreen></iframe></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-3">
+                    <div class="widget widget_categories appear-animation fadeInDown appear-animation-visible" data-appear-animation="fadeInDown" data-appear-animation-delay="500" style="-webkit-animation: 500ms;">
+                        <h3 class="widget_title">דברו איתנו</h3>
+
+
+                        <form id="contactform" class="contact_form">
+                            <ul>
+                                <li>
+                                    <label>שם מלא<span class="required">*</span></label>
+                                    <input type="text" name="cf_name" id="cf_name">
+                                </li>
+                                <li>
+                                    <label>דוא"ל<span class="required">*</span></label>
+                                    <input type="text" name="cf_email" id="cf_email">
+                                </li>
+                                <li>
+                                    <label>נושא</label>
+                                    <input type="url" name="cf_subject" id="cf_subject">
+                                </li>
+                                <li>
+                                    <label>הודעה</label>
+                                    <textarea name="cf_message" id="cf_message"></textarea>
+                                </li>
+                                <li>
+                                    <button class="button button_grey">שליחה</button>
+                                </li>
+                            </ul>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-3">
+                    <div class="widget widget_social_icons clearfix appear-animation fadeInDown appear-animation-visible" data-appear-animation="fadeInDown" data-appear-animation-delay="500" style="-webkit-animation: 500ms;">
+                        <h3 class="widget_title">עיקבו אחרינו</h3>
+                        <ul>
+                            <li class="facebook">
+                                <span class="tooltip">Facebook</span>
+                                <a href="https://www.facebook.com/isrschspo/?notif_t=fbpage_fan_invite&notif_id=1469900656888533">
+                                    <i class="fa fa-facebook"></i>
+                                </a>
+                            </li>
+                            <li class="youtube">
+                                <span class="tooltip">Youtube</span>
+                                <a href="https://www.youtube.com/user/LITALTIBI">
+                                    <i class="fa fa-youtube-play"></i>
+                                </a>
+                            </li>
+                            <li class="envelope">
+                                <span class="tooltip">דוא"ל</span>
+                                <a href="mailto:info@isa2000.co.il">
+                                    <i class="fa fa-envelope-o"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--footer middle part-->
+
+    <!--copyright part-->
+    <div class="footer_bottom_part">
+        <div class="container clearfix">
+            <p>&copy; 2016 <span>התאחדות הספורט לבתי ספר</span>.כל הזכויות שמורות.</p>
+            <div class="mobile_menu var2">
+                <nav>
+                    <ul>
+                        <li><a href="#">דף הבית</a></li>
+                        <li><a href="#">הרשמה</a></li>
+                        <li><a ui-sref="galleries">גלריות תמונות</a></li>
+                        <li><a href="#">ענפים</a></li>
+                        <li><a href="#">אירועים</a></li>
+                        <li><a href="#">פרחי ספורט</a></li>
+                        <li><a href="#">היחידה לספורטאים צעירים</a></li>
+                        <li><a href="#">פעולות</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!--scripts include-->
+<script src="js/jquery-2.1.0.min.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<script src="js/jquery.queryloader2.min.js"></script>
+<script src="js/jflickrfeed.js"></script>
+<script src="js/retina.js"></script>
+<!--
+<script src="js/apear.js"></script>
+-->
+<script src="js/circles.min.js"></script>
+<script src="plugins/twitter/jquery.tweet.min.js"></script>
+<script src="rs-plugin/js/jquery.themepunch.tools.min.js"></script>
+<script src="rs-plugin/js/jquery.themepunch.revolution.min.js"></script>
+<script src="js/plugins.js"></script>
+<script src="js/vendor.min.js"></script>
+<script src="js/script.js"></script>
+<script src="js/sport.js"></script>
+<script src="js/accessibility_pro.js" type="text/javascript"></script>
+<script type="text/javascript">
+    accessibility_rtl = true;
+    pixel_from_side = 20;
+    pixel_from_start = 20;
+</script>
+
+<script>
+    $('.btn').button();
+</script>
+
+<script type="text/javascript">
+    // custom select
+    function InitCustomSelect() {
+        $('.custom_select').each(function () {
+            var list = $(this).children('ul'),
+                    select = $(this).find('select'),
+                    title = $(this).find('.select_title');
+
+
+            // select items to list items
+
+            if ($(this).find('[data-filter]').length) {
+                for (var i = 0, len = select.children('option').length; i < len; i++) {
+                    list.append('<li data-filter="' + select.children('option').eq(i).data('filter') + '">' + select.children('option').eq(i).text() + '</li>')
+                }
+            }
+            else {
+                for (var i = 0, len = select.children('option').length; i < len; i++) {
+                    list.append('<li>' + select.children('option').eq(i).text() + '</li>')
+                }
+            }
+            select.hide();
+
+            // open list
+
+            title.on('click', function () {
+                list.slideToggle(400);
+                $(this).toggleClass('active');
+            });
+
+            // selected option
+
+            list.on('click', 'li', function () {
+                var val = $(this).text();
+                title.text(val);
+                list.slideUp(400);
+                select.val(val);
+                title.toggleClass('active');
+            });
+
+        });
+    }
+</script>
+
+</body>
+</html>

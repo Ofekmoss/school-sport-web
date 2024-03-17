@@ -1,0 +1,458 @@
+<div class="dialog wide" style="height: 500px; display: flex; justify-content: space-between">
+    <div>
+        <!--<div style="display: flex"><div v-on:click="cancel" class="clickable">&#x2715; </div><div><div>&nbsp;</div></div></div>-->
+        <div class="horizontal-flex" style="justify-content: space-between; flex-direction: column; max-height: 430px;">
+            <div v-if="state == states.new" class="panel-header" style="display: flex; justify-content: center"> הוספת קבוצה</div>
+            <div v-if="state == states.edit" class="panel-header" style="display: flex; justify-content: center">עריכת קבוצה</div>
+            <div v-if="state == states.duplicate" class="panel-header" style="display: flex; justify-content: center">שכפול קבוצה</div>
+            <div v-if="state == states.edit || state == states.duplicate" class="panel-sub-header" style="display: flex; justify-content: center">
+                {{record.DisplayName}} {{record.Championship.Name}} {{record.Category.Name}}
+            </div>
+            <div v-if="state == states.new || state == states.duplicate" class="panel-sub-header" style="display: flex; justify-content: center">
+                {{description}}
+            </div>
+            <div style="display: flex; justify-content: space-between; flex-direction: column;
+        position: relative; overflow-y: auto; padding: 5px;">
+                <div style="width: 100%; box-sizing: border-box; padding-top: 15px;">
+                    <form id="validated-form" v-if="record && (state != states.duplicate ||
+                        (state == states.duplicate && record.Id && !overMaxTeams))">
+                        <div class="panel-body" v-if="teamInfoOpen" style="overflow: visible;">
+                            <template v-if="state == states.new">
+                                <div>
+                                    <div style="float: right; width: 25%;">
+                                        <div class="label" style="width: 100%;">מחוז</div>
+                                        <select v-model="region" v-on:change="regionChanged()" title="מחוז" style="width: 100%;">
+                                            <option v-for="(region, index) in regions" v-bind:value="region.Id">{{region.Name}}</option>
+                                        </select>
+                                    </div>
+                                    <div style="float: left; width: 65%; margin-left: 10px;">
+                                        <div class="label">בית ספר</div>
+                                        <selectex class="ml-sm" style="width: 98%;"
+                                                  v-bind:options="schools"
+                                                  v-bind:label="'label'"
+                                                  v-bind:init="schoolId"
+                                                  placeholder="בית ספר..."
+                                                  v-model="record.School"
+                                                  v-on:input="setSchool($event)"></selectex>
+                                    </div>
+                                </div>
+                                <div style="clear: both;"></div>
+                            </template>
+
+                            <div>
+                                <div>
+                                    <div style="float: right; width: 90%;">
+                                        <div class="label">קבוצה</div>
+                                        <input type="text" style="width: 100%;" v-model="record.TeamNumber" v-on:change="teamNumberChanged()" name="teamNumber">
+                                        <div v-if="!isValidTeamNumber()" style="color: red;">
+                                            ערך זה כבר בשימוש על ידי קבוצה אחרת, נא להזין ערך שונה
+                                        </div>
+                                    </div>
+                                    <div style="float: left; width: 25%;" v-if="false">
+                                        <div class="label">עונה לחיוב</div>
+                                        <select v-model="chargeSeason" title="עונה" style="width: 100%;">
+                                            <option v-for="(season, index) in chargeSeasons" v-bind:value="season.Id">{{season.Name}}</option>
+                                        </select>
+                                    </div>
+                                    <div style="clear:both;"></div>
+                                </div>
+
+                                <div v-bind:style="{'float': record.Id > 0 ? 'right' : 'none',
+                                    'width': record.Id > 0 ? '32%' : 'default',
+                                    'margin-right': record.Id > 0 ? '10px' : 'inherit'}">
+                                    <div class="label">סטטוס</div>
+                                    <select v-model="record.AdminStatus" style="width: 100%;" autofocus name="status"
+                                            v-bind:disabled="state == states.duplicate"
+                                            v-on:change="teamStatusChanged()" >
+                                        <option v-for="(s, index) in adminStatuses" v-bind:value="s.Id">{{s.Name}}</option>
+                                    </select>
+                                </div>
+
+                                <div v-bind:style="{'float': record.Id > 0 ? 'left' : 'none', 'width': record.Id > 0 ? '32%' : 'default'}">
+                                    <template v-if="record.RegistrationDate">
+                                        <div class="label">תאריך רישום הקבוצה</div>
+                                        <!--<input type="text" style="width: 100%;" v-model="record.registrationDate" name="registrationDate">-->
+                                        <datepicker :language="Hebrew" :value="record.RegistrationDate" v-on:selected="setRegistrationDate($event)"></datepicker>
+
+                                    </template>
+                                </div>
+                                <div style="clear: both;"></div>
+                            </div>
+
+                            <template v-if="record.isAthletics && (record.TeamId || state === states.new)">
+                                <div class="label">מספר חזה מינימאלי</div>
+                                <input type="number" style="width: 100%;" v-model="record.PlayerNumberFrom" name="shirtNumberFrom">
+
+                                <div class="label">מספר חזה מקסימאלי</div>
+                                <input type="number" style="width: 100%;" v-model="record.PlayerNumberTo " name="shirtNumberTo ">
+                            </template>
+                        </div>
+
+                        <div class="panel" v-if="record.Id" style="padding-bottom: 0px;">
+                            <div class="panel-header" style="display: flex; align-items: center;">
+                                <span>מתקן</span>
+                                <span style="padding: 0 1rem; font-size: 30px; cursor: pointer;"
+                                      v-bind:style="{transform: facilityOpen ? 'rotate(270deg)' : 'none'}"
+                                      v-on:click="toggleFacility()"> > </span>
+                            </div>
+                            <div class="panel-body" v-if="facilityOpen">
+                                <div>
+                                    <div style="float: right; width: 15%;">
+                                        <div class="label" style="width: 100%;">מחוז</div>
+                                        <select v-model="facilityRegion" v-on:change="facilityRegionChanged()" title="מחוז" style="width: 100%;">
+                                            <option v-for="(region, index) in regions" v-bind:value="region.Id">{{region.Name}}</option>
+                                        </select>
+                                    </div>
+                                    <div style="float: right; width: 20%; margin-right: 15px;">
+                                        <div class="label" style="width: 100%;">רשות</div>
+                                        <select v-model="facilityCity" v-on:change="facilityCityChanged()" title="רשות" style="width: 100%;">
+                                            <option v-for="(city, index) in facilityCities" v-bind:value="city.Id">{{city.Name}}</option>
+                                        </select>
+                                    </div>
+                                    <div style="float:left; width: 20%; margin-right: 10px;">
+                                        <div class="label" style="width: 100%;">&nbsp;</div>
+                                        <button class="btn" v-if="record.Facility.Id && !addingNewFacility"
+                                                style="background-color: rgba(217, 1, 17, 0.82); white-space: nowrap; padding: 5px;
+                                                font-size: 12px; font-weight: bold; margin-right: -3px;"
+                                                type="button"
+                                                v-on:click="resetFacility()">איפוס</button>
+                                        <button class="btn" v-if="!addingNewFacility"
+                                                style="white-space: nowrap; padding: 5px;
+                                                font-size: 12px; font-weight: bold;"
+                                                type="button"
+                                                v-on:click="addFacility()">חדש</button>
+                                        <button class="btn" v-if="addingNewFacility"
+                                                style="background-color: rgba(217, 1, 17, 0.82); white-space: nowrap; padding: 5px;
+                                                font-size: 12px; font-weight: bold;"
+                                                type="button"
+                                                v-on:click="abortAddingFacility()">ביטול</button>
+                                    </div>
+                                    <div v-if="!addingNewFacility" style="float: left; width: 38%; margin-left: 5px;">
+                                        <div class="label">מתקן</div>
+                                        <select v-model="record.Facility.Id" style="width: 100%;" autofocus name="facility">
+                                            <option v-for="(facility, index) in facilities" v-bind:value="facility.Id">{{facility.Name}}</option>
+                                        </select>
+                                    </div>
+                                    <template v-if="addingNewFacility">
+                                        <div style="float: left; width: 20%; margin-left: 5px;">
+                                            <div class="label">כתובת המתקן</div>
+                                            <input type="text" style="width: 100%;" v-model="newFacility.Address" name="NewFacilityAddress">
+                                        </div>
+                                        <div style="float: left; width: 15%; margin-left: 15px;">
+                                            <div class="label">שם המתקן</div>
+                                            <input type="text" style="width: 100%;" v-model="newFacility.Name" name="NewFacilityName">
+                                        </div>
+                                    </template>
+                                </div>
+                                <div style="clear: both;"></div>
+                                <div>
+                                    <div style="float: right; width: 30%;">
+                                        <div class="label">שם מתקן חלופי</div>
+                                        <input type="text" style="width: 100%;" v-model="record.AlternativeFacility.Name" name="AlternativeFacilityName">
+                                    </div>
+                                    <div style="float: right; width: 45%; margin-right: 15px;">
+                                        <div class="label">כתובת מתקן חלופי</div>
+                                        <input type="text" style="width: 100%;" v-model="record.AlternativeFacility.Address" name="AlternativeFacilityAddress">
+                                    </div>
+                                </div>
+                                <div style="clear: both;"></div>
+                            </div>
+                        </div>
+
+                        <div v-if="record.Id" class="panel">
+                            <div class="panel-header" style="display: flex; align-items: center; padding-bottom: 0px;">
+                                <span>ימי ושעות אימונים</span>
+                                <span style="padding: 0 1rem; font-size: 30px; cursor: pointer;"
+                                      v-bind:style="{transform: activityTimesPanelOpen ? 'rotate(270deg)' : 'none'}"
+                                      v-on:click="toggleActivityTimesPanel()"> > </span>
+                            </div>
+                            <div class="panel-body" v-if="activityTimesPanelOpen" style="overflow: visible; padding-top: 0px; line-height: 25px;">
+                                <table v-for="(activity, index) in record.ActivityTimes">
+                                    <tr>
+                                        <td>יום</td>
+                                        <td>משעה</td>
+                                        <td>עד שעה</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="pl-sm">
+                                            <select required v-model="activity.day" style="min-width: 60px;">
+                                                <option value="0">א'</option>
+                                                <option value="1">ב'</option>
+                                                <option value="2">ג'</option>
+                                                <option value="3">ד'</option>
+                                                <option value="4">ה'</option>
+                                                <option value="5">ו'</option>
+                                            </select>
+                                        </td>
+                                        <td class="pl-sm">
+                                            <select v-model="activity.startTime" v-on:change="activityMethods().computeEndTime(activity)"
+                                                    v-bind:disabled="activity.day == null" style="min-width: 80px;" required>
+                                                <option v-for="hour in startHours" v-bind:value="hour.value">{{hour.text}}</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select v-model="activity.endTime"
+                                                    v-bind:disabled="activity.day == null || activity.startTime == null"
+                                                    required
+                                                    style="min-width: 80px;">
+                                                <option v-for="hour in activity.endHours" v-bind:value="hour.value">{{hour.text}}</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <button type="button" v-if="record.ActivityTimes.length > 1" class="mr-sm btn red"
+                                                    v-on:click="activityMethods().removeDay(record.ActivityTimes, activity)">הסרת יום</button>
+                                            <button type="button" v-if="index == record.ActivityTimes.length - 1
+                                            && record.ActivityTimes[record.ActivityTimes.length - 1].day
+                                            && record.ActivityTimes[record.ActivityTimes.length - 1].startTime
+                                            && record.ActivityTimes[record.ActivityTimes.length - 1].endTime"
+                                                    class="mr-sm btn" v-on:click="activityMethods().addDay(record.ActivityTimes)">הוספת יום</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div v-if="record.Id" class="panel">
+                            <div class="panel-header" style="display: flex; align-items: center; padding-bottom: 0px;">
+                                <span>שעות אירוח</span>
+                                <span style="padding: 0 1rem; font-size: 30px; cursor: pointer;"
+                                      v-bind:style="{transform: hostingHoursPanelOpen ? 'rotate(270deg)' : 'none'}"
+                                      v-on:click="toggleHostingHoursPanel()"> > </span>
+                            </div>
+                            <div class="panel-body" v-if="hostingHoursPanelOpen" style="overflow: visible; padding-top: 0px; line-height: 25px;">
+                                <table v-for="(hostingHour, index) in record.HostingHours">
+                                    <tr>
+                                        <td>יום</td>
+                                        <td>משעה</td>
+                                        <td>עד שעה</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="pl-sm">
+                                            <select required v-model="hostingHour.day" style="min-width: 60px;">
+                                                <option value="0">א'</option>
+                                                <option value="1">ב'</option>
+                                                <option value="2">ג'</option>
+                                                <option value="3">ד'</option>
+                                                <option value="4">ה'</option>
+                                                <option value="5">ו'</option>
+                                            </select>
+                                        </td>
+                                        <td class="pl-sm">
+                                            <select v-model="hostingHour.startTime" v-on:change="activityMethods().computeEndTime(hostingHour)"
+                                                    v-bind:disabled="hostingHour.day == null" style="min-width: 80px;" required>
+                                                <option v-for="hour in startHours" v-bind:value="hour.value">{{hour.text}}</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select v-model="hostingHour.endTime"
+                                                    v-bind:disabled="hostingHour.day == null || hostingHour.startTime == null"
+                                                    required
+                                                    style="min-width: 80px;">
+                                                <option v-for="hour in hostingHour.endHours" v-bind:value="hour.value">{{hour.text}}</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <button type="button" v-if="record.HostingHours.length > 1" class="mr-sm btn red"
+                                                    v-on:click="activityMethods().removeDay(record.HostingHours, hostingHour)">הסרת יום</button>
+                                            <button type="button" v-if="index == record.HostingHours.length - 1
+                                            && record.HostingHours[record.HostingHours.length - 1].day
+                                            && record.HostingHours[record.HostingHours.length - 1].startTime
+                                            && record.HostingHours[record.HostingHours.length - 1].endTime"
+                                                    class="mr-sm btn" v-on:click="activityMethods().addDay(record.HostingHours)">הוספת יום</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="panel" v-if="record.Id">
+                            <div class="panel-header" style="display: flex; align-items: center;">
+                                <span>בעלי תפקידים</span>
+                                <span style="padding: 0 1rem; font-size: 30px; cursor: pointer;"
+                                      v-bind:style="{transform: rolesInfoOpen ? 'rotate(270deg)' : 'none'}"
+                                      v-on:click="toggleRoles()"> > </span>
+                            </div>
+                            <div class="panel-body" v-if="rolesInfoOpen">
+                                <div class="label" style="color: #1453b1;">מאמן</div>
+                                <div style="margin-bottom: 10px;">
+                                    <table style="width: 100%; text-align: right;">
+                                        <tr>
+                                            <th>שם</th>
+                                            <th>טלפון</th>
+                                            <th>מייל</th>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                <input type="text" style="" v-model="record.Coach.Name" name="coachName">
+                                            </th>
+                                            <th>
+                                                <input type="text" style="" v-model="record.Coach.PhoneNumber" name="coachPhone">
+                                            </th>
+                                            <th>
+                                                <input type="text" style="" v-model="record.Coach.Email" name="coachName">
+                                            </th>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div>
+                                    <label>האם עבר השתלמות</label>
+                                    <input type="checkbox" v-model="record.Coach.Certification">
+                                </div>
+
+                                <div v-if="!record.IsClub" style="margin-bottom: 10px;">
+                                    <div class="label" style="color: #1453b1;">עוזר מאמן</div>
+                                    <table style="width: 100%; text-align: right;">
+                                        <tr>
+                                            <th>שם</th>
+                                            <th>טלפון</th>
+                                            <th>מייל</th>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                <input type="text" style="" v-model="record.CoachHelper.Name" name="coachHelperName">
+                                            </th>
+                                            <th>
+                                                <input type="text" style="" v-model="record.CoachHelper.PhoneNumber" name="coachHelperPhone">
+                                            </th>
+                                            <th>
+                                                <input type="text" style="" v-model="record.CoachHelper.Email" name="coachHelperEmail">
+                                            </th>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                                <div v-if="!record.IsClub" style="margin-bottom: 10px;">
+                                    <div class="label" style="color: #1453b1;">מנהל</div>
+                                    <table style="width: 100%; text-align: right;">
+                                        <tr>
+                                            <th>שם</th>
+                                            <th>טלפון</th>
+                                            <th>מייל</th>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                <input type="text" style="" v-model="record.Manager.Name" name="managerName">
+                                            </th>
+                                            <th>
+                                                <input type="text" style="" v-model="record.Manager.PhoneNumber" name="managerPhone">
+                                            </th>
+                                            <th>
+                                                <input type="text" style="" v-model="record.Manager.Email" name="managerEmail">
+                                            </th>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                                <div v-if="!record.IsClub" style="margin-bottom: 10px;">
+                                    <div class="label" style="color: #1453b1;">מורה</div>
+                                    <table style="width: 100%; text-align: right;">
+                                        <tr>
+                                            <th>שם</th>
+                                            <th>טלפון</th>
+                                            <th>מייל</th>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                <input type="text" style="" v-model="record.Teacher.Name" name="teacherName">
+                                            </th>
+                                            <th>
+                                                <input type="text" style="" v-model="record.Teacher.PhoneNumber" name="teacherPhone">
+                                            </th>
+                                            <th>
+                                                <input type="text" style=";" v-model="record.Teacher.Email" name="teacherEmail">
+                                            </th>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                                <div>
+                                    <div class="label" style="color: #1453b1;">אישור בעלי תפקידים</div>
+                                </div>
+                                <table style="width: 100%; text-align: right;">
+                                    <tr>
+                                        <th>מנהל</th>
+                                        <th>נציג רשות</th>
+                                        <th>מפקח</th>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" v-model="roles[0].value" v-on:change="setRoleApproval()">
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" v-model="roles[1].value" v-on:change="setRoleApproval()">
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" v-model="roles[2].value" v-on:change="setRoleApproval()">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                    <div v-if="record && state == states.duplicate && !record.Id" style="color: red; font-weight: bold;">
+                        שכפול קבוצה אפשרי רק עבור קבוצת מועדונים
+                    </div>
+                    <div v-if="overMaxTeams"
+                         style="color: red; font-weight: bold;">
+                        בית ספר כבר רשם את מספר הקבוצות המקסימלי לאליפות זו
+                    </div>
+                    <div v-if="schoolData && schoolData.gotData && !overMaxTeams" class="panel">
+                        <div class="panel-header" style="display: flex; align-items: center; padding-bottom: 0px;">
+                            <span>בית ספר</span>
+                            <span style="padding: 0 1rem; font-size: 30px; cursor: pointer;"
+                                  v-bind:style="{transform: schoolPanelOpen ? 'rotate(270deg)' : 'none'}"
+                                  v-on:click="toggleSchoolPanel()"> > </span>
+                        </div>
+                        <div class="panel-body" v-if="schoolPanelOpen" style="overflow: visible; padding-top: 0px; line-height: 25px;">
+                            <div v-if="schoolData.registration">
+                                <div v-if="schoolData.registration.coordinatorDisplay" style="color: blue; font-weight: bold;">
+                                    רכז/ת מועדון:  {{schoolData.registration.coordinatorDisplay}}
+                                </div>
+                            </div>
+                            <div v-if="schoolData.principalLoginLink">
+                                <a v-bind:href="schoolData.principalLoginLink" target="_blank">לינק התחברות מנהל בית ספר</a>
+                            </div>
+                            <div v-if="schoolData.representativeLoginLink">
+                                <a v-bind:href="schoolData.representativeLoginLink" target="_blank">לינק התחברות נציג רשות</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="display: flex; justify-content: space-evenly;">
+        <div v-if="generalErrorMessage" style="position: relative; color: red; font-size: 12px; max-width: 150px; border: 1px solid black; border-radius: 5px; padding: 5px 5px 5px 15px;">
+            <div v-on:click="resetGeneralErrorMessage()"
+                 style="position: absolute; left: 5px; top: 3px; font-size: 14px; font-weight: bold; color: black; cursor: pointer;">
+                X
+            </div>
+            שגיאה בעת שמירת נתונים:
+            {{generalErrorMessage}}
+        </div>
+        <div>
+            <span v-if="invalidFormReason() != null" style="color: red; font-weight: bold; font-size: 12px;">
+                {{invalidFormReason()}}
+                <br />
+            </span>
+            <button class="btn"
+                    style="width: 100px;"
+                    v-if="!record || (record && (state != states.duplicate || (state == states.duplicate && record.Id && !overMaxTeams)))"
+                    v-on:click="saveRecord()"
+                    v-bind:disabled="!changed || !isValidTeamNumber() || invalidFormReason() != null"
+            >
+                שמירת נתונים
+            </button>
+        </div>
+        <div>
+            <button class="btn"
+                    style="background-color: rgba(217, 1, 17, 0.82); white-space: nowrap"
+                    v-on:click="cancel()"
+            >
+                סגירת חלונית ללא שמירה
+            </button>
+        </div>
+    </div>
+</div>

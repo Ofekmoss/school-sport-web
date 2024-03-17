@@ -1,0 +1,117 @@
+/* Revolution */
+.tp-banner-container {
+    width: 100%;
+    position: relative;
+}
+
+.tp-banner .rev_caption {
+    padding: 0px 20px;
+    background:rgba(34,34,38,.8);
+}
+
+.tp-banner .rev_caption a,
+.tp-banner .rev_caption h2 {
+    color: #fefeff;
+}
+
+.tp-leftarrow.default:before{
+    content: "\e824";
+}
+
+.tp-rightarrow.default:before{
+    content: "\e825";
+}
+
+.tparrows:before{
+    font-family: "revicons";
+    font-size: 20px;
+}
+
+.tparrows{
+    background: rgba(0, 0, 0, 0.5) !important;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    text-align: center;
+    padding-top: 10px;
+    vertical-align: middle;
+    color: #fff;
+}
+
+.tparrows:hover{
+    background: rgba(0, 0, 0, 1) !important;
+    color: #fff;
+}
+
+
+/*.rev_slider,
+
+.rev_slider .caption_type_1 .caption_inner{
+  padding: 20px 0px 40px 0px;
+  right: 100px;
+  width: 50%;
+}
+
+  .caption_type_1.var2{
+    bottom: 10px;
+    z-index: 1;
+  }
+
+  .caption_type_1.var2 .caption_inner{
+    padding: 15px 0 10px;
+  }
+
+  .caption_type_1.var2 .caption_inner .event_date{
+    color: #fff;
+    line-height: 21px;
+  }
+
+  .caption_type_1.var2 .caption_inner a h2{
+    display: inline-block;
+    font-size: 30px;
+  }
+*/
+/*
+.rev_slider ul li{
+z-index: 1!important;
+}*/
+
+/*
+.tp-banner-container:hover .tparrows{
+  opacity: 1;
+}
+
+.tp-leftarrow.default{
+  left: 20px!important;
+}
+
+.tp-rightarrow.default{
+  right: 20px!important;
+}
+
+.tparrows{
+  position: absolute;
+  top: calc(20% - 20px)!important;
+  margin-top: 0!important;
+  z-index: 999;
+  opacity: 0;
+  cursor: pointer;
+  display: block;
+  background: #f2f2f2;
+  padding: 10px 16px;
+  font-weight: bold;
+  font-size: 22px;
+  text-align: center;
+  color: #212428;
+  font-family: FontAwesome;
+
+  -webkit-transition: all .3s ease;
+  -moz-transition: all .3s ease;
+  transition: all .3s ease;
+}
+
+.tparrows:hover{
+  background: #00ADEE;
+  color: #fff;
+}
+*/
+

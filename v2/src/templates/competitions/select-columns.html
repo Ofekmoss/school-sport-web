@@ -1,0 +1,21 @@
+<div class="dialog vertical-flex" style="min-height: 10rem; max-height: inherit; width: 500px;">
+    <div>
+        <div class="caption" style="position: relative;">
+            <div style="position: absolute; right: 5px; top: -5px; cursor: pointer; font-size: 18px; font-weight: bold;"
+                 title="ביטול וסגירת חלונית"
+                 v-on:click="cancel()">
+                X
+            </div>
+            בחירת עמודות
+        </div>
+    </div>
+
+    <div class="column-list">
+        <div class="column-item" v-bind:class="{selected: column.selected}" v-for="column in columns" v-on:click="toggleColumn(column)">{{column.name}}</div>
+    </div>
+
+    <div class="text-center mt-md">
+        <button class="btn gray ml-sm" style="width: 5rem" v-on:click="cancel()">ביטול</button>
+        <button class="btn" style="width: 5rem" v-on:click="confirm()">אישור</button>
+    </div>
+</div>

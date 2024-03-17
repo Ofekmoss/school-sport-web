@@ -1,0 +1,199 @@
+<div>
+    <div class="panel" v-for="order in orders">
+        <div class="panel-body">
+            <div class="label">
+                פירוט דרישת תשלום מס' {{order.id | documentNumber}} מתאריך {{order.time | date}}
+            </div>
+
+            <div v-for="payment in order.payments" class="pt-md">
+                <table>
+                    <tr>
+                        <td class="pl-md">
+                            <div class="label">גורם משלם</div>
+                        </td>
+                        <td class="pl-md">
+                            <div class="label">סה"כ לתשלום</div>
+                        </td>
+                        <td class="pl-md">
+                            <div class="label">אופן תשלום</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="pl-md">{{payment.payerName}}</td>
+                        <td class="pl-md">{{payment.totalAmount | price}}</td>
+                        <td class="pl-md">שליחת המחאה</td>
+                    </tr>
+                </table>
+
+                <form id="add-contacts-form">
+
+                    <table class="mt-md">
+                        <tr>
+                            <td colspan="5">
+                                <div class="label">הדרישה נשלחה אל:</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="label">תפקיד</div>
+                            </td>
+                            <td>
+                                <div class="label">שם מלא</div>
+                            </td>
+                            <td>
+                                <div class="label">טלפון</div>
+                            </td>
+                            <td>
+                                <div class="label">מייל</div>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr v-for="(contact, ci) in payment.contacts">
+                            <td class="pl-sm">
+                                <input :disabled="true" required type="text" v-model="contact.role">
+                            </td>
+                            <td class="pl-sm">
+                                <input :disabled="true" required type="text" v-model="contact.name">
+                            </td>
+                            <td class="pl-sm">
+                                <input :disabled="true" pattern="(0[0-9]{2}-[0-9]{7}|0[0-9]{1}-[0-9]{7}|0[0-9]{2}[0-9]{7}|0[0-9]{1}[0-9]{7})" required type="text" v-model="contact.phoneNumber">
+                            </td>
+                            <td class="pl-sm">
+                                <input :disabled="true" pattern="^\S+@\S+$" required type="text" v-model="contact.email">
+                            </td>
+                            <td>
+
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+                <div class="label mt-md">חיובים</div>
+                <table class="table" style="width: 50%;" v-if="payment.teams.length > 0">
+                    <thead>
+                    <tr>
+                        <th>ענף</th>
+                        <th v-if="payment.showChampionshipColumn">אליפות</th>
+                        <th>קטגוריה</th>
+                        <th>תשלום</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="team in payment.teams">
+                        <td>{{team.sport.name}}</td>
+                        <td v-if="payment.showChampionshipColumn">{{team.championship.name}}</td>
+                        <td>{{team.competition.name}}</td>
+                        <td>{{team.price}}</td> <!--  v-bind:class="{ line: team.removePayment }" -->
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div style="display: flex; justify-content: flex-end">
+                    <button class="btn mr-sm" v-bind:style="{'background-color': inactiveSeason ? 'gray' : 'red'}"
+                            v-on:click="cancelOrder(order)" v-bind:disabled="inactiveSeason">
+                        ביטול דרישת תשלום
+                    </button>
+                    <button class="btn mr-sm" v-on:click="downloadPayment(order)">
+                        הורדת העתק
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div v-if="teams.length > 0">
+        <div class="panel" v-for="(payment, index) in payments">
+            <button v-if="index > 0" class="float-left normal btn red m-sm" v-bind:disabled="inactiveSeason"
+                    v-on:click="removePayment(payment, index)">הסרת גורם משלם</button>
+            <div class="panel-header">
+                {{index + 1}}. פרטי משלם
+                <span v-if="payment.payerName && payment.payerName.length > 0"> - {{payment.payerName}}</span>
+            </div>
+            <div class="panel-body">
+                <div class="label">גורם משלם</div>
+                <input type="text" v-model="payment.payerName" v-bind:disabled="inactiveSeason">
+                <table class="mt-sm">
+                    <template v-for="(contact, ci) in payment.contacts">
+                        <tr>
+                            <td>
+                                <div class="label">תפקיד</div>
+                            </td>
+                            <td>
+                                <div class="label">שם מלא</div>
+                            </td>
+                            <td>
+                                <div class="label">טלפון</div>
+                            </td>
+                            <td>
+                                <div class="label">מייל</div>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="pl-sm">
+                                <input type="text" v-model="contact.role" v-bind:disabled="inactiveSeason">
+                            </td>
+                            <td class="pl-sm">
+                                <input type="text" v-model="contact.name" v-bind:disabled="inactiveSeason">
+                            </td>
+                            <td class="pl-sm">
+                                <input pattern="(0[0-9]{2}-[0-9]{7}|0[0-9]{1}-[0-9]{7}|0[0-9]{2}[0-9]{7}|0[0-9]{1}[0-9]{7})"
+                                       type="text" v-model="contact.phoneNumber" v-bind:disabled="inactiveSeason">
+                            </td>
+                            <td class="pl-sm">
+                                <input pattern="^\S+@\S+$" type="text" v-model="contact.email" v-bind:disabled="inactiveSeason">
+                            </td>
+                            <td>
+                                <button v-if="payment.contacts.length > 1" class="mr-sm btn red" v-bind:disabled="inactiveSeason"
+                                        v-on:click="removeContact(payment, ci)">הסרת איש קשר</button>
+                                <button v-if="ci == payment.contacts.length - 1" class="mr-sm btn" v-bind:disabled="inactiveSeason"
+                                        v-on:click="addContact(payment)">הוספת איש קשר</button>
+                            </td>
+                        </tr>
+                    </template>
+                </table>
+                <div class="label mt-sm mb-sm">סה"כ לתשלום</div>
+                <div>{{getPaymentTotal(index) | price}}</div>
+            </div>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="panel-header">
+            חיובים
+        </div>
+        <div class="panel-body">
+            <div v-if="teams.length == 0" style="text-align: center;">
+                אין חיובים לתשלום
+            </div>
+            <table class="table" style="width: 50%;" v-if="teams.length > 0">
+                <thead>
+                <tr>
+                    <th>ענף</th>
+                    <th>קטגוריה</th>
+                    <th>תשלום</th>
+                    <th>גורם משלם</th>
+                    <!--
+                    <th>דרישת תשלום</th>
+                    -->
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="team in teams">
+                    <td>{{team.sport.name}}</td>
+                    <td>{{team.competition.name}}</td>
+                    <td v-bind:class="{ line: team.removePayment }">{{team.price}}</td>
+                    <td>
+                        <select v-model="team.paymentIndex" style="width: 100%;" v-bind:disabled="inactiveSeason">
+                            <option v-for="(payment, index) in payments" v-if="payment.payerName && payment.payerName.length > 0" v-bind:value="index">{{payment.payerName}}</option>
+                        </select>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="mt-sm" v-if="teams.length > 0">
+        <button class="btn" v-on:click="addPayment()" v-bind:disabled="inactiveSeason">הוספת גורם משלם</button>
+        <button class="btn float-left green"
+                v-bind:disabled="!canPay || paying || !isFormValid() || !hasPaymentToPay() || inactiveSeason"
+                v-on:click="commit()">אישור תשלום</button>
+    </div>
+</div>

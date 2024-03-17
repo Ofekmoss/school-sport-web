@@ -1,0 +1,129 @@
+<div>
+    <div class="panel">
+        <div class="panel-header">
+            הרשמת קבוצות - הסברים
+        </div>
+        <div class="panel-body">
+            <p>
+                בשנה"ל {{currentSeasonName}} - דמי רישום לקבוצה תחרותית יעמדו על {{priceWithoutTotoSupport}} ש"ח.
+                בדמינטון וכדורסל 3X3 התשלום יהיה עבור כל הקבוצות באותה קטגוריית גיל ומין. בענפים אלה חלה חובת רישום של מינימום 2 קב' ומקסימום 4 קב' בכל קטגוריה).
+                דמי רישום לקבוצה הנתמכת על ידי  מבחני התמיכה לאגודות ואיגודי ספורט יהיה {{priceWithTotoSupport}} ש"ח.
+            </p>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-body">
+            <div class="tool-bar">
+                <button class="float-left btn" v-on:click="newTeam()" v-bind:disabled="inactiveSeason">הוספת קבוצה חדשה</button>
+                <div class="float-left button-group pb-md">
+                    <button v-bind:disabled="inactiveSeason || selectionCount !== 1 || adminApprovedSelectionCount === 1" v-on:click="editTeam()" style="z-index: 9;"><span class="icon">&#x1F589;</span> עריכה</button>
+                    <button v-bind:disabled="inactiveSeason || selectionCount !== 1" v-on:click="duplicateTeam()" style="z-index: 10;"><span class="icon">&#x1F7A1;</span> שכפול</button>
+                    <button v-bind:disabled="inactiveSeason || selectionCount === 0" v-on:click="deleteTeam()" style="z-index: 11;"><span class="icon">&#x2715;</span> מחיקה</button>
+                    <span style="z-index: 1; color: red; position: absolute; left: 50px; top: 20px;" v-if="adminApprovedSelectionCount > 0">
+                        <br />
+                        שימו לב,
+                        <span v-if="selectionCount === 1">
+                            הקבוצה שנבחרה אושרה
+                        </span>
+                        <span v-if="selectionCount > 1">
+                            <span v-if="adminApprovedSelectionCount === selectionCount">
+                                <span v-if="adminApprovedSelectionCount === 1">
+                                    הקבוצה שנבחרה אושרה
+                                </span>
+                                <span v-if="adminApprovedSelectionCount > 1">
+                                    כל הקבוצות שנבחרו אושרו
+                                </span>
+                            </span>
+                            <span v-if="adminApprovedSelectionCount < selectionCount">
+                                <span v-if="adminApprovedSelectionCount === 1">
+                                    קבוצה אחת
+                                </span>
+                                <span v-if="adminApprovedSelectionCount > 1">
+                                    {{adminApprovedSelectionCount}}
+                                </span>
+                                מתוך הקבוצות שנבחרו
+                                <span v-if="adminApprovedSelectionCount === 1">
+                                    אושרה
+                                </span>
+                                <span v-if="adminApprovedSelectionCount > 1">
+                                    אושרו
+                                </span>
+                            </span>
+                        </span>
+                        ע"י רכז/ת ההתאחדות ולכן לא ניתן לערוך
+                        <span v-if="adminApprovedSelectionCount === 1">
+                            קבוצה זו
+                        </span>
+                        <span v-if="adminApprovedSelectionCount > 1">
+                            קבוצות אלו
+                        </span>
+                    </span>
+                </div>
+                <div class="float-right pb-md" v-if="!inactiveSeason">
+                    <div>
+                        <input type="checkbox" v-model="selectAll" v-on:change="handleSelectAll">
+                        <span>כל הקבוצות</span>
+                    </div>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th v-if="!inactiveSeason" style="width: 22px;"></th>
+                    <th>ענף</th>
+                    <th>אליפות</th>
+                    <th>קטגוריה</th>
+                    <th>קבוצה</th>
+                    <th>מאמן</th>
+                    <th>מתקן</th>
+                    <th>זמני פעילות</th>
+                    <th>שעות אירוח</th>
+                    <th style="direction: ltr">זמן יצירה</th>
+                    <th>לתשלום</th>
+                    <th>סטטוס</th>
+                    <th>הערות</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="team in teams"
+                    v-bind:style="{backgroundColor: (!team.selected && (team.approved == null || team.approved == 0)) ? '#069d55' : '',
+                        color: (!team.selected && (team.approved == null || team.approved == 0)) ? 'white' : ''}"
+                    v-bind:class="{selected: team.selected && team.adminStatus != 2, selectedRed: team.selected && team.adminStatus == 2}">
+                    <td v-if="!inactiveSeason" v-bind:title="team.tooltip">
+                        <input type="checkbox" v-model="team.selected" v-on:change="handleSelectionChange">
+                    </td>
+                    <td>
+                        {{team.sport.name}}
+                    </td>
+                    <td>{{team.championship.name}}</td>
+                    <td>{{team.category.displayName || team.category.name}}</td>
+                    <td>{{team.teamNumber}}</td>
+                    <td>{{team.coach.name}}</td>
+                    <td>{{getFacilityName(team)}}</td>
+                    <td>{{getActivityText(team.activity)}}</td>
+                    <td>{{getActivityText(team.hostingHours)}}</td>
+                    <td>{{team.createdAt | dateTime}}</td>
+                    <td v-bind:class="{ line: team.removePayment }">
+                        {{team.price}}
+                    </td>
+                    <td>{{team.removePayment ? 'לא לתשלום' : 'לא שולם'}}</td>
+                    <td>
+
+                        {{team.payment != null ? 'נשלחה דרישה לתשלום' : ''}}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="pb-md pt-sm">
+                <div class="float-left">
+                    סה"כ:
+                    <span class="label">{{ totalPayment | price}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button v-if="nonApprovedTeamCount() > 0" class="btn green float-left" v-on:click="next()" v-bind:disabled="inactiveSeason">
+        אישור והמשך
+    </button>
+</div>

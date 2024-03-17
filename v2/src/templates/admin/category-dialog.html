@@ -1,0 +1,78 @@
+<div class="dialog wide" style="height: 500px; display: flex; justify-content: space-between">
+    <template v-if="!error">
+        <div>
+            <div class="horizontal-flex" style="justify-content: space-between; flex-direction: column; max-height: 430px;">
+                <div class="panel-header" style="display: flex; justify-content: center">
+                    עריכת פרטי תחרות
+                    <template v-if="championship">
+                        <br />
+                        {{championship.name}} {{name}}
+                    </template>
+                </div>
+                <div style="display: flex; justify-content: space-between; flex-direction: column;
+        position: relative; overflow-y: auto; padding: 5px; min-height: 250px;">
+                    <div class="tight-container" style="width: 100%; box-sizing: border-box; padding-top: 15px;">
+                        <form id="validated-form">
+                            <div>
+                                <div class="label">עונה לחיוב</div>
+                                <select v-model="chargeSeason" v-on:change="dataChanged()" title="עונה לחיוב">
+                                    <option v-for="(season, index) in seasons" v-bind:value="season.id">{{season.name}}</option>
+                                </select>
+                                <button type="button" class="btn small red" v-if="chargeSeason != null"
+                                        style="font-size: 10px; font-weight: bold;" v-on:click="resetChargeSeason()">X</button>
+                            </div>
+                            <div style="margin-top: 10px;">
+                                <div class="label">תעריף רישום</div>
+                                <input type="number" v-on:change="dataChanged()" v-model="price" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: space-evenly;">
+            <img v-if="categoryProgress.editing" src="img/progress.gif" style="height: 30px;" />
+            <span v-if="categoryProgress.edited" style="color: blue;">
+                נתוני תחרות עודכנו בהצלחה
+            </span>
+            <span v-if="categoryProgress.failed" style="color: red;">
+                עריכת נתוני תחרות נכשלה, נא לנסות מאוחר יותר
+            </span>
+            <button class="btn"
+                    v-if="!categoryProgress.editing && !categoryProgress.edited && !categoryProgress.failed"
+                    v-on:click="saveCategory()"
+                    v-bind:disabled="!isValid || !changed">
+                    אישור ועדכון נתוני תחרות
+            </button>
+            <span v-if="confirmClosure">
+                כל הנתונים אשר הוזנו ייאבדו! האם לבטל בכל זאת?
+                <br />
+                <button class="btn red" v-on:click="reallyCancel()">כן</button>
+                &nbsp;&nbsp;&nbsp;
+                <button class="btn green" v-on:click="abortCancel()">לא</button>
+            </span>
+            <button v-if="!confirmClosure && !categoryProgress.edited" class="btn"
+                    style="background-color: rgba(217, 1, 17, 0.82); white-space: nowrap"
+                    v-on:click="cancel()">
+                חזרה למסך תחרויות ללא עריכה
+            </button>
+            <button v-if="categoryProgress.edited" class="btn" v-on:click="cancel()">
+                חזרה למסך תחרויות
+            </button>
+        </div>
+    </template>
+    <template v-if="error">
+        <div>
+            <div class="horizontal-flex" style="justify-content: space-between; flex-direction: column; max-height: 430px;">
+                <div class="panel-header" style="display: flex; justify-content: center; color: red;">
+                    {{error}}
+                </div>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: space-evenly;">
+            <button class="btn" style="background-color: rgba(217, 1, 17, 0.82); white-space: nowrap" v-on:click="cancel()">
+                חזרה למסך תחרויות
+            </button>
+        </div>
+    </template>
+</div>

@@ -1,0 +1,51 @@
+<div>
+    <div class="panel">
+        <div class="panel-header">
+            בתי ספר
+        </div>
+        <div class="panel-body" style="display: flex; flex-direction: column">
+            <div class="tool-bar">
+                <button class="float-left btn" v-on:click="newSchool()">הוספת בית ספר חדש</button>
+
+                <div class="float-left button-group pb-md">
+                    <button v-bind:disabled="selectionCount != 1" v-on:click="editSchool()"><span class="icon">&#x1F589;</span> עריכה</button>
+                    <button v-bind:disabled="selectionCount == 0" v-on:click="deleteSchool()"><span class="icon">&#x2715;</span> מחיקה</button>
+                </div>
+                <div class="float-right pb-md">
+                    <div>
+                        <input type="checkbox" class="checkbox" v-model="selectAll" v-on:change="handleSelectAll">
+                        <span>כל בתי הספר</span>
+                    </div>
+                </div>
+            </div>
+            <div style="overflow: auto">
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <td style="width: 22px;"></td>
+                        <td class="pl-lg">סמל בית ספר</td>
+                        <td class="pl-lg">שם בית ספר</td>
+                        <td class="pl-lg">מסגרת הפעלת התכנית</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr v-for="(school, index) in schools">
+                        <td class="pl-lg" style="position: relative;">
+                            <input type="checkbox" v-model="school.selected" v-on:change="handleSelectionChange">
+                        </td>
+                        <td class="pl-lg" style="white-space: nowrap">{{school.symbol}}</td>
+                        <td class="pl-lg">{{school.name}}</td>
+                        <td class="pl-lg">{{school.scheme == 2 ? school.schemeDescription : (school.scheme == 0 ? ' שעה שלישית במערכת' : ' פעילות דו שבועית')}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn green float-left" v-bind:disabled="!isFormValid()" v-on:click="next()">
+        אישור והמשך
+    </button>
+</div>

@@ -1,0 +1,42 @@
+@import "dimensions";
+@import "colors";
+
+.dialog {
+  background-color: #fff;
+  margin: 120px auto;
+  width: 320px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  padding: 8px;
+  max-height: 600px;
+  //overflow: auto;
+  display: flex;
+  flex-direction: column;
+  max-width: 90%;
+}
+
+.dialog.wide {
+  width: 640px;
+}
+
+.dialog .caption {
+  color: @primary-color;
+  font-size: 130%;
+  margin: 8px;
+  text-align: center;
+}
+
+@media (max-height: 620px) {
+  .dialog {
+    margin: 5% auto;
+    max-height: 90%;
+  }
+}
+
+@media (max-width: @medium-size) {
+  .dialog {
+    margin: 5% auto;
+    max-height: 90%;
+  }
+}

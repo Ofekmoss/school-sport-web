@@ -1,0 +1,78 @@
+<div class="dialog wide">
+    <div class="float-left clickable" v-on:click="cancel">&#x2715;</div>
+    <div class="caption">
+        {{newPlayer ? "שחקן חדש" : "עריכת שחקן"}}
+    </div>
+    <div class="ph-md" style="overflow: auto;">
+        <table class="pb-sm">
+            <tr>
+                <td><div>שם פרטי</div></td>
+                <td><div>שם משפחה</div></td>
+            </tr>
+            <tr>
+                <td class="pl-sm">
+                    <input type="text" style="width: 100%;" v-model="player.firstName" name="firstName">
+                </td>
+                <td class="pl-sm">
+                    <input type="text" style="width: 100%;" v-model="player.lastName" name="lastName">
+                </td>
+            </tr>
+        </table>
+
+        <table class="pb-sm">
+            <tr>
+                <td><div>תעודת זהות \ דרכון</div></td>
+                <td v-if="player.idNumberType == 1"><div>מספר תעודת זהות</div></td>
+                <td v-if="player.idNumberType == 0"><div>מספר דרכון</div></td>
+                <td v-if="!isValidIdNumber()"></td>
+            </tr>
+            <tr>
+                <td class="pl-sm">
+                    <span>תעודת זהות</span>
+                    <input type="radio" v-model="player.idNumberType" name="idNumberType" value="1">
+                    <span>דרכון</span>
+                    <input type="radio" v-model="player.idNumberType" name="idNumberType" value="0">
+                </td>
+                <td v-if="player.idNumberType == 1" class="pl-sm">
+                    <input type="text" style="width: 100%;" v-model="player.idNumber" name="idNumber"
+                           v-bind:class="{ error: !isValidIdNumber()}">
+                </td>
+                <td v-if="player.idNumberType == 0" class="pl-sm">
+                    <input type="text" style="width: 100%;" v-model="player.idNumber" name="idNumber">
+                </td>
+                <td v-if="!isValidIdNumber()" style="color: red;" class="pl-sm">
+                    מספר תעודת זהות לא תקין
+                </td>
+            </tr>
+        </table>
+
+        <table class="pb-sm">
+            <tr>
+                <td><div>שנת לידה</div></td>
+                <td><div>זכר\נקבה</div></td>
+                <td><div>האם משתייך לפרויקט פל"א?</div></td>
+            </tr>
+            <tr>
+                <td class="pl-sm"><input type="number" pattern="\d{4}" v-model="player.yearOfBirth" v-bind:class="{ error: !validYear}" style="width: 100px;"></td>
+                <td class="pl-sm">
+                    <span>זכר</span>
+                    <input type="radio" v-model="player.gender" value="1">
+                    <span>נקבה</span>
+                    <input type="radio" v-model="player.gender" value="0">
+                </td>
+                <td class="pl-sm" style="line-height: 25px;">
+                    <input type="checkbox" v-model="player.isPele">
+                    <span v-if="player.isPele">
+                        תאריך הצטרפות <input type="text" v-model="player.peleJoinDate" />
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="pb-md" style="text-align: center; margin-top: 15px;">
+        <div v-if="error" style="color: red; font-weight: bold;">
+            {{error}}
+        </div>
+        <button type="button" class="btn wide" v-on:click="confirm()" v-bind:disabled="!validateForm()">אישור</button>
+    </div>
+</div>

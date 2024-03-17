@@ -1,0 +1,32 @@
+<div dir="rtl" style="{{style}}">
+    <form name="contactForm" ng-submit="submit()">
+        <div class="modal-header" ng-show="title">
+            <div class="modal-title">
+                <div class="modal-title-main">
+                    <i class="fa fa-warning" ng-show="isWarning"></i>
+                    {{title}}
+                </div>
+                <div class="modal-title-sub">{{subTitle}}</div>
+            </div>
+        </div>
+        <div class="modal-body">
+            <div class="bg-info" style="margin-bottom: 12px;" ng-if="info">{{info}}</div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div ng-bind-html="message"></div>
+                </div>
+            </div>
+            <div class="row" ng-if="prompt">
+                <div class="col-md-12" style="font-size: 140%;">
+                    <textarea ng-model="userInput" id="userInput" class="form-control custom-control" rows="3" style="resize:none;"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="pull-left">
+                <button class="btn btn-warning" ng-show="cancelCaption" ng-click="cancel()">{{cancelCaption}}</button>
+                <button class="button button_grey" ng-click="confirm()">{{confirmCaption}}</button>
+            </div>
+        </div>
+    </form>
+</div>

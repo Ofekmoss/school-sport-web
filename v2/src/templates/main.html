@@ -1,0 +1,75 @@
+<div style="position: absolute; height: 100%; width: 100%;">
+    <view-slot v-if="!loggedIn && loggedIn != null" class="flex-fill"></view-slot>
+    <div v-else-if="admin" class="frame vertical-flex" v-bind:style="admin ? 'height: 100%;' : 'padding: 2rem; height: calc(100% - 2rem);'">
+        <div v-if="admin" class="admin-bar">
+            <div class="horizontal-flex">
+                <div class="tabs horizontal-flex">
+                    <div class="tab" v-for="tab in viewManager.tabs" v-bind:class="{active: tab.selected}">
+                        <div class="tab-caption" v-on:click="selectTab(tab)">
+                            {{tab.name}}
+                            <!--
+                            <div class="close-button fa fa-close"></div>
+                            -->
+                        </div>
+                        <div class="view-list">
+                            <div class="view-item" v-for="view in tab.views" v-on:click="selectView(view)" v-bind:class="{active: view.selected}">
+                                <span>{{view.component.caption}}</span>
+                                <div class="close-button fa fa-close" v-on:click="closeView($event, view)"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab" v-on:click="openNewTabDialog()">
+                        <div class="tab-caption">+</div>
+                    </div>
+                </div>
+                <div v-if="user" style="padding: 8px;" v-bind:style="{border: user.delegatedUser != null ? '1px dashed black' : '',
+            padding: user.delegatedUser != null ? '5px 5px 5px 5px' : 'inherit'}">
+                    <strong v-if="user.delegatedUser">
+                        {{user.delegatedUser.name}}
+                        &larr;
+                        מחובר בתור
+                        &larr;
+                    </strong>
+                    <strong>
+                        {{user.name}}
+                    </strong>
+                    <strong style="color: blue; cursor: pointer" v-on:click="logout()">
+                        התנתק
+                    </strong>
+                </div>
+            </div>
+            <div class="title">
+                <div v-if="viewManager.selected && viewManager.selected.component">
+                    <select v-if="viewManager.selected.component.alterViews && viewManager.selected.component.alterViews.length > 0"
+                            v-bind:value="viewManager.selected.link"
+                            v-on:input="handleAlterViewChange">
+                        <option v-for="alterView in viewManager.selected.component.alterViews" v-bind:value="alterView.link">{{alterView.caption}}</option>
+                    </select>
+                    <span v-else>{{viewManager.selected.component.caption}}</span>
+                </div>
+            </div>
+        </div>
+        <view-slot class="flex-fill"></view-slot>
+    </div>
+    <div v-else-if="user" class="frame horizontal-flex">
+        <div class="menu" v-if="showMenu">
+            <div style="position: relative;">
+                <template v-for="(item, index) in menu">
+                    <div class="menu-item" v-bind:class="{active: item.selected}" v-on:click="open(item, index)">
+                        <img v-if="item.image" v-bind:src="item.selected ? item.imageActive : item.image">
+                        <label class="menu-label" v-bind:class="{active: item.selected}">{{item.name}}</label>
+                    </div>
+                </template>
+                <!--
+                <div style="position: absolute; left: 0px; right: 0px; bottom: 0px;">
+                    <div class="menu-item" v-on:click="logout()">
+                        <label class="menu-label">התנתקות</label>
+                    </div>
+                </div>
+                -->
+            </div>
+        </div>
+        <view-slot class="flex-fill"></view-slot>
+    </div>
+    <dialog-slot></dialog-slot>
+</div>

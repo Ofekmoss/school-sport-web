@@ -1,0 +1,142 @@
+<div>
+    <div class="panel">
+        <div class="panel-header">
+            פרטי בית ספר
+        </div>
+        <div class="panel-body">
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 30%;"><div class="label">שם בית ספר</div></td>
+                    <td style="width: 30%;"><div class="label">טלפון</div></td>
+                    <td class="medium-up"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input required type="text" tabindex="-1" style="width: 90%;" v-model="name" readonly>
+                    </td>
+                    <td>
+                        <input required type="text" tabindex="4" style="width: 90%;" v-model="details.phoneNumber" v-bind:disabled="!details.canChange">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 30%;"><div class="label">סמל בית ספר</div></td>
+                    <td style="width: 30%;"><div class="label">פקס</div></td>
+                    <td class="medium-up"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" tabindex="-1" style="width: 90%;" v-model="symbol" readonly>
+                    </td>
+                    <td>
+                        <input required type="text" tabindex="5" style="width: 90%;" v-model="details.fax" v-bind:disabled="!details.canChange">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 30%;"><div class="label">הגדרת כיתות</div></td>
+                    <td style="width: 30%;"><div class="label">מייל</div></td>
+                    <td class="medium-up"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <select autofocus tabindex="2" style="width: 90%;" v-model="details.type" v-bind:disabled="!details.canChange">
+                            <option value="0">א-ו</option>
+                            <option value="1">א-ח</option>
+                            <option value="2">ז-ט</option>
+                            <option value="3">ז-י&quot;ב</option>
+                            <option value="4">ט-י&quot;ב</option>
+                            <option value="5">י-י"ב</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" tabindex="6" style="width: 90%;" v-model="details.email" v-bind:disabled="!details.canChange">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 30%;"><div class="label">כתובת</div></td>
+                    <td></td>
+                    <td class="medium-up"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input required type="text" tabindex="3" style="width: 90%;" v-model="details.address" v-bind:disabled="!details.canChange">
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="panel-header">
+            פרטי הנהלה
+        </div>
+        <div class="panel-body">
+            <table style="width: 100%;">
+                <tr>
+                    <td style=""><div class="label">שם מנהל/ת בית הספר</div></td>
+                    <td style=""><div class="label">שם רכז התכנית בבית הספר</div></td>
+                    <td class="medium-up"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" required tabindex="7" style="width: 90%;" v-model="principal.name" v-bind:disabled="!principal.canChange">
+                    </td>
+                    <td>
+                        <input type="text" required tabindex="10" style="width: 90%;" v-model="coordinator.name">
+                    </td>
+                    <td class="medium-up"></td>
+                </tr>
+                <tr>
+                    <td style="width: 25%;"><div class="label">טלפון</div></td>
+                    <td style="width: 25%;"><div class="label">טלפון</div></td>
+                    <td class="medium-up"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" required tabindex="8" style="width: 90%;" v-model="principal.phoneNumber" v-bind:disabled="!principal.canChange">
+                    </td>
+                    <td>
+                        <input type="text" required tabindex="11" style="width: 90%;" v-model="coordinator.phoneNumber">
+                    </td>
+                    <td class="medium-up"></td>
+                </tr>
+                <tr>
+                    <td style="width: 25%;"><div class="label">מייל</div></td>
+                    <td style="width: 25%;"><div class="label">מייל</div></td>
+                    <td class="medium-up"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" required tabindex="9" style="width: 90%;" v-model="principal.email" v-bind:disabled="!principal.canChange">
+                    </td>
+                    <td>
+                        <input type="text" required tabindex="12" style="width: 90%;" v-model="coordinator.email">
+                    </td>
+                    <td class="medium-up"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="panel-header">
+            מסגרת הפעלת התכנית
+        </div>
+        <div class="panel-body">
+            <div class="mb-sm">
+                <input type="radio" v-model="scheme" value="1" tabindex="13">
+                שעה שלישית במערכת
+            </div>
+            <div class="mb-sm">
+                <input type="radio" v-model="scheme" value="2" tabindex="14">
+                פעילות דו שבועית
+            </div>
+            <div class="mb-sm">
+                <input type="radio" v-model="scheme" value="3" tabindex="15">
+                אחר
+                <input v-if="scheme == 3" type="text" style="width: 30%;" v-model="schemeDescription" tabindex="16">
+            </div>
+        </div>
+    </div>
+
+    <button class="btn green float-left" v-bind:disabled="!isFormValid" v-on:click="next()">
+        אישור והמשך
+    </button>
+</div>

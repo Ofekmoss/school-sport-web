@@ -1,0 +1,97 @@
+<div>
+    <div class="panel">
+        <div class="panel-header">
+            הגדרת ענפי ספורט
+        </div>
+        <div class="panel-body">
+            <p>
+                הגדירו את שלושת ענפי הספורט התואמים את תכנית האב היישובית לשנת הלימודים תש"פ.
+            </p>
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 30%;"><div class="label">ענף ספורט 1:</div></td>
+                    <td class="medium-up"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input autofocus type="text" tabindex="1" v-bind:disabled="stage != 0" style="width: 90%;" v-model="item1">
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 30%;"><div class="label">ענף ספורט 2:</div></td>
+                    <td class="medium-up"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" tabindex="2" v-bind:disabled="stage != 0" style="width: 90%;" v-model="item2">
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 30%;"><div class="label">ענף ספורט 3:</div></td>
+                    <td class="medium-up"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" tabindex="3" v-bind:disabled="stage != 0" style="width: 90%;" v-model="item3">
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div style="text-align: left;" class="p-sm">
+            <button type="button" class="btn green" v-if="stage == 0" v-bind:disabled="updating || !item1 || !item2 || !item3" v-on:click="updateItems">
+                אישור
+            </button>
+            <button type="button" class="btn" v-if="stage == 1 && projectSchools.length == 0" v-on:click="editItems">
+                עדכון
+            </button>
+        </div>
+    </div>
+    <div class="panel" v-if="stage > 0 && schools">
+        <div class="panel-header">
+            בתי ספר
+        </div>
+        <div class="panel-body">
+            הוספת בית ספר:
+            <div>
+                <selectex v-bind:options="schools" style="min-width: 250px;" v-bind:label="getSchoolHtml" v-model="newSchool"></selectex>
+                <button type="button" class="btn small" v-bind:disabled="!newSchool" v-on:click="addSchool">
+                    הוספה
+                </button>
+            </div>
+
+            <div class="container">
+                <data-table v-bind:data="projectSchools" v-bind:columns="schoolColumns"
+                            enableSort="false" enableSearch="false" enableColumnSelect="false"
+                            selection="single" v-on:selection-change="handleSelectionChange">
+                    <div class="flex-fill">
+
+                    </div>
+                    <div class="tool-bar pt-sm">
+                        <div class="float-left button-group pb-md">
+                            <button v-bind:disabled="!selectedSchool" v-on:click="editSchool()"><span class="icon">&#x1F589;</span> עריכה</button>
+                            <!--
+                            <button v-bind:disabled="!selectedSchool"><span class="icon">&#x2715;</span> מחיקה</button>
+                            -->
+                        </div>
+                    </div>
+                </data-table>
+            </div>
+        </div>
+    </div>
+    <!--
+    <button class="btn green float-left" v-bind:disabled="!confirmation ||
+                                                            !formValidations.school ||
+                                                            !formValidations.principal ||
+                                                            !formValidations.chairman ||
+                                                            !formValidations.coordinator"
+            v-on:click="next()">
+        אישור והמשך
+    </button>
+    -->
+</div>

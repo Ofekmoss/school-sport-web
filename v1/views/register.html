@@ -1,0 +1,512 @@
+<style type="text/css">
+    .team-panel, .team-panel * {
+        cursor: pointer;
+    }
+
+    .team-panel {
+        height: 160px;
+    }
+
+    .team-panel-small-screen {
+        height: 200px;
+    }
+
+    .dropzone {
+        min-height: inherit !important;
+    }
+
+    .different-school-notice {
+        color: red;
+        cursor: pointer;
+        font-size: 15px;
+        margin-top: 5px;
+    }
+
+    .different-school-notice-small-screen {
+        position: absolute;
+        left: 150px;
+        top: -5px;
+        width: 300px;
+    }
+
+    .delete-icon, .edit-icon {
+        padding: 5px;
+        cursor: pointer;
+        margin-top: -5px;
+    }
+
+    .delete-icon {
+        color: red;
+    }
+
+    .edit-icon {
+        color: #13b7ff;
+    }
+
+    .delete-icon:hover {
+        background-color: #ffa0a0;
+    }
+
+    .edit-icon:hover {
+        background-color: #B2E8FF;
+    }
+
+    .common-placeholder {
+        position: relative;
+        border: 1px solid #00ada7;
+        padding-top: 5px;
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-bottom: 15px;
+        overflow: hidden;
+        margin-top: 15px;
+    }
+
+    .player-placeholder-normal {
+        height: 160px;
+    }
+
+    .player-placeholder, .player-placeholder-normal, .player-placeholder-small-screen {
+        cursor: pointer;
+    }
+
+    .player-placeholder-small-screen {
+        height: 200px;
+    }
+
+    .picture-preview {
+        width: 70px;
+        height: 70px;
+        margin-top: 20px;
+    }
+
+    .player-status, .action-buttons {
+        position: absolute;
+    }
+
+    .player-placeholder-normal .player-status {
+        left: 20px;
+        top: 20px;
+    }
+
+    .player-placeholder-normal .action-buttons {
+        left: 20px;
+        bottom: 20px;
+    }
+
+    .team-panel .action-buttons {
+        left: 20px;
+        top: 50px;
+    }
+
+    .player-placeholder-small-screen .player-status {
+        left: 10px;
+        top: 10px;
+    }
+
+    .player-placeholder-small-screen .action-buttons {
+        right: 150px;
+        top: 10px;
+    }
+
+    .register-date {
+        position: absolute;
+    }
+
+    .player-placeholder-normal .register-date {
+        left: 20px;
+        top: 75px;
+    }
+
+    .player-placeholder-small-screen .register-date {
+        left: 10px;
+        bottom: 10px;
+    }
+
+    .upload-error {
+        font-size: 17px;
+        display: inline-block;
+        margin-top: 20px;
+        height: 70px;
+        color: red;
+    }
+
+    .player-file {
+        position: absolute;
+        height: 120px;
+        width: 120px;
+    }
+
+    .player-file .dropzone {
+        height: 120px;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background-color: transparent;
+    }
+
+    .player-file .dz-preview {
+        background-color: transparent !important;
+        margin: 0 !important;
+    }
+
+    .player-file .dz-image {
+        height: 100px !important;
+    }
+
+    .player-file .common_rounded_rectangle:hover {
+        background-color: #00ada7;
+    }
+
+    .player-file .dz-message {
+        margin: 0;
+    }
+
+    .player-placeholder-normal .player-file {
+        top: 20px;
+    }
+
+    .player-placeholder-small-screen .player-file {
+        top: 40px;
+    }
+
+
+    .player-file .common_rounded_rectangle {
+        border-color: #00ada7;
+        width: 120px;
+        height: 120px;
+    }
+
+    .common_rounded_rectangle {
+        padding-top: 7px !important;
+        padding-bottom: 7px !important;
+    }
+</style>
+
+<div class="wide-container" ng-if="!loggedUser">
+    <form class="login-form">
+        <div style="margin-bottom: 15px;">
+                <label for="register_username">שם משתמש</label><br>
+                <input type="text" class="auto-click" data-button-id="btnRegisterLogin" name="username" id="register_username" ng-model="userInput.username" />
+        </div>
+        <div style="margin-bottom: 15px;">
+                <label for="register_password">סיסמא</label><br>
+                <input type="password" class="auto-click" data-button-id="btnLogin" name="password" id="register_password" ng-model="userInput.password" />
+        </div>
+        <div style="margin-bottom: 15px;">
+                <a id="btnRegisterLogin" href="#" class="button button_grey" ng-click="login()" onclick="return false;">
+                    התחברות
+                </a>
+        </div>
+        <div>
+                <div class="alert alert-danger" role="alert" ng-show="errorMessage">
+                    {{errorMessage}}
+                </div>
+        </div>
+    </form>
+</div>
+
+<div class="wide-container" ng-if="loggedUser">
+    <manage-breadcrumbs description="רישום קבוצות ושחקנים"></manage-breadcrumbs>
+    <manage-tabs sender="register"></manage-tabs>
+    <div class="content" ng-if="loggedUser.Role == 2">
+        <div class="section" style="margin-top: 0px;">
+            <h2 class="section_title section_title_big">
+                {{loggedUser.SchoolName}}
+                <div class="pull-left"  style="margin-left: 15px;">
+                    <a href="/v1/club-register-form.html?s={{loggedUser.SchoolSymbol}}" target="_blank"
+                       class="button button_type_icon_medium button_orange">
+                        טופס רישום מועדון
+                        <i class="fa fa-print"></i>
+                    </a>
+                </div>
+            </h2>
+            <div class="sorting_block var2 clearfix">
+                <div>
+                    <input type="text" name="search" ng-model="search" placeholder="חיפוש" />
+                </div>
+                <div>
+                    <span>
+מיון לפי
+                    </span>
+                    <!--Categories-->
+                    <div class="custom_select" id="ddlSortBy">
+                        <div class="select_title">
+ברירת מחדל
+                        </div>
+                        <ul id="menu_type" class="select_list"></ul>
+                        <select>
+                            <option value="1">
+                                ברירת מחדל
+                            </option>
+                        </select>
+                    </div>
+                    <span>
+הצגת
+                    </span>
+                    <div class="custom_select" id="ddlPageType">
+                        <div class="select_title">
+כל הקבוצות
+                        </div>
+                        <ul id="selected_page_type" class="select_list"></ul>
+                        <select>
+                            <option>
+                                כל הקבוצות
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="section_7">
+            <div style="margin-top: -20px; margin-bottom: 10px;">
+                <div>
+                    <a href="#" ng-click="registerTeam()"
+                       class="button button_type_icon_medium button_orange" onclick="return false;" style="margin-right: 5px; margin-bottom: 10px;">
+                    רישום קבוצות לאליפות
+                        <i class="fa fa-pencil-square-o"></i>
+                    </a>
+                </div>
+                <div class="row">
+                    <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                        <div ng-if="selected.team">
+                            <h2>
+                                {{selected.team.CHAMPIONSHIP_NAME}}, {{selected.team.CATEGORY_NAME}}
+                                <div class="pull-left" ng-if="selected.team.STATUS != 2 && selected.team.Players.length == 0">
+                                    <button class="button button_orange" ng-click="deleteTeam(selected.team)" ng-disabled="selected.team.deleting">
+                                        <span ng-show="selected.team.deleting">
+                                            נא להמתין...
+                                        </span>
+                                        <span ng-show="!selected.team.deleting">
+                                        מחיקת קבוצה
+                                        </span>
+                                    </button>
+                                </div>
+                            </h2>
+                            <div ng-show="selected.team.CHAMPIONSHIP_STATUS == 2 && selected.team.Players.length == 0" style="margin-top: 10px;">
+                                <a href="#" ng-click="registerNewPlayers(selected.team)"
+                                   class="button button_type_icon_medium button_orange" onclick="return false;">
+רישום שחקנים לקבוצה
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </div>
+                            <div ng-show="selected.team.Players.length > 0">
+                                <h3>
+                                    רשימת שחקנים בקבוצה, לעריכה או מחיקה נא ללחוץ על שחקן
+                                    <div class="pull-left" ng-if="selected.team.CHAMPIONSHIP_STATUS == 2">
+                                        <a href="#" ng-click="registerNewPlayers(selected.team)"
+                                           class="button button_type_icon_medium button_orange" onclick="return false;">
+                                            הוספת שחקנים חדשים
+                                            <i class="fa fa-plus"></i>
+                                        </a>
+                                    </div>
+                                    <div class="pull-left" ng-if="selected.team.STATUS == 2" style="margin-left: 15px;">
+                                        <a href="/v1/players-register-form.html?t={{selected.team.TEAM_ID}}" target="_blank"
+                                           class="button button_type_icon_medium button_orange">
+                                            טופס רישום קבוצתי
+                                            <i class="fa fa-print"></i>
+                                        </a>
+                                    </div>
+                                </h3>
+                                <div style="clear: both;"></div>
+                                <div ng-repeat="player in players = selected.team.Players.RegisteredPlayers.concat(selected.team.Players.ConfirmedPlayers).concat(selected.team.Players.UnConfirmedPlayers) | orderBy : ['-Selected', '-REGISTRATION_DATE']"
+                                     class="section common-placeholder player-placeholder player-placeholder-normal" style="{{getPlayerPanelStyle(player)}}"
+                                     ng-click="selectPlayer(player); $event.stopPropagation();">
+                                    <div class="player-status">
+                                        <h4 ng-show="player.STATUS == 1">
+                                            <span class="glyphicon glyphicon-warning-sign" style="color: #5bc0de;"></span>
+                                            רשום, ממתין לאישור
+                                        </h4>
+                                        <h4 ng-show="player.STATUS == 2">
+                                            <span class="glyphicon glyphicon-ok" style="font-size: 16px; color: #3DCC00;"></span>
+                                            מאושר
+                                        </h4>
+                                        <h4 ng-show="player.STATUS == 3" title="player.RejectReason">
+                                            <span class="glyphicon glyphicon-remove" style="color: #DD5A5A;"></span>
+                                            לא מאושר
+                                        </h4>
+                                        <div class="different-school-notice" ng-if="player.DifferentSchool"  ng-click="player.DifferentSchool.Show = !player.DifferentSchool.Show">
+                                            <span class="glyphicon glyphicon-warning-sign"></span>
+                                            בקשת שינוי בית ספר ממתינה לאישור
+                                            </span>
+                                    <span ng-if="player.DifferentSchool.Show">
+                                        <br />
+                                        סמל מוסד:
+                                        {{player.DifferentSchool.Symbol}}
+                                        <br />
+                                        שם ביה"ס:
+                                        {{player.DifferentSchool.Name}}
+                                    </span>
+                                        </div>
+                                    </div>
+                                    <div class="action-buttons" ng-show="player.STATUS == 1 && player.Selected">
+                                        <span class="glyphicon glyphicon-trash delete-icon" ng-click="deletePlayer(player); $event.stopPropagation();"
+                                              title="מחיקת שחקן" ></span>
+                                        <span class="glyphicon glyphicon-pencil edit-icon" ng-click="editPlayer(player); $event.stopPropagation();"
+                                              title="עריכת פרטי שחקן" ></span>
+                                    </div>
+                                    <div class="register-date" ng-show="player.REGISTRATION_DATE" style="line-height: 15px;">
+                                        <a class="button banner_button" onclick="return false;" style="color: #3b5998; background-color: #d9edf7;">
+                                            ת. רישום:
+                                            {{player.REGISTRATION_DATE | date : 'dd/MM/yyyy'}}
+                                            <br />
+                                            כיתה:
+                                            {{player.ParsedGrade}}
+                                        </a>
+                                    </div>
+                                    <!-- img src="/content/PlayerFile?type=1&id=31396252" / -->
+                                    <div id="pnlPictureContainer" style="display: none;">
+                                        <div class="common_rounded_rectangle transparent_rounded_rectangle">
+                                            <span class="fa fa-camera" style="font-size: 70px; margin-top: 20px;"></span>
+                                            <span class="upload-error" style="display: none;"></span>
+                                            <img class="picture-preview" src="about:blank" style="display: none;" />
+                                            <br />
+                                    <span>
+                                        תמונה
+                                    </span>
+                                        </div>
+                                    </div>
+                                    <div class="player-file" style="right: 160px;" ng-click="PlayerFileClicked(player, 1)" data-file-container="pnlPictureContainer">
+                                        <div style="" dropzone="dropzoneConfig_Picture" class="dropzone page-dropzone" data-player-id="{{player.ID_NUMBER}}" data-file-type="1"></div>
+                                    </div>
+                                    <div id="pnlMedicalFormContainer" style="display: none;">
+                                        <div class="common_rounded_rectangle transparent_rounded_rectangle">
+                                            <span class="fa fa-wpforms" style="font-size: 70px; margin-top: 20px;"></span>
+                                            <span class="upload-error" style="display: none;"></span>
+                                            <img class="picture-preview" src="about:blank" style="display: none;" />
+                                            <span class="file-pdf fa fa-file-pdf-o" style="font-size: 70px; margin-top: 20px; color: red;  display: none;"></span>
+                                            <br />
+                                    <span>
+                                                                                בדיקה רפואית
+                                    </span>
+                                        </div>
+                                    </div>
+                                    <div class="player-file" style="right: 300px;" ng-click="PlayerFileClicked(player, 2)" data-file-container="pnlMedicalFormContainer">
+                                        <div style="" dropzone="dropzoneConfig_MedicalForm" class="dropzone page-dropzone" data-player-id="{{player.ID_NUMBER}}" data-file-type="2"></div>
+                                    </div>
+                                    <div id="pnlIdVoucherContainer" style="display: none;">
+                                        <div class="common_rounded_rectangle transparent_rounded_rectangle">
+                                            <span class="fa fa-id-card" style="font-size: 70px; margin-top: 20px;"></span>
+                                            <span class="upload-error" style="display: none;"></span>
+                                            <img class="picture-preview" src="about:blank" style="display: none;" />
+                                            <span class="file-pdf fa fa-file-pdf-o" style="font-size: 70px; margin-top: 20px; color: red;  display: none;"></span>
+                                            <br />
+                                    <span>
+ספח ת"ז
+                                    </span>
+                                        </div>
+                                    </div>
+                                    <div class="player-file" style="right: 440px;" ng-click="PlayerFileClicked(player, 3)" data-file-container="pnlIdVoucherContainer">
+                                        <div style="" dropzone="dropzoneConfig_IdVoucher" class="dropzone page-dropzone" data-player-id="{{player.ID_NUMBER}}" data-file-type="3"></div>
+                                    </div>
+                                    <h3 class="section_title" style="color: #3b5998; border-top: none; margin-bottom: 5px;">
+                                        <span class="label label-info">{{player.ID_NUMBER}}</span>
+                                    </h3>
+                                    <h3 class="section_title" style="color: #3b5998; border-top: none; margin-bottom: 5px; width: 145px;">
+                            <span style="color: #5bc0de">
+                                שם מלא
+                            </span>
+                                        <br />
+                                        {{player.FIRST_NAME}} {{player.LAST_NAME}}
+                                    </h3>
+                                    <h3 class="section_title" style="color: #3b5998; border-top: none; margin-bottom: 5px;" ng-show="player.BIRTH_DATE">
+                               <span style="color: #5bc0de">
+                                ת. לידה
+                                </span>
+                                        <br />
+                                        {{player.BIRTH_DATE | date : 'dd/MM/yyyy'}}
+                                    </h3>
+                                    <h3 ng-show="player.IsPending == 1" style="color: red;">
+                                        שחקן  לא נשלח
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <h2>
+                            קבוצות
+                        </h2>
+						<h3 ng-show="schoolTeams.length == 0">
+                            אין קבוצות רשומות עבור בית ספר זה בעונה נוכחית
+                        </h3>
+                        <h3 ng-show="schoolTeams.length > 0">
+                            לרישום שחקנים נא ללחוץ על קבוצה רצויה
+                        </h3>
+                        <div ng-repeat="team in schoolTeams" ng-click="selectTeam(team)"
+                             class="section team-panel common-placeholder" style="{{getTeamPanelStyle(team)}}">
+                            <div style="position: absolute; left: 20px; top: 20px;">
+                                <span style="font-size: 15px; color: #3DCC00;" ng-show="team.STATUS == 2">
+                                    <span class="glyphicon glyphicon-ok"></span>
+        מאושרת
+                                </span>
+                                <span style="font-size: 15px; color: #5bc0de;" ng-show="team.STATUS != 2">
+                                    <span class="glyphicon glyphicon-warning-sign"></span>
+        ממתינה לאישור
+                                </span>
+                            </div>
+                            <div class="action-buttons" ng-if="team.STATUS != 2">
+                                <span class="glyphicon glyphicon-trash delete-icon" ng-click="deleteTeam(team); $event.stopPropagation();" ng-show="team.Players.length == 0"
+                                      title="מחיקת קבוצה" ></span>
+                            </div>
+                            <div style="position: absolute; left: 20px; bottom: 20px;">
+                                <a class="button banner_button" style="{{getSportFieldStyle(team.SPORT_ID)}}" onclick="return false;">
+                                    {{team.SPORT_NAME}}
+                                </a>
+                            </div>
+                            <div style="position: absolute; left: 20px; top: 10px;" ng-show="team.IsPending == 1">
+                                <span style="font-size: 20px;" ng-click="removePendingTeam(team)"
+                                    title="ביטול הזמנת קבוצה" >
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </span>
+                            </div>
+                            <h3 class="section_title" style="color: #3b5998; border-top: none; margin-bottom: 5px;">
+                                {{team.CHAMPIONSHIP_NAME}}
+                                <span class="label label-info" ng-if="team.TEAM_INDEX > 1">{{team.HebrewIndex}}</span>
+                            </h3>
+                            <h3 class="section_title" style="color: #3b5998; border-top: none; margin-bottom: 5px;">
+                                {{team.CATEGORY_NAME}}
+                            </h3>
+                            <h3 ng-show="team.IsPending == 1" style="color: red;">
+                                קבוצה לא נשלחה
+                            </h3>
+                            <h4 ng-show="team.IsPending == 0">
+                        <span ng-show="team.Players.length == 0 && team.IsPending == 0">
+                            לקבוצה זו אין שחקנים
+                        </span>
+                        <span ng-show="team.Players.RegisteredPlayers.length > 0">
+                            {{team.RegisteredPlayersCountHebrew}}<br />
+                        </span>
+                        <span ng-show="team.Players.ConfirmedPlayers.length > 0">
+                            {{team.ConfirmedPlayersCountHebrew}}<br />
+                        </span>
+                        <span ng-show="team.Players.UnConfirmedPlayers.length > 0">
+                            {{team.UnConfirmedPlayersCountHebrew}}<br />
+                        </span>
+                            </h4>
+                            <br />
+                            <h4 ng-show="team.REGISTRATION_DATE">
+                                תאריך רישום
+                                {{team.REGISTRATION_DATE | date : 'dd/MM/yyyy'}}
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+<script type="text/javascript">
+    // custom select
+    function InitCustomSelect() {
+        if (typeof sportUtils != 'undefined') {
+            window.setTimeout(function() {
+                sportUtils.InitCustomSelect();
+            }, 500);
+        } else {
+            window.setTimeout(InitCustomSelect, 100);
+        }
+    }
+    window.setTimeout(InitCustomSelect, 100);
+</script>

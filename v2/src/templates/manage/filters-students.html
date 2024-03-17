@@ -1,0 +1,8 @@
+<div class="horizontal-flex" :key="upCount">
+    <selectex class="ml-sm" style="width: 180px" v-bind:options="regions" placeholder="מחוז..." v-model="result.region"></selectex>
+    <selectex class="ml-sm" style="width: 180px" v-bind:options="cities" placeholder="עיר..." v-model="result.city"></selectex>
+    <selectex class="ml-sm" style="width: 180px" v-bind:options="schools" placeholder="בית ספר..." v-model="result.school"></selectex>
+    <selectex class="ml-sm"  :disabled="!result.school || result.school.id == -1" style="width: 180px" v-bind:options="grades" placeholder="כיתה..." v-model="result.grade"></selectex>
+    <selectex class="ml-sm" style="width: 180px" v-bind:options="genders" placeholder="מין..." v-model="result.gender"></selectex>
+    <button class="btn medium" v-on:click="load" :disabled="!result.school || result.school.id == -1">הצג</button>
+</div>

@@ -1,0 +1,6 @@
+[
+  "src/js/components/vuejs-datepicker.js",
+  "node_modules/vuejs-datepicker/dist/locale/translations/he.js",
+  "node_modules/vue-chartjs/dist/vue-chartjs.min.js",
+  "node_modules/vue-chartjs/dist/vue-chartjs.js"
+]

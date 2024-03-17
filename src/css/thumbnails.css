@@ -1,0 +1,21 @@
+.article_thumbnail {
+    width: 214px;
+    height: 234px;
+    border-radius: 5px;
+    border: 2px solid black;
+}
+
+.manage_thumbnail_small {
+    width: 130px;
+    height: 85px;
+}
+
+.manage_thumbnail_2 {
+    width: 100px;
+    height: 100px;
+}
+
+.article_author_picture {
+    width: 165px;
+    height: 165px;
+}

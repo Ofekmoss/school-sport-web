@@ -1,0 +1,208 @@
+@import "dimensions";
+@import "colors";
+
+.vertical-flex {
+  display: flex;
+  flex-direction: column;
+}
+
+.horizontal-flex {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-fill {
+  position: relative;
+  flex-grow: 1;
+  flex-shrink: 1;
+  min-height: 0;
+}
+
+.flex-space {
+  justify-content: space-between;
+}
+
+.inline {
+  display: inline-block;
+}
+
+.menu {
+  background-color: @primary-color;
+  color: @background-color;
+  //width: @menu-size;
+
+  > * {
+    height: 100%;
+    padding-top: 60px;
+  }
+}
+
+.menu-item img {
+  display: block;
+  width: 39px;
+  margin-right: auto;
+  margin-left: auto;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+}
+
+.menu-item {
+  padding-top: @menu-size / 5;
+  padding-bottom: @menu-size / 5;
+  background-color: @primary-color;
+  width: 180px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.menu-item.active {
+  background-color: white;
+}
+
+.menu-label {
+  color: #7da5e3;
+  font-size: x-large;
+  padding-left: 15px;
+  cursor: pointer;
+  width: min-content;
+}
+
+.menu-label.active {
+  color: @primary-color;
+}
+
+.table-row:hover {
+  background-color: #d9d9d9;
+}
+
+.view-slot {
+  position: relative;
+  height: 100%;
+  box-shadow: 0px 0px 11px 0px rgba(0, 0, 0, 0.15);
+  margin: 0 4px;
+}
+
+.view-slot > div {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  top: 0px;
+}
+
+
+.float-left {
+  float: left;
+}
+
+.float-right {
+  float: right;
+}
+
+// Margin
+
+.m0  { margin: 0px !important; }
+.ml0 { margin-left: 0px !important; }
+.mr0 { margin-right: 0px !important; }
+.mt0 { margin-top: 0px !important; }
+.mb0 { margin-bottom: 0px !important; }
+.mh0 { .ml0; .mr0; }
+.mv0 { .mt0; .mb0; }
+
+.m-sm  { margin: @small !important; }
+.ml-sm { margin-left: @small !important; }
+.mr-sm { margin-right: @small !important; }
+.mt-sm { margin-top: @small !important; }
+.mb-sm { margin-bottom: @small !important; }
+.mh-sm { .ml-sm; .mr-sm; }
+.mv-sm { .mt-sm; .mb-sm; }
+
+.m-md  { margin: @medium !important; }
+.ml-md { margin-left: @medium !important; }
+.mr-md { margin-right: @medium !important; }
+.mt-md { margin-top: @medium !important; }
+.mb-md { margin-bottom: @medium !important; }
+.mh-md { .ml-md; .mr-md; }
+.mv-md { .mt-md; .mb-md; }
+
+.m-lg  { margin: @large !important; }
+.ml-lg { margin-left: @large !important; }
+.mr-lg { margin-right: @large !important; }
+.mt-lg { margin-top: @large !important; }
+.mb-lg { margin-bottom: @large !important; }
+.mh-lg { .ml-lg; .mr-lg; }
+.mv-lg { .mt-lg; .mb-lg; }
+
+// Padding
+
+.p0  { padding: 0px !important; }
+.pl0 { padding-left: 0px !important; }
+.pr0 { padding-right: 0px !important; }
+.pt0 { padding-top: 0px !important; }
+.pb0 { padding-bottom: 0px !important; }
+.ph0 { .pl0; .pr0; }
+.pv0 { .pt0; .pb0; }
+
+.p-sm  { padding: @small !important; }
+.pl-sm { padding-left: @small !important; }
+.pr-sm { padding-right: @small !important; }
+.pt-sm { padding-top: @small !important; }
+.pb-sm { padding-bottom: @small !important; }
+.ph-sm { .pl-sm; .pr-sm; }
+.pv-sm { .pt-sm; .pb-sm; }
+
+.p-md  { padding: @medium !important; }
+.pl-md { padding-left: @medium !important; }
+.pr-md { padding-right: @medium !important; }
+.pt-md { padding-top: @medium !important; }
+.pb-md { padding-bottom: @medium !important; }
+.ph-md { .pl-md; .pr-md; }
+.pv-md { .pt-md; .pb-md; }
+
+.p-lg  { padding: @large !important; }
+.pl-lg { padding-left: @large !important; }
+.pr-lg { padding-right: @large !important; }
+.pt-lg { padding-top: @large !important; }
+.pb-lg { padding-bottom: @large !important; }
+.ph-lg { .pl-lg; .pr-lg; }
+.pv-lg { .pt-lg; .pb-lg; }
+
+.below-medium {
+  display: none;
+}
+
+@media (max-width: @small-size) {
+  .menu {
+    display: none;
+  }
+
+  .medium-up {
+    display: none;
+  }
+
+  .below-medium {
+    display: block;
+  }
+}
+
+.wrong {
+  border-color: red;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.frame {
+  height: 100%;
+  width: 100%;
+}

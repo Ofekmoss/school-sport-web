@@ -1,0 +1,233 @@
+<div>
+    <div class="panel p-sm"  style="width: auto; position: absolute; left: 39px; right: 39px; top: 13px; bottom: 0px;">
+        <div>
+            <label>סוג הגדרות</label>
+            <select v-model="type">
+                <option v-for="t in types" v-bind:value="t.value">{{t.caption}}</option>
+            </select>
+        </div>
+        <div style="margin-top: 10px;" v-if="updateStatus['isf-overage'].authorized || updateStatus['overage'].authorized"
+            v-bind:style="{'border': filters.season > 0 ? '1px dashed red' : 'none'}">
+            <label>סינון לפי עונה:</label>
+            <select v-model="filters.season">
+                <option v-for="season in filters.seasons" v-bind:value="season.id">{{season.name}}</option>
+            </select>
+        </div>
+        <div v-if="type == 0 || type == 1" style="margin-top: 20px;">
+            <span style="direction: rtl;">
+                פל"א:
+            </span>
+            <template v-if="!updateStatus['pele-team-registration'].authorized">
+                <div>
+                    <button type="button" v-if="!updateStatus['pele-team-registration'].authorizing" class="btn btn-lg"
+                            style="font-weight: bold;"
+                            v-on:click="updateStatus['pele-team-registration'].authorizing = true;
+                            setTimeout(function() {document.getElementById('txtPelePassword').focus();}, 500);">
+                        יש ללחוץ כאן על מנת לערוך
+                    </button>
+                    <form autocomplete="off" onsubmit="return false;" v-if="updateStatus['pele-team-registration'].authorizing">
+                        <label for="txtPelePassword">נא להזין סיסמא:</label><br />
+                        <input type="password"  id="txtPelePassword"
+                               v-model="updateStatus['pele-team-registration'].password" autocomplete="disable-this"
+                               v-on:change="pelePasswordChange()"
+                               v-on:keyup="pelePasswordChange()"/>
+                        <button type="button" class="btn btn-sm red"
+                                style="font-weight: bold;"
+                                v-on:click="updateStatus['pele-team-registration'].authorizing = false">
+                            ביטול
+                        </button>
+                    </form>
+                </div>
+            </template>
+            <template v-if="updateStatus['pele-team-registration'].authorized">
+                <label for="chkPeleTeamRegistration">
+                    האם לאפשר רישום קבוצות פל"א?
+                    <input id="chkPeleTeamRegistration" type="checkbox" v-model="peleTeamRegistration"
+                           v-on:change="peleTeamRegistrationChanged()"
+                           v-bind:disabled="updateStatus['pele-team-registration'].loading" />
+                </label>
+                <span v-if="updateStatus['pele-team-registration'].loading">
+                שומר שינויים...
+            </span>
+                <span style="font-weight: bold;" v-if="updateStatus['pele-team-registration'].success">
+                שינויים נשמרו בהצלחה
+            </span>
+                <span style="font-weight: bold; color: red;" v-if="updateStatus['pele-team-registration'].failed">
+                שמירת שינויים נכשלה, נא לנסות שוב מאוחר יותר
+            </span>
+            </template>
+        </div>
+        <div v-if="type == 0 || type == 2" style="margin-top: 20px;">
+            <label for="txtSchoolsSeasonAuthorization">
+                בתי ספר מורשים לשינוי נתונים גם בעונות קודמות
+                (סמלי מוסד מופרדים עם פסיק)
+                <input id="txtSchoolsSeasonAuthorization" type="text" v-model="schoolsSeasonAuthorization"
+                       v-on:change="schoolsSeasonAuthorizationChanged()"
+                       v-bind:disabled="updateStatus['schools-season-authorization'].loading" />
+            </label>
+            <span v-if="updateStatus['schools-season-authorization'].loading">
+                שומר שינויים...
+            </span>
+            <span style="font-weight: bold;" v-if="updateStatus['schools-season-authorization'].success">
+                שינויים נשמרו בהצלחה
+            </span>
+            <span style="font-weight: bold; color: red;" v-if="updateStatus['schools-season-authorization'].failed">
+                שמירת שינויים נכשלה, נא לנסות שוב מאוחר יותר
+            </span>
+        </div>
+        <div v-if="type == 0 || type == 2" style="margin-top: 20px; background-color: #F899FF;">
+            <span style="direction: rtl;">
+                חריגי גיל ISF:
+            </span>
+            <template v-if="!updateStatus['isf-overage'].authorized">
+                <div>
+                    <button type="button" v-if="!updateStatus['isf-overage'].authorizing" class="btn btn-lg"
+                            style="font-weight: bold;"
+                            v-on:click="updateStatus['isf-overage'].authorizing = true;
+                            setTimeout(function() {document.getElementById('txtIsfOverAgePassword').focus();}, 500);">
+                        יש ללחוץ כאן על מנת לערוך
+                    </button>
+                    <form autocomplete="off" onsubmit="return false;" v-if="updateStatus['isf-overage'].authorizing">
+                        <label for="txtIsfOverAgePassword">נא להזין סיסמא:</label><br />
+                        <input type="password"  id="txtIsfOverAgePassword"
+                               v-model="updateStatus['isf-overage'].password" autocomplete="disable-this"
+                               v-on:change="isfOveragePasswordChange()"
+                               v-on:keyup="isfOveragePasswordChange()"/>
+                        <button type="button" class="btn btn-sm red"
+                                style="font-weight: bold;"
+                                v-on:click="updateStatus['isf-overage'].authorizing = false">
+                            ביטול
+                        </button>
+                    </form>
+                </div>
+            </template>
+            <template v-if="updateStatus['isf-overage'].authorized">
+                <span v-if="updateStatus['isf-overage'].loading">
+                    שומר שינויים...
+                </span>
+                <span style="font-weight: bold;" v-if="updateStatus['isf-overage'].success">
+                    שינויים נשמרו בהצלחה
+                </span>
+                <span style="font-weight: bold; color: red;" v-if="updateStatus['isf-overage'].failed">
+                    שמירת שינויים נכשלה, נא לנסות שוב מאוחר יותר
+                </span>
+                <br />
+                <div v-for="(isfOverAgeItem, index) in isfOverAgeItems"
+                     v-if="isItemVisible(isfOverAgeItem)"
+                     v-bind:style="{marginTop: index > 0 ? '20px' : '0px'}">
+                    <select v-model="isfOverAgeItem.season">
+                        <option v-for="season in seasons" v-bind:value="season.id">{{season.name}}</option>
+                    </select>
+                    <select v-model="isfOverAgeItem.sport">
+                        <option v-for="sport in sports" v-bind:value="sport.Id">{{sport.Name}}</option>
+                    </select>
+                    <span style="position: relative;">
+                        <select v-model="isfOverAgeItem.category">
+                            <option v-for="category in categories" v-bind:value="category.Category">{{category.Name}}</option>
+                        </select>
+                        <input type="text" v-model="isfOverAgeItem.rangeStart" size="10" style="margin-right: 15px;" />
+                        <span>
+                            עד
+                        </span>
+                        <input type="text" v-model="isfOverAgeItem.rangeEnd" size="10" />
+                        <span style="position: absolute; top: 20px; left: 95px; color: red;" v-if="isfOverAgeItem.error">
+                            {{isfOverAgeItem.error}}
+                        </span>
+                    </span>
+                    <button type="button" class="btn red" style="font-size: 16px; margin-right: 10px;" v-if="index < (isfOverAgeItems.length - 1)"
+                            v-on:click="removeIsfOverageItem(index)">&nbsp;-&nbsp;</button>
+                </div>
+                <div>
+                    <button type="button" class="btn" style="font-size: 18px;" v-on:click="addIsfOverageItem()">&nbsp;+&nbsp;</button>
+                </div>
+            </template>
+        </div>
+
+        <div v-if="type == 0 || type == 2" style="margin-top: 20px; background-color: #ffff0057;">
+            <span style="direction: rtl;">
+                חריגי גיל:
+            </span>
+            <template v-if="!updateStatus['overage'].authorized">
+                <div>
+                    <button type="button" v-if="!updateStatus['overage'].authorizing" class="btn btn-lg"
+                            style="font-weight: bold;"
+                            v-on:click="updateStatus['overage'].authorizing = true;
+                            setTimeout(function() {document.getElementById('txtOverAgePassword').focus();}, 500);">
+                        יש ללחוץ כאן על מנת לערוך
+                    </button>
+                    <form autocomplete="off" onsubmit="return false;" v-if="updateStatus['overage'].authorizing">
+                        <label for="txtOverAgePassword">נא להזין סיסמא:</label><br />
+                        <input type="password"  id="txtOverAgePassword"
+                               v-model="updateStatus['overage'].password" autocomplete="disable-this"
+                               v-on:change="overagePasswordChange()"
+                               v-on:keyup="overagePasswordChange()"/>
+                        <button type="button" class="btn btn-sm red"
+                                style="font-weight: bold;"
+                                v-on:click="updateStatus['overage'].authorizing = false">
+                            ביטול
+                        </button>
+                    </form>
+                </div>
+            </template>
+            <template v-if="updateStatus['overage'].authorized">
+                <span v-if="updateStatus['overage'].loading">
+                    שומר שינויים...
+                </span>
+                <span style="font-weight: bold;" v-if="updateStatus['overage'].success">
+                    שינויים נשמרו בהצלחה
+                </span>
+                <span style="font-weight: bold; color: red;" v-if="updateStatus['overage'].failed">
+                    שמירת שינויים נכשלה, נא לנסות שוב מאוחר יותר
+                </span>
+                <br />
+                <div v-for="(overAgeItem, index) in overAgeItems"
+                     v-if="isItemVisible(overAgeItem)"
+                     v-bind:style="{marginTop: index > 0 ? '20px' : '0px'}">
+                    <select v-model="overAgeItem.season">
+                        <option v-for="season in seasons" v-bind:value="season.id">{{season.name}}</option>
+                    </select>
+                    <select v-model="overAgeItem.sport">
+                        <option value="0">כל הענפים</option>
+                        <option v-for="sport in sports" v-bind:value="sport.Id">{{sport.Name}}</option>
+                    </select>
+                    <span style="position: relative;">
+                        <select v-model="overAgeItem.category">
+                            <option v-for="category in categories" v-bind:value="category.Category">{{category.Name}}</option>
+                        </select>
+                        <span>
+                            תלמידים/ות שנולדו לפני:
+                        </span>
+                        <input type="text" v-model="overAgeItem.rangeEnd" size="10" />
+                        <span style="position: absolute; top: 20px; left: 95px; color: red;" v-if="overAgeItem.error">
+                            {{overAgeItem.error}}
+                        </span>
+                    </span>
+                    <button type="button" class="btn red" style="font-size: 16px; margin-right: 10px;" v-if="index < (overAgeItems.length - 1)"
+                            v-on:click="removeOverageItem(index)">&nbsp;-&nbsp;</button>
+                </div>
+                <div>
+                    <button type="button" class="btn" style="font-size: 18px;" v-on:click="addOverageItem()">&nbsp;+&nbsp;</button>
+                </div>
+            </template>
+        </div>
+
+        <div v-if="downloadLinks && downloadLinks.length > 0 && (type == 0 || type == 3)" style="margin-top: 20px;">
+            <span style="direction: rtl;">
+                הורדות:
+            </span>
+            <template v-if="!downloadsVisible">
+                <div>
+                    <button type="button" class="btn btn-lg" style="font-weight: bold;" v-on:click="toggleDownloadsPanel()">
+                        יש ללחוץ כאן על מנת לפתוח רשימת הורדות
+                    </button>
+                </div>
+            </template>
+            <template v-if="downloadsVisible">
+                <div v-for="(downloadLink, index) in downloadLinks"
+                     v-bind:style="{marginTop: index > 0 ? '20px' : '10px'}">
+                    <a v-bind:href="downloadLink.url">{{downloadLink.text}}</a>
+                </div>
+            </template>
+        </div>
+    </div>
+</div>

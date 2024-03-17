@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<!--[if IE 9 ]><html class="ie9" lang="en" ng-app="sport.home"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html lang="en" ng-app="sport"><!--<![endif]-->
+<head>
+	<title>טופס רישום מועדון</title>
+    <meta charset="utf-8">
+    <script type="text/javascript">
+        function Print() {
+            document.getElementById("btnPrint").style.display = "none";
+            document.getElementById("btnCancel").style.display = "none";
+            window.print();
+            document.getElementById("btnCancel").style.display = "";
+            document.getElementById("btnPrint").style.display = "";
+            window.close();
+        }
+    </script>
+    <link rel="stylesheet" type="text/css" media="all" href="http://www.schoolsport.co.il:8080/SportSite.css">
+    <!-- style type="text/css">
+        #go-to-top { display: none; }
+        div, body { margin: 0; padding: 0; }
+        table { margin: 0; }
+        div, body, td, th, span, p, a { font-family: Arial; font-size: 12px; text-align: center; }
+        img { border: none; }
+        h2 { margin: 0; padding: 0; text-decoration: underline; }
+        .header_caption { font-weight: bold; }
+        .dashed_border { border-style: dashed; border-width: 2px; border-color: black; }
+        #captions td { font-family: Tahoma; font-size: 15px; font-weight: bold; }
+        #players { width: 100%; border-width: 3px; border-color: black; border-style: solid; }
+        #players th { background-color: #e9e9e9; padding: 0px 0px 5px 0px; }
+        #players th, #players td { width: 14%; border-style: solid; border-width: 1px; border-color: black; }
+    </style -->
+    <style type="text/css" media="print">
+        #btnPrint, #btnConfirm, #btnCancel { display: none; }
+    </style>
+    <style type="text/css">
+        #Club_Extra_Text ul li { padding: 3px; }
+        #Club_Extra_Text table td { text-align: right; }
+        #Club_Extra_Text .borderable_table td { border: solid 1px black; font-weight: bold; }
+        .SportFieldDays td { font-weight: bold; }
+        .SportFieldDays td div { color: red; font-style: italic; }
+    </style>
+    <style type="text/css">
+        .newpage {page-break-after: always; border-bottom: dashed 1px #c0c0c0; font-size: 1px; height: 5px; margin-bottom: 5px;}
+        .InputBottomOnly {text-align: center; border-top: none; border-left: none; border-right: none; border-bottom: solid 1px black;}
+        .InputNoBorder { text-align: center; border: 0px; }
+        .PageContentsPanel ul, .PageContentsPanel div, .PageContentsPanel span {padding-right: 0px; !important}
+        .scrollable {width: 95%; overflow-x: scroll;}
+    </style>
+    <style type="text/css" media="print">
+        .newpage {border-bottom: none;}
+        .scrollable {width: 100%; overflow: visible;}
+    </style>
+</head>
+<body style="direction: rtl;">
+<div ng-controller="ClubRegisterFormController as main" style="margin-left: 50px;">
+    <div align="right" dir="rtl" style="text-align: center; color: red; font-weight: bold;" ng-if="error">
+        {{error}}
+    </div>
+    <div align="right" dir="rtl" style="text-align: center; font-weight: bold;" ng-if="loading">
+        מערכת טוענת נתונים, נא להמתין...
+    </div>
+    <table id="tblSchoolTeamOrders" class="table_type_1" border="1" cellspacing="0" cellpadding="0" style="width: 100%; display: none;">
+        <tr class="f_size_large">
+            <th style="padding: 3px 3px 3px 3px; text-align: center;">#</th>
+            <th style="padding: 3px 3px 3px 3px; text-align: center;">ענף</th>
+            <th style="padding: 3px 3px 3px 3px; text-align: center;">אליפות</th>
+            <th style="padding: 3px 3px 3px 3px; text-align: center;">קטגוריה</th>
+            <th style="padding: 3px 3px 3px 3px; text-align: center;">כמות</th>
+        </tr>
+        <tr ng-repeat="order in schoolOrdersBasket">
+            <td style="padding: 3px 3px 3px 3px; text-align: center;">
+                {{order.Index}}
+            </td>
+            <td style="padding: 3px 3px 3px 3px; text-align: center;">
+                {{order.SPORT_NAME}}
+            </td>
+            <td style="padding: 3px 3px 3px 3px; text-align: center;">
+                {{order.CHAMPIONSHIP_NAME}}
+            </td>
+            <td style="padding: 3px 3px 3px 3px; text-align: center;">
+                {{order.CATEGORY_NAME}}
+            </td>
+            <td style="padding: 3px 3px 3px 3px; text-align: center;">
+                {{order.Amount}}
+            </td>
+        </tr>
+    </table>
+    <div align="right" dir="rtl" style="width: 544px;" ng-if="!error && !loading">
+        <div ng-bind-html="RawHTML"></div>
+        <table border="0" style="width: 100%;">
+            <tr>
+                <td align="right" style="text-align: right;">
+                    <button type="button" id="btnPrint" onclick="Print();">
+                        הדפסת טופס רישום
+                    </button>
+                </td>
+                <td align="center" style="text-align: center;">
+                    <button type="button" id="btnCancel" onclick="window.close();">ביטול</button>
+                </td>
+                <td align="left" style="text-align: left;">
+                    &nbsp;
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<!--scripts include-->
+<script src="js/jquery-2.1.0.min.js" defer></script>
+<script src="js/plugins.min.js" defer></script>
+<script src="js/vendor.min.js" defer></script>
+<script src="js/sport.min.js" defer></script>
+</body>
+</html>

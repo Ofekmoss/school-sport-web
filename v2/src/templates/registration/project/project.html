@@ -1,0 +1,33 @@
+<div class="vertical-flex" style="position: relative; padding: 2rem 0;">
+    <div class="ph-lg pt-lg">
+        <div class="float-right">
+            <strong v-if="project">
+                תכנית {{project.name}} -
+                {{getSeason()}}
+            </strong>
+        </div>
+        <div class="float-left">
+            <strong>
+                {{user.name}}
+            </strong>
+            <strong style="color: blue; cursor: pointer" v-on:click="logout()">
+                התנתק
+            </strong>
+        </div>
+    </div>
+    <div class="step-progress">
+        <div class="step-bar"></div>
+        <div class="step-mark p1-3" v-bind:class="{active: currentPage == 0, enabled: true}" v-on:click="goToPage(0)">
+            <span>פרטי התכנית</span>
+        </div>
+        <div class="step-mark p2-3" v-bind:class="{active: currentPage == 1, enabled: school}" v-on:click="goToPage(1)">
+            <span>פרטי בית ספר</span>
+        </div>
+        <div class="step-mark p3-3" v-bind:class="{active: currentPage == 2, enabled: school && school.stage > 0}" v-on:click="goToPage(2)">
+            <span>רישום כיתות</span>
+        </div>
+    </div>
+    <div class="flex-fill ph-lg pv-sm" style="overflow-x: hidden; overflow-y: auto;">
+        <component v-bind:is="page" v-on:page="handlePage" v-bind:school.sync="school" v-bind:project="project"></component>
+    </div>
+</div>

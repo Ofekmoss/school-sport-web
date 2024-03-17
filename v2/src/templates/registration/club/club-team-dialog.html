@@ -1,0 +1,273 @@
+<div class="dialog wide">
+    <div class="float-left clickable" v-on:click="cancel">&#x2715;</div>
+    <div class="caption" v-if="duplicate">
+        שכפול קבוצה
+    </div>
+    <div class="caption" v-if="!duplicate && newTeam">
+        קבוצה חדשה
+    </div>
+    <div class="caption" v-if="!duplicate && !newTeam">
+        עריכת קבוצה
+    </div>
+    <form id="validated-form" v-if="team" style="overflow: auto;">
+        <div class="ph-md">
+            <table class="pb-sm">
+                <tr>
+                    <td><div class="label">ענף</div></td>
+                    <td><div class="label">אליפות</div></td>
+                    <td><div class="label">קטגוריה</div></td>
+                    <td><div class="label">קבוצה</div></td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <select v-model="sportIndex" style="min-width: 100px;" autofocus required name="sport" v-bind:disabled="!newTeam">
+                            <option v-for="(sport, index) in sports" v-bind:value="index">{{sport.name}}</option>
+                        </select>
+                    </td>
+                    <td class="pl-sm">
+                        <select v-if="team.sport" v-model="championshipIndex" style="min-width: 100px;" required name="championship" v-bind:disabled="!newTeam">
+                            <option v-for="(championship, index) in team.sport.championships" v-bind:value="index">{{championship.name}}</option>
+                        </select>
+                        <select v-if="!team.sport" disabled="true" style="min-width: 100px;"></select>
+                    </td>
+                    <td class="pl-sm">
+                        <select v-if="team.sport" v-model="categoryIndex" style="min-width: 100px;" required name="category" v-bind:disabled="!newTeam">
+                            <option v-for="(category, index) in team.sport.categories"
+                                    v-if="championshipIndex != null && category.championship == team.sport.championships[championshipIndex].id"
+                                    v-bind:value="index">{{category.displayName || category.name}}</option>
+                        </select>
+                        <select v-if="!team.sport" disabled="true" style="min-width: 100px;"></select>
+                    </td>
+                    <td>
+                        <input type="text" style="width: 100%;" v-model="team.teamNumber" v-bind:disabled="true" required name="teamNumber"> <!-- !team.category -->
+                    </td>
+                </tr>
+            </table>
+            <div class="pb-sm">
+                <div class="label">מאמן</div>
+                <table>
+                    <tr>
+                        <td>שם</td>
+                        <td>טלפון</td>
+                        <td>מייל</td>
+                    </tr>
+                    <tr>
+                        <td class="pl-sm">
+                            <input type="text" style="width: 100%;" v-model="team.coach.name" v-bind:disabled="!team.category" name="coachName" required>
+                        </td>
+                        <td class="pl-sm">
+                            <input pattern="(0[0-9]{2}-[0-9]{7}|0[0-9]{1}-[0-9]{7}|0[0-9]{2}[0-9]{7}|0[0-9]{1}[0-9]{7})" required
+                                   type="text" style="width: 100%;" v-model="team.coach.phoneNumber" v-bind:disabled="!team.category" name="coachPhone">
+                        </td>
+                        <td class="pl-sm">
+                            <input pattern="^\S+@\S+$" required
+                                   type="text" style="width: 100%;" v-model="team.coach.email" v-bind:disabled="!team.category" name="coachEmail">
+                        </td>
+                    </tr>
+                    <!-- not yet -->
+                    <tr v-if="false">
+                        <td colspan="3" align="right" style="text-align: right;">
+                            <label for="rdCoachGender1" v-bind:disabled="!team.category">מר</label>
+                            <input type="radio" id="rdCoachGender1" v-model="team.coach.gender" value="1" v-bind:disabled="!team.category">
+                            <label for="rdCoachGender2" v-bind:disabled="!team.category">גב'</label>
+                            <input type="radio" id="rdCoachGender2" v-model="team.coach.gender" value="2" v-bind:disabled="!team.category">
+                            <input type="button" value="איפוס" v-if="team.coach.gender" v-on:click="team.coach.gender = null" style="margin-right: 10px;" v-bind:disabled="!team.category" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="pb-sm">
+                <label style="position: relative;">
+                    האם בעל תעודת הוראה או עבר השתלמות מאמן ללא תעודת הוראה?
+                </label>
+                <div>
+                    כן
+                    <input type="radio" name="certification" v-model="team.coach.certification" value="1" v-bind:disabled="!team.category">
+                    לא
+                    <input type="radio" name="certification" v-model="team.coach.certification" value="0" v-bind:disabled="!team.category">
+                </div>
+            </div>
+            <div class="pb-sm" v-if="true"> <!-- team.coach.certification == 1 -->
+                <label style="position: relative;">
+                    סוג הסמכה של המאמן:
+                    (ניתן לבחור מספר אפשרויות)
+                </label>
+                <div>
+                    <template v-for="(certification, index) in coachCertifications">
+                        <label v-bind:for="'chkCertification'+certification.Id">
+                            {{certification.Name}}
+                            <input :id="'chkCertification'+certification.Id" type="checkbox" name="certificationType" v-model="team.coach.certificationTypes"
+                                   v-bind:value="certification.Id" />
+                        </label>
+                    </template>
+                </div>
+            </div>
+            <div class="pb-sm" v-if="false" v-bind:style="{'border': team.coach.sexOffenseClearance == null || team.coach.sexOffenseClearance == 0 ? '1px solid red' : 'none'}">
+                <label style="position: relative;">
+                    האם קיים למאמן אישור משטרה (היעדר עבירות מין)?
+                </label>
+                <div>
+                    <label for="chkSexOffenseClearance1">
+                        יש אישור
+                        <input type="radio" id="chkSexOffenseClearance1" name="sexOffenseClearance" v-model="team.coach.sexOffenseClearance" value="1">
+                    </label>
+                    <label for="chkSexOffenseClearance2">
+                        אין אישור
+                        <input type="radio" id="chkSexOffenseClearance2" name="sexOffenseClearance" v-model="team.coach.sexOffenseClearance" value="0">
+                    </label>
+                    <label for="chkSexOffenseClearance3">
+                        לא רלוונטי (שאלה מתייחסת לגברים בלבד)
+                        <input type="radio" id="chkSexOffenseClearance3" name="sexOffenseClearance" v-model="team.coach.sexOffenseClearance" value="2">
+                    </label>
+                </div>
+                <div style="color: red; font-weight: bold;" v-if="team.coach.sexOffenseClearance == null">
+                    שדה חובה
+                </div>
+                <div style="color: red; font-weight: bold;" v-if="team.coach.sexOffenseClearance == 0">
+                    לא ניתן לרשום קבוצה ללא אישור זה
+                </div>
+            </div>
+            <div class="pb-sm">
+                <table>
+                    <tr v-if="team.sport"> <!--  && team.sport.isGroup -->
+                        <td class="label required">מתקן</td>
+                        <td class="label required" v-if="team.facility == null || editingFacility">שם</td>
+                        <td class="label required" v-if="team.facility == null || editingFacility">כתובת</td>
+                        <td></td>
+                    </tr>
+                    <tr  v-if="team.sport"> <!--  && team.sport.isGroup -->
+                        <td class="pl-sm">
+                            <select v-model="team.facility" style="min-width: 100px;" v-bind:disabled="!team.category">
+                                <option v-for="facility in facilities" v-bind:value="facility.id">{{facility.name}}</option>
+                                <option v-bind:value="null"></option>
+                            </select>
+                        </td>
+                        <td class="pl-sm" v-if="team.facility == null || editingFacility">
+                            <input type="text" v-model="newFacilityName" required v-bind:disabled="!team.category">
+                        </td>
+                        <td v-if="team.facility == null || editingFacility">
+                            <input type="text" v-model="newFacilityAddress" required v-bind:disabled="!team.category">
+                        </td>
+                        <td>
+                            <button v-bind:disabled="!team.category" type="button" v-if="team.facility != null && !editingFacility" class="btn" v-on:click="editFacility(true)">
+                                עדכון
+                            </button>
+                            <button v-bind:disabled="!team.category" type="button" v-if="team.facility != null && editingFacility" class="btn" v-on:click="editFacility(false)">
+                                ביטול
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="pb-sm">
+                <div class="label">ימי ושעות אימונים</div>
+
+                <table v-for="(activity, index) in team.activity">
+                    <tr>
+                        <td>יום</td>
+                        <td>משעה</td>
+                        <td>עד שעה</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="pl-sm">
+                            <select required v-model="activity.day" v-bind:disabled="!team.category" style="min-width: 60px;">
+                                <option value="0">א'</option>
+                                <option value="1">ב'</option>
+                                <option value="2">ג'</option>
+                                <option value="3">ד'</option>
+                                <option value="4">ה'</option>
+                                <option value="5">ו'</option>
+                            </select>
+                        </td>
+                        <td class="pl-sm">
+                            <select v-model="activity.startTime" v-on:change="activityMethods.computeEndTime(activity)"
+                                    v-bind:disabled="!team.category || activity.day == null" style="min-width: 80px;" required>
+                                <option v-for="hour in startHours" v-bind:value="hour.value">{{hour.text}}</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select v-model="activity.endTime"
+                                    v-bind:disabled="!team.category || activity.day == null || activity.startTime == null"
+                                    required
+                                    style="min-width: 80px;">
+                                <option v-for="hour in activity.endHours" v-bind:value="hour.value">{{hour.text}}</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button type="button" v-if="team.activity.length > 1" class="mr-sm btn red"
+                                    v-on:click="activityMethods.removeDay(team.activity, activity)">הסרת יום</button>
+                            <button type="button" v-if="index == team.activity.length - 1
+                                            && team.activity[team.activity.length - 1].day
+                                            && team.activity[team.activity.length - 1].startTime
+                                            && team.activity[team.activity.length - 1].endTime"
+                                    class="mr-sm btn" v-on:click="activityMethods.addDay(team.activity)">הוספת יום</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="pb-sm">
+                <div class="label">שעות אירוח</div>
+                <div v-bind:style="{'color': isHostingDayValid(team.hostingHours) ? 'inherit' : 'red'}">יש לרשום טווח של 3 שעות לפחות</div>
+                <table v-for="(hostingHour, index) in team.hostingHours">
+                    <tr>
+                        <td>יום</td>
+                        <td>
+                            משעה
+                        </td>
+                        <td>עד שעה</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="pl-sm">
+                            <select v-model="hostingHour.day" v-bind:disabled="!team.category" style="min-width: 60px;">
+                                <option value="0">א'</option>
+                                <option value="1">ב'</option>
+                                <option value="2">ג'</option>
+                                <option value="3">ד'</option>
+                                <option value="4">ה'</option>
+                                <option value="5">ו'</option>
+                            </select>
+                        </td>
+                        <td class="pl-sm">
+                            <select v-model="hostingHour.startTime" v-on:change="activityMethods.computeEndTime(hostingHour)"
+                                    v-bind:disabled="!team.category || hostingHour.day == null" style="min-width: 80px;">
+                                <option v-for="hour in startHours" v-bind:value="hour.value">{{hour.text}}</option>
+                            </select>
+                        </td>
+                        <td>
+                            <!-- v-on change="hostingEndTimeChanged()" -->
+                            <select v-model="hostingHour.endTime"
+                                    v-bind:disabled="!team.category || hostingHour.day == null || hostingHour.startTime == null"
+                                    style="min-width: 80px;">
+                                <option v-for="hour in hostingHour.endHours" v-bind:value="hour.value">{{hour.text}}</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button type="button" v-if="team.hostingHours.length > 1" class="mr-sm btn red"
+                                    v-on:click="activityMethods.removeDay(team.hostingHours, hostingHour)">הסרת יום</button>
+                            <button type="button" v-if="index == team.hostingHours.length - 1
+                                            && team.hostingHours[team.hostingHours.length - 1].day
+                                            && team.hostingHours[team.hostingHours.length - 1].startTime
+                                            && team.hostingHours[team.hostingHours.length - 1].endTime"
+                                    class="mr-sm btn" v-on:click="activityMethods.addDay(team.hostingHours)">הוספת יום</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="pb-md" style="text-align: center;">
+            <span v-if="teamNumberExists" style="color: red;">
+                ערך של שדה קבוצה כבר תפוס על ידי קבוצה אחרת, נא להזין ערך אחר
+                <br />
+            </span>
+            <button type="button" class="btn wide" v-on:click="confirm()"
+                    v-bind:disabled="!team.category ||
+                    !validateForm() || !teamDataChanged">אישור</button>
+            <!-- team.coach.sexOffenseClearance == null || team.coach.sexOffenseClearance == 0 || -->
+            <button type="button" class="btn red small" style="float: left; margin-left: 10px;"
+                    v-on:click="cancel()">יציאה ללא שמירת נתונים</button>
+        </div>
+    </form>
+</div>

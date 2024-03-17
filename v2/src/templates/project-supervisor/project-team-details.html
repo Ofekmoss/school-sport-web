@@ -1,0 +1,104 @@
+<div class="dialog wide">
+    <div class="float-left clickable" v-on:click="cancel">&#x2715;</div>
+    <div class="caption">
+        קבוצה
+        {{team.id}}
+        -
+        פרטים נוספים
+    </div>
+    <div class="ph-md" style="overflow: auto;">
+        <div class="pb-sm" style="display: flex; flex-wrap: wrap; justify-content: space-between; margin: 5px; line-height: 30px;">
+            <div>
+                <span>ענף:</span>
+                <span style="color: blue;">
+                    {{team.sport.name}}
+                    <span> {{getGender(team.sport.gender)}}</span>
+                </span>
+            </div>
+            <div>
+                <span>גילאים:</span>
+                <span style="color: blue;">{{getAgesText(team.ages)}}</span>
+            </div>
+            <div>
+                <span>מתקן:</span>
+                <span style="color: blue;">{{team.facility.name}}</span>
+            </div>
+            <div>
+                <span>כתובת מתקן:</span>
+                <span style="color: blue;">{{team.facility.address}}</span>
+            </div>
+            <div>
+                <span>סוג מתקן:</span>
+                <span style="color: blue;">{{team.facility.type}}</span>
+            </div>
+            <div>
+                <span>ימי אימון:</span>
+                <span style="color: blue;">{{getActivityText(team.activity)}}</span>
+            </div>
+            <div>
+                <span>שם מאמן/ת:</span>
+                <span style="color: blue;">{{team.coach.name}}</span>
+            </div>
+            <div>
+                <span>טלפון מאמן/ת:</span>
+                <span style="color: blue;">{{team.coach.phoneNumber}}</span>
+            </div>
+            <div>
+                <span>מייל מאמן/ת:</span>
+                <span style="color: blue;">{{team.coach.email}}</span>
+            </div>
+            <div>
+                <span>מגדר מאמן/ת:</span>
+                <span style="color: blue;">{{team.coach.gender == 1 ? 'זכר' : 'נקבה'}}</span>
+            </div>
+            <div>
+                <span>הסמכת מאמן/ת:</span>
+                <span style="color: blue;">{{getCertificationText(team.coach.certification)}}</span>
+            </div>
+            <div>
+                <span>אישור מנהל/ת פרוייקט:</span>
+                <span style="color: blue;">{{isApprovedByAdmin(team)}}</span>
+            </div>
+            <div>
+                <span>אישור מפקח/ת מחוז:</span>
+                <span style="color: blue;">{{isApprovedBySportAdmin(team)}}</span>
+            </div>
+            <div>
+                <span>האם הקבוצה מאושרת?</span>
+                <span style="color: blue;">{{isApproved(team)}}</span>
+            </div>
+        </div>
+        <div v-if="team.players && team.players.length > 0">
+            <table class="table" style="width: 100%; margin-bottom: 25px;">
+                <caption style="font-weight: bold;">רשימת שחקנים</caption>
+                <thead>
+                <tr>
+                    <th style="text-align: center">שם פרטי</th>
+                    <th style="text-align: center">שם משפחה</th>
+                    <th style="text-align: center">תעודת זהות\דרכון</th>
+                    <th style="text-align: center">מספר תעודת זהות\דרכון</th>
+                    <th style="text-align: center">שנת לידה</th>
+                    <th style="text-align: center">מגדר</th>
+                    <th style="text-align: center">האם משתייך לפרויקט פלא?</th>
+                    <th style="text-align: center"> תאריך הצטרפות לפרויקט פלא</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(player, index) in team.players">
+                    <td align="center">{{player.firstName}}</td>
+                    <td align="center">{{player.lastName }}</td>
+                    <td align="center">{{getIdType(player.idNumberType)}}</td>
+                    <td align="center">{{player.idNumber}}</td>
+                    <td align="center">{{player.yearOfBirth}}</td>
+                    <td align="center">{{getPlayerGender(player.gender)}}</td>
+                    <td align="center">{{getIsPele(player.isPele)}}</td>
+                    <td align="center">{{player.peleJoinDate}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="pb-md" style="text-align: center;">
+        <button type="button" class="btn wide" v-on:click="confirm()">חזרה למסך קבוצות</button>
+    </div>
+</div>

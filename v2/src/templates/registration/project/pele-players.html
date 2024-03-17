@@ -1,0 +1,213 @@
+<div>
+    <table class="pele-players" style="border: none;" border="0" cellpadding="5" cellspacing="0">
+        <thead>
+        <tr style="position: relative;">
+            <th align="right" style="text-align: right;">
+                ענף ומס' קבוצה
+            </th>
+            <th align="right" style="text-align: right;">
+                &nbsp;
+            </th>
+            <th align="right" style="text-align: right;">
+                ספורטאים/ות
+            </th>
+            <th align="right" style="text-align: right;">
+                ספורטאי/ות פל"א
+            </th>
+            <th align="right" style="text-align: right;">
+                אחוז ספורטאי/ות פל"א
+            </th>
+            <th align="left" style="text-align: center; position: absolute; left: 320px;">
+                אישור מנהל פל"א
+            </th>
+            <th align="left" style="text-align: center; position: absolute; left: 140px;">
+                אישור מפקח/ת מנהל
+            </th>
+            <th align="left" style="text-align: center; position: absolute; left: 20px;">
+                סטטוס בקשה
+            </th>
+        </tr>
+        </thead>
+        <tbody v-for="(team, index) in teams">
+        <tr style="position: relative;">
+            <td align="right" style="text-align: right;">
+                <div class="panel-header" v-on:click="togglePanel(team)" style="cursor: pointer;">
+                    <div>{{team.sport}} {{getTeamGender(team.gender)}} - {{team.id}}</div>
+                </div>
+            </td>
+            <td align="right">
+                <div class="panel-header" style="padding: 0 1rem; font-size: 30px; cursor: pointer;"
+                     v-bind:style="{transform: team.__panelOpen ? 'rotate(270deg)' : 'none'}"
+                     v-on:click="togglePanel(team)"> > </div>
+            </td>
+            <td align="right">
+                <div class="panel-header" style="font-size: 14px;">
+                    {{team.players.length}} ספורטאים/ות
+                </div>
+            </td>
+            <td align="right">
+                <div class="panel-header" style="font-size: 14px;">
+                    {{peleCount(team)}} פל"א
+                </div>
+            </td>
+            <td align="right">
+                <div v-if="team.players.length > 0"  class="panel-header" style="font-size: 14px; text-align: right;">
+                    {{getPelePercentPopulation(team)}}%
+                </div>
+            </td>
+            <td align="left" style="position: absolute; left: 320px;">
+                <div class="panel-header" style="font-size: 14px;">
+                    <span class="tooltip" style="color: red;">
+                        <img style="width: 2rem; padding: 0 0.5rem;" v-bind:src="isApprovedByAdmin(team) ? 'img/v.svg' : 'img/x-grey.svg'">
+                            <div class="tooltip-content" v-bind:style="{top: index > 0 ? '-20px' : '20px'}">
+                                <p v-if="isApprovedByAdmin(team)">יש אישור של רכז\ת</p>
+                                <p v-else>אין אישור של רכז\ת</p>
+                                <i></i>
+                            </div>
+                        </span>
+                    <div v-if="false">מנהל\ת פל"א</div>
+                </div>
+            </td>
+            <td align="left" style="position: absolute; left: 140px;">
+                <div class="panel-header" style="font-size: 14px;">
+                    <span class="tooltip" style="color: red;">
+                        <img style="width: 2rem; padding: 0 0.5rem;" v-bind:src="isApprovedBySportAdmin(team) ? 'img/v.svg' : 'img/x-grey.svg'">
+                            <div class="tooltip-content" v-bind:style="{top: index > 0 ? '-20px' : '20px'}">
+                                <p v-if="isApprovedBySportAdmin(team)">יש אישור של מפקח\ת  מנהל הספורט</p>
+                                <p v-else>אין אישור של מפקח\ת  מנהל הספורט</p>
+                                <i></i>
+                            </div>
+                        </span>
+                    <div v-if="false">מפקח\ת מנהל הספורט</div>
+                </div>
+            </td>
+            <td align="left" style="position: absolute; left: 20px;">
+                <div class="panel-header" style="font-size: 14px;">
+                    <span class="tooltip" style="color: red;">
+                        <img style="width: 2rem; padding: 0 0.5rem;" v-bind:src="isApproved(team) ? 'img/v.svg' : 'img/x-grey.svg'">
+                            <div class="tooltip-content" v-bind:style="{top: index > 0 ? '-20px' : '20px'}">
+                                <p v-if="isApproved(team)">קבוצה מאושרת</p>
+                                <p v-else>קבוצה לא מאושרת</p>
+                                <i></i>
+                            </div>
+                        </span>
+                    <div v-if="false">סטטוס</div>
+                </div>
+            </td>
+        </tr>
+        <tr v-if="team.__panelOpen">
+            <td colspan="8" align="right">
+                <div class="panel-body" style="overflow: unset">
+                    <div class="tool-bar" style="display: flex; justify-content: space-between">
+                        <div>
+                            <div>
+                                <input type="checkbox" v-model="team.selectAll" v-on:change="handleSelectAll(team)">
+                                <span>כל השחקנים</span>
+                            </div>
+                        </div>
+
+                        <div style="display: flex;">
+                            <div style="color: red; font-size: 14px">
+                                <div style="display: flex; margin: 4px">
+                                    <div v-if="team.players.length > 15 || team.players.length < 10">ניתן לצרף בין 10 ל 15 שחקנים לקבוצה</div>
+                                    <div v-if="checkAges(team)" class="label tooltip"><div class="tooltip-content">
+                                        <p style="white-space: nowrap">גיל המשתתפים בפעילות : ילדים/ות בגיל 10-12, נערים/ות בגיל 13-18</p>
+                                        <i></i>
+                                    </div><img style="width: 1rem" src="img/warning.png"></div>
+                                </div>
+                                <div v-if="getPelePercentPopulation(team) <= 0.40 && getPelePercentPopulation(team) >= 0.20 ">בכל קבוצת פעילות חלקם של יוצאי קהילת אתיופיה יהיה 20%-40% מכלל המשתתפים.</div>
+                            </div>
+                            <div class="button-group">
+                                <button v-bind:disabled="team.selectionCount != 1" v-on:click="editPlayer(team)"><span class="icon">&#x1F589;</span> עריכה</button>
+                                <button v-bind:disabled="team.selectionCount == 0" v-on:click="deletePlayers(team)"><span class="icon">&#x2715;</span> מחיקה</button>
+                            </div>
+                            <button class="btn"
+                                    style="pointer-events: auto;"
+                                    v-bind:title="team.players.length >= maxTeamPlayers ? 'קבוצה הגיעה למכסת שחקנים מקסימלית' : ''"
+                                    v-on:click="newPlayer(team)"
+                                    v-bind:disabled="team.players.length >= maxTeamPlayers">הוספת ספורטאים/ות</button>
+
+                        </div>
+                    </div>
+                    <div v-if="team.players && team.players.length > 0">
+                        <table class="table mt-md" style="width: 100%">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th style="text-align: center">שם פרטי</th>
+                                <th style="text-align: center">שם משפחה</th>
+                                <th style="text-align: center">תעודת זהות\דרכון</th>
+                                <th style="text-align: center">מספר תעודת זהות\דרכון</th>
+                                <th style="text-align: center">שנת לידה</th>
+                                <th style="text-align: center">מגדר</th>
+                                <th style="text-align: center">האם משתייך לפרויקט פל"א?</th>
+                                <th style="text-align: center">תאריך הצטרפות לפרוייקט פל"א</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="(player, index) in team.players" v-bind:class="{ multipleTeamsRow: player.multipleTeams }">
+                                <td><input type="checkbox" v-model="player.selected" v-on:change="handleSelectionChange(team)"></td>
+                                <td align="center">{{player.firstName}}</td>
+                                <td align="center">{{player.lastName }}</td>
+                                <td align="center">{{getIdType(player.idNumberType)}}</td>
+                                <td align="center" v-bind:title="player.tooltip">{{player.idNumber}}</td>
+                                <td align="center">{{player.yearOfBirth}}</td>
+                                <td align="center">{{getGender(player.gender)}}</td>
+                                <td align="center">{{getIsPele(player.isPele)}}</td>
+                                <td align="center">{{player.peleJoinDate}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="8" align="right">
+                &nbsp;
+            </td>
+        </tr>
+        </tbody>
+        <tbody>
+        <tr style="position: relative;">
+            <td colspan="2" align="left" style="text-align: left;">
+                <div class="panel-header">
+                    <div>סה"כ</div>
+                </div>
+            </td>
+            <td align="right">
+                <div class="panel-header" style="font-size: 14px;">
+                    {{totalPlayers}}
+                    ספורטאים/ות
+                </div>
+            </td>
+            <td align="right">
+                <div class="panel-header" style="font-size: 14px;">
+                    {{peleCount(null)}}
+                    פל"א
+                </div>
+            </td>
+            <td align="right">
+                <div v-if="totalPlayers > 0"  class="panel-header" style="font-size: 14px; text-align: right;">
+                   {{getPelePercentPopulation(null)}}%
+                </div>
+            </td>
+            <td align="left" style="position: absolute; left: 320px;">
+                <div class="panel-header" style="font-size: 14px;">
+                    &nbsp;
+                </div>
+            </td>
+            <td align="left" style="position: absolute; left: 140px;">
+                <div class="panel-header" style="font-size: 14px;">
+                    &nbsp;
+                </div>
+            </td>
+            <td align="left" style="position: absolute; left: 20px;">
+                <div class="panel-header" style="font-size: 14px;">
+                    &nbsp;
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

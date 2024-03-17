@@ -1,0 +1,158 @@
+<div>
+    <form id="form">
+
+        <div class="panel">
+            <div class="panel-header">
+                פרטי רשות
+            </div>
+
+            <div class="panel-body" style="overflow: unset;">
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 33%;"><div class="label">שם הרשות</div></td>
+                        <td style="width: 33%;"><div class="label">שם ראש הרשות</div></td>
+                        <td style="width: 33%;"><div class="label">סמל הרשות
+                        </div></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" required tabindex="1" style="width: 90%;" v-model="name" disabled="true">
+                        </td>
+                        <td>
+                            <input type="text" required tabindex="2" style="width: 90%;" v-model="managerName">
+                        </td>
+                        <td>
+                            <input type="text" pattern="\d*" required tabindex="3" style="width: 90%;" v-model="symbol">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 33%;"><div class="label tooltip"><div class="tooltip-content">
+                            <p>משרדי הרשות</p>
+                            <i></i>
+                        </div>כתובת</div></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" required tabindex="4" style="width: 90%;" v-model="address">
+                        </td>
+
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                אנשי קשר
+            </div>
+            <div class="panel-body" style="overflow: unset;">
+                <div class="panel-sub-header">מנהל/ת מחלקת ספורט</div>
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 33%;"><div class="label">שם</div></td>
+                        <td style="width: 33%;"><div class="label tooltip">נייד<div class="tooltip-content">
+                            <p>נייד מנהל/ת מחלקת הספורט</p>
+                            <i></i>
+                        </div></div></td>
+                        <td style="width: 33%;"><div class="label tooltip">אימייל<div class="tooltip-content">
+                            <p>אימייל מנהל/ת מחלקת הספורט</p>
+                            <i></i>
+                        </div></div></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" required tabindex="5" style="width: 90%;" v-model="manager.name">
+                        </td>
+                        <td>
+                            <input type="text" required tabindex="6" style="width: 90%;" v-model="manager.phoneNumber"
+                                   pattern="(0[0-9]{2}-[0-9]{7}|0[0-9]{1}-[0-9]{7}|0[0-9]{2}[0-9]{7}|0[0-9]{1}[0-9]{7})">
+                        </td>
+                        <td>
+                            <input type="text" required tabindex="7" style="width: 90%;" v-model="manager.email"
+                                   pattern="^\S+@\S+$">
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="panel-sub-header">אחראי/ת פרויקט מטעם הרשות</div>
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 33%;"><div class="label">שם</div></td>
+                        <td style="width: 33%;"><div class="label tooltip">נייד<div class="tooltip-content">
+                            <p>נייד של האחראי על הפרויקט מטעם הרשות</p>
+                            <i></i>
+                        </div></div></td>
+                        <td style="width: 33%;"><div class="label tooltip">אימייל<div class="tooltip-content">
+                            <p>אימייל של האחראי על הפרויקט מטעם הרשות</p>
+                            <i></i>
+                        </div></div></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" required tabindex="8" style="width: 90%;" v-model="supervisor.name">
+                        </td>
+                        <td>
+                            <input type="text" required tabindex="9" style="width: 90%;" v-model="supervisor.phoneNumber"
+                                   pattern="(0[0-9]{2}-[0-9]{7}|0[0-9]{1}-[0-9]{7}|0[0-9]{2}[0-9]{7}|0[0-9]{1}[0-9]{7})">
+                        </td>
+                        <td>
+                            <input type="text" required tabindex="10" style="width: 90%;" v-model="supervisor.email"
+                                   pattern="^\S+@\S+$">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                הגדרת ענפי ספורט
+            </div>
+            <div class="panel-body">
+                <p>
+                    הגדירו את שלושת ענפי הספורט התואמים את תכנית האב היישובית לשנת הלימודים תש"פ.
+                </p>
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 30%;"><div class="label">ענף ספורט 1:</div></td>
+                        <td class="medium-up"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input autofocus type="text" tabindex="11" style="width: 90%;" v-model="item1">
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%;"><div class="label">ענף ספורט 2:</div></td>
+                        <td class="medium-up"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" tabindex="12" style="width: 90%;" v-model="item2">
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%;"><div class="label">ענף ספורט 3:</div></td>
+                        <td class="medium-up"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" tabindex="13" style="width: 90%;" v-model="item3">
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </form>
+
+    <button class="btn green float-left" v-bind:disabled="!isFormValid" v-on:click="next()">
+        אישור והמשך
+    </button>
+</div>

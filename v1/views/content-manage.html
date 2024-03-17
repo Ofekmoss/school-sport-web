@@ -1,0 +1,309 @@
+<style type="text/css">
+    .fa {
+        /* display: inline !important; */
+    }
+    .tags {
+        text-align: right;
+    }
+    .tag-item {
+        /* float: right; */
+        display: inline-block;
+        background: #60666b;
+        border: none;
+        margin-left: 5px;
+        font-size: 12px !important;
+        line-height: 15px;
+        color: #fff !important;
+        padding: 2px 8px;
+        text-shadow: none;
+        border: 1px solid #ffffff;
+        border-radius: 4px;
+    }
+
+    .action_icons .glyphicon {
+        cursor: pointer;
+        font-size: 60%;
+        padding: 2px 2px 2px 2px;
+    }
+
+    .action_icons .glyphicon:hover {
+        background-color: #00ADEE;
+        color: #e2e6e7;
+    }
+</style>
+
+<div class="wide-container" ng-if="Unauthorized">
+    <div class="alert alert-danger" role="alert">
+        עמוד זה דורש הרשאות ניהול
+    </div>
+</div>
+
+<div class="wide-container" ng-if="!Unauthorized">
+    <manage-breadcrumbs description="ניהול עמודי תוכן"></manage-breadcrumbs>
+    <div class="content">
+        <div> <!-- class="container" -->
+            <div class="row">
+                <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">
+                    <!--Featured video-->
+                    <div class="section">
+                        <h3 class="section_title">
+                            <i class="fa fa-home" style="font-weight: bold;"></i>
+                            כתבות וגלריות מקודמות
+                        </h3>
+                        <div class="t_align_c">
+                            <ul class="row" ng-repeat="pageRow in featuredPageRows">
+                                <li class="col-lg-4 col-md-4 col-sm-4 col-xs-4" ng-repeat="page in pageRow | reverse">
+                                    <div class="section_post_left">
+                                        <div> <!-- scale_image_container  with_buttons -->
+                                            <div class="scale_image_container manage_thumbnail_small">
+                                                <a ui-sref="page.edit({page: page.Seq})"><img ng-src="{{page.DefaultImagePath}}" alt="" class="scale_image"></a>
+                                                <div class="post_image_buttons">
+                                                    <div class="buttons_container">
+                                                        <a ui-sref="page.edit({page: page.Seq})" class="{{page.BannerButtonClass}}">
+                                                            {{page.HebrewType}}
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="clearfix">
+                                            <div class="f_left" style="margin-top: -10px;">
+                                                <div class="event_date">{{page.Date | date : 'dd/MM/yyyy'}}</div>
+                                            </div>
+                                            <div class="f_right action_icons" style="margin-top: -5px;">
+                                                <span class="glyphicon glyphicon-arrow-right" style="margin-left: 3px;"
+                                                      ng-show="page.FeaturedIndex > 1"
+                                                      ng-click="MoveFeaturedRight(page)"></span>
+                                                <span class="glyphicon glyphicon-remove" style="margin-left: 3px;"
+                                                      ng-click="RemoveFromFeatured(page)"></span>
+                                                <span class="glyphicon glyphicon-arrow-left" style="margin-left: -15px;"
+                                                      ng-show="page.FeaturedIndex < FeaturedPageCount()"
+                                                      ng-click="MoveFeaturedLeft(page)"></span>
+                                            </div>
+                                        </div>
+                                        <div class="post_text">
+                                            <h4 class="post_title">
+                                                <a ui-sref="page.edit({page: page.Seq})">
+                                                    {{page.Description}}
+                                                </a>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="section" ng-repeat="recentPageType in recentPageTypes">
+                        <h3 class="section_title">
+                            <i class="fa fa-heart" style="font-weight: bold;"></i>
+                            {{recentPageType.HebrewPluralType}}
+                        </h3>
+                        <div class="t_align_c">
+                            <ul class="row" ng-repeat="pageRow in recentPageType.Rows">
+                                <li class="col-lg-4 col-md-4 col-sm-4 col-xs-4" ng-repeat="page in pageRow | reverse">
+                                    <div class="section_post_left">
+                                        <div> <!--  with_buttons -->
+                                            <div class="scale_image_container manage_thumbnail_small">
+                                                <a ui-sref="page.edit({page: page.Seq})"><img ng-src="{{page.DefaultImagePath}}" alt="" class="scale_image"></a>
+                                                <div class="post_image_buttons">
+                                                    <div class="buttons_container">
+                                                        <a ui-sref="page.edit({page: page.Seq})" class="button banner_button" style="{{getSportFieldStyle(page.SportFieldSeq)}}">{{page.SportFieldName}}</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="clearfix">
+                                            <div class="f_left" style="margin-top: -10px;">
+                                                <div class="event_date">{{page.Date | date : 'dd/MM/yyyy'}}</div>
+                                            </div>
+                                            <div class="f_right action_icons" style="margin-top: -5px;">
+                                                <span class="glyphicon glyphicon-arrow-right" style="margin-left: 3px;"
+                                                      ng-show="page.PageIndex > 1"
+                                                      ng-click="MoveRecentRight(page)"></span>
+                                                <span class="glyphicon glyphicon-remove" style="margin-left: 3px;"
+                                                      ng-click="RemoveFromRecent(page)"></span>
+                                                <span class="glyphicon glyphicon-arrow-left" style="margin-left: -15px;"
+                                                      ng-show="page.PageIndex < recentPageType.Pages.length"
+                                                      ng-click="MoveRecentLeft(page)"></span>
+                                            </div>
+                                        </div>
+                                        <div class="post_text">
+                                            <h4 class="post_title">
+                                                <a ui-sref="page.edit({page: page.Seq})">
+                                                    {{page.Description}}
+                                                </a>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12">
+                    <div class="section" style="margin-top: 0px;">
+                        <manage-tabs sender="pages.manage"></manage-tabs>
+                        <div class="sorting_block var2 clearfix">
+                            <div>
+                                <input type="text" name="search" ng-model="data.contentSearch" placeholder="חיפוש" />
+                            </div>
+                            <div>
+                                <span>
+מיון לפי
+                                </span>
+                                <!--Categories-->
+                                <div class="custom_select" id="ddlSortBy">
+                                    <div class="select_title">
+{{sortFields[0].Name}}
+                                    </div>
+                                    <ul id="menu_type" class="select_list"></ul>
+                                    <select>
+                                        <option ng-repeat="sortField in sortFields" value="sortField.Value">
+{{sortField.Name}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <span>
+הצגת
+                                </span>
+                                <div class="custom_select" id="ddlPageType">
+                                    <div class="select_title">
+                                        כל הסוגים
+                                    </div>
+                                    <ul id="selected_page_type" class="select_list"></ul>
+                                    <select>
+                                        <option value="0">
+                                            כל הסוגים
+                                        </option>
+                                        <option ng-repeat="availablePageType in availablePageTypes" value="availablePageType.Type">
+                                            {{availablePageType.PluralHebrewType}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section_7">
+                        <div style="margin-top: -20px; margin-bottom: 10px;">
+                            <a ng-repeat="pageType in pageTypes" ui-sref="{{pageType.Name}}.edit({page: 'new'})"
+                               class="button button_type_icon_medium button_orange" onclick="return false;" style="margin-right: 5px;">
+                                הוספת
+                                {{pageType.Hebrew.Singular}}
+                                <i class="{{pageType.Icon}}"></i></a>
+                        </div><br />
+                        <ul class="activity_list">
+                            <li ng-repeat="page in pages">
+                                <div class="post_photo" style="position: relative;">
+                                    <div class="scale_image_container manage_thumbnail_2">
+                                        <img class="scale_image" ng-src="{{page.DefaultImagePath}}" alt="" />
+                                    </div>
+                                    <div style="position: absolute; right: 0px; width: 40px; bottom: 0px; height: 40px; background-color: white; opacity: 0.7; text-align: center; line-height: 40px; vertical-align: middle;">
+                                        <a ui-sref="page.edit({page: page.Seq})">
+                                            <i class="{{getPageIcon(page)}}" style="font-size: 30px;"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="post_text">
+                                    <a ui-sref="page.edit({page: page.Seq})" class="f_left">
+                                        <h5>
+                                            {{page.SportFieldName}}<br />
+                                            {{page.Description}}
+                                        </h5>
+                                    </a>
+                                    <div style="clear: both;"></div>
+                                    <p class="var3">
+                                        <a ui-sref="article({page: page.Seq})" class="button button_type_icon_small icon button_grey_light" title="צפייה">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
+                                        &nbsp; | &nbsp;
+                                        <a ui-sref="page.edit({page: page.Seq})" class="button button_type_icon_small icon button_grey_light" title="עריכה">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                        &nbsp; | &nbsp;
+                                        <a href="#" class="button button_type_icon_small icon button_grey_light" ng-click="Delete(page)" onclick="return false;"
+                                           ng-show="!page.deleting" title="מחיקה">
+                                            <i class="fa fa-trash-o"></i>
+                                        </a>
+                                        <span ng-show="page.deleting">
+מוחק...
+                                        </span>
+                                        &nbsp; | &nbsp;
+                                        <a href="#" class="{{page.HidePageCssClass}}" ng-click="ToggleHidden(page)" onclick="return false;"
+                                           ng-show="!page.Hiding" title="{{HideTitle(page)}}">
+                                            <i class="fa fa-eye-slash"></i>
+                                        </a>
+                                        <span ng-show="page.Hiding">
+נא להמתין...
+                                        </span>
+                                        <span ng-show="page.Type != 5">
+                                           &nbsp; | &nbsp;
+                                        </span>
+                                        <a ng-show="page.Type != 5" href="#" class="{{page.AddToFeaturedCssClass}}" ng-click="ToggleFeatured(page)" onclick="return false;"
+                                           ng-show="!page.AddingToFeatured" title="{{AddToFeaturedTitle(page)}}">
+                                            <i class="fa fa-home"></i>
+                                        </a>
+                                        <span ng-show="page.AddingToFeatured">
+נא להמתין...
+                                        </span>
+                                        <span ng-show="page.Type != 5">
+                                            &nbsp; | &nbsp;
+                                        </span>
+                                        <a ng-show="page.Type != 5" href="#" class="{{page.AddToRecentCssClass}}" ng-click="ToggleRecent(page)" onclick="return false;"
+                                           ng-show="!page.AddingToRecent" title="{{AddToRecentTitle(page)}}">
+                                            <i class="fa fa-heart"></i>
+                                        </a>
+                                        <span ng-show="page.AddingToRecent">
+                                            נא להמתין...
+                                        </span>
+                                    </p>
+                                    <div class="event_activity">
+                                        {{page.HebrewType}}
+                                        <span ng-if="page.IsHebrewMale">
+                                            נוצר
+                                        </span>
+                                        <span ng-if="!page.IsHebrewMale">
+                                            נוצרה
+                                        </span>
+                                        ב-
+                                        {{page.Date | date : 'dd/MM/yyyy'}}
+                                        ע"י
+                                        {{page.CreatorDisplayName}}
+                                    </div>
+                                    <div class="tags">
+                                        <span class="tag-item" ng-repeat="tag in page.Tags">
+                                            {{tag.Name}}
+                                        </span>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="pagination_block var2" ng-if="contentPagingService.pagingData && contentPagingService.pagingData.gotPaging" style="margin-top: 15px; float: right;">
+                        <span>
+                            עמוד
+                            {{contentPagingService.pagingData.selectedPage}}
+                            מתוך
+                            {{contentPagingService.pagingData.pageCount}}
+                        </span>
+                            <ul class="pagination clearfix" style="margin-top: 0px;">
+                                <li><a href="#" ng-click="contentPagingService.previousPage()" class="{{(contentPagingService.pagingData.isFirstPage) ? 'disabled-link' : ''}}" onclick="return false;"><i class="fa fa-angle-right"></i></a></li>
+                                <li ng-repeat="page in contentPagingService.pagingData.pages"><a href="#" class="{{(page == contentPagingService.pagingData.selectedPage) ? 'active' : ''}}" ng-click="contentPagingService.changePage(page)" onclick="return false;">{{page}}</a></li>
+                                <li><a href="#" ng-click="contentPagingService.nextPage()" class="{{(contentPagingService.pagingData.isLastPage) ? 'disabled-link' : ''}}" onclick="return false;"><i class="fa fa-angle-left"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    // custom select
+    function InitCustomSelect() {
+        if (typeof sportUtils != 'undefined') {
+            sportUtils.InitCustomSelect();
+        } else {
+            window.setTimeout(InitCustomSelect, 100);
+        }
+    }
+    window.setTimeout(InitCustomSelect, 100);
+</script>

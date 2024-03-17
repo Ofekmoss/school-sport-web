@@ -1,0 +1,49 @@
+<div>
+    <div style="width: 100%;
+    height: 100%;
+    position: absolute;
+    background-image: url(img/background.png);
+    background-position: center bottom;
+    bottom: 85px;"></div>
+
+    <div style="width: 100%;
+    height: 100%;
+    position: absolute;
+    background-image: url(img/login-figures@2x.png);
+    background-position: left bottom;
+    background-size: 45%;
+    background-repeat: no-repeat;
+    margin: -33px;"></div>
+
+    <div style="position: absolute; display: flex; flex-direction: column; margin: 5% 5%; text-align: center; " v-if="passwordLogin || tokenLogin">
+        <div style="display: inline-block; text-align: right;">
+            <img class="mb-sm" src="img/logo.png" srcset="img/logo@2x.png 2x, img/logo@3x.png 3x">
+            <template v-if="!comsigndocid">
+                <div class="mb-sm label" style="color: white; font-size: large">כניסה למערכת</div>
+                <div v-if="passwordLogin">
+                    <div>
+                        <input style="width:30vw; font-size: large" type="text" v-model="username" placeholder="שם משתמש" autofocus v-on:keyup="keyUp($event)">
+                    </div>
+                    <div>
+                        <input style="width:30vw; font-size: large" type="password" v-model="password" placeholder="סיסמה" v-on:keyup="keyUp($event)">
+                    </div>
+                </div>
+                <div v-if="tokenLogin">
+                    <div class="mb-sm" style="color: white;">
+                        לשם כניסה למערכת יש להזין מספר טלפון ללא מקפים
+                    </div>
+                    <input style="width:200px;" type="password" v-model="password" placeholder="מספר טלפון" autofocus v-on:keyup="keyUp($event)">
+                </div>
+            </template>
+            <template v-if="comsigndocid">
+                <div class="mb-sm label" style="color: white; font-size: large">
+                    תהליך החתימה הושלם, תודה והמשך גלישה מהנה.
+                </div>
+            </template>
+        </div>
+        <button id="btnLogin" v-if="!comsigndocid" class="btn mt-sm" style="width:30vw; font-size: large;" v-on:click="login()">אישור</button>
+        <div v-if="errorMessage != null">
+            <p class="alert">{{errorMessage}}</p>
+        </div>
+    </div>
+</div>

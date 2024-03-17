@@ -1,0 +1,149 @@
+<div>
+    <div style="display: flex;justify-content: center; align-items: center; height: 4rem">
+        <div style="font-size: x-large; font-weight: 700;">התאחדות הספורט לבתי ספר</div>
+        <select v-model="season" v-on:change="refresh('season')" style="margin: 0 1rem 0 0;">
+            <option v-for="(season, index) in seasons" v-bind:value="season.id">{{season.name}}</option>
+        </select>
+
+        <select v-model="region" v-on:change="refresh('region'); reloadSports()" v-bind:disabled="type === 3" style="margin: 0 1rem 0 0;">
+            <option :value="null">כל המחוזות</option>
+            <option v-for="(region, index) in regions" v-bind:value="region.id">{{region.name}}</option>
+        </select>
+
+        <select v-model="sport" v-on:change="refresh('sport')" style="margin: 0 1rem 0 0;">
+            <option :value="null">כל הענפים</option>
+            <option v-for="(sport, index) in sports" v-bind:value="sport.id">{{sport.name}}</option>
+        </select>
+
+        <select v-model="category" v-if="type !== 13 && type !== 15" v-on:change="refresh('category')" style="margin: 0 1rem 0 0;">
+            <option :value="null">כל הקטגוריות</option>
+            <option v-for="(category, index) in categories" v-bind:value="category.id">{{category.name}}</option>
+        </select>
+
+        <select v-model="type" v-on:change="refresh('type')" style="margin: 0 1rem 0 0;">
+            <option :value="null">כל סוגי האליפות</option>
+            <option v-for="(t, index) in types" v-bind:value="t.id">{{t.name}}</option>
+        </select>
+
+    </div>
+    <div v-if="dataLoading" style="width: 100%; height: 100%; text-align: center;">
+        <img align="center" src="img/progress.gif" />
+    </div>
+    <div ng-if="!dataLoading" class="horizontal-flex" style="height: calc(60% - 4.5rem)">
+        <div v-if="type != 13 && type != 15" style="flex: 0 0 36%;
+            justify-content: space-around;
+            display: flex;
+            flex-direction: column;
+            margin: 0rem 2rem 0px 1rem;">
+            <div class="panel" style="height: 100%; padding: 1rem; box-sizing: border-box;"
+                 v-bind:style="{'overflow-y': events.length > 3 ? 'scroll' : 'auto'}">
+                <div style="display: flex; justify-content: space-between">
+                    <div style="color: #1453b1; font-weight: bold; font-size: 130%; height: 2rem;" >לוח אירועים</div>
+                </div>
+                <div class="vertical-flex dashboard-container" style="align-items: baseline; height: 2rem;">
+                    <datepicker :language="Hebrew" :inline="true" :highlighted="highlightedDates"
+                                :value="date"
+                                v-on:selected="filterEvents($event)"
+                                v-on:changedMonth="filterEvents($event, false)"></datepicker>
+                    <div v-if="events.length > 0" style="line-height: 10px;">
+                        <div v-for="(event, index) in events" style="overflow: hidden;padding: 1rem;"
+                             v-bind:style="{'border-bottom': index < events.length - 1 ? '1px solid #1453b1' : 'none'}">
+                            <a v-bind:href="event.scoreLink" target="_blank" style="text-decoration: none; color: blue;">{{event.title}}</a>
+                        </div>
+                    </div>
+                    <div v-if="events.length == 0">
+                        אין אירועים להצגה
+                        {{calendarDayCaption}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div v-bind:style="{ 'flex':  (type  == 13 || type  == 15) ? '0 0 100%' : '0 0 58%'}"
+             style="justify-content: space-around;
+             max-width: calc(100% - 2rem);
+            display: flex;
+            flex-direction: column;
+            margin: 0rem 1rem 0px 2rem;">
+            <div class="panel" style="height: 100%; padding: 1rem; box-sizing: border-box;">
+                <div style="display: flex;align-items: center">
+                    <div style="color: #1453b1; font-weight: bold; font-size: 130%; height: 2rem;" >התפלגות נתונים</div>
+                </div>
+                <div class="dashboard-top-graphs" style="display: flex; justify-content: space-between; height: calc(100% - 4rem); position: relative;">
+                    <div v-if="type != 13 && type != 15" style="width: 15%; position: relative ; display: flex; flex-direction: column; min-width: 100px; ">
+                        <div style="height: 2rem; text-align: center;"> תשלומים </div>
+                        <div class="chart-container" style="position: relative ; display: flex; height: 100%;">
+                            <bar-chart chart-id="payments" :data="paymentsData"></bar-chart>
+                            <!-- doughnut-chart id="chartPayments" :data="paymentsData" ></doughnut-chart -->
+                        </div>
+                    </div>
+
+                    <div style="width: 25%; position: relative ; display: flex; flex-direction: column; ">
+                        <div style="height: 2rem; text-align: center;">יחס קבוצות</div>
+                        <div class="chart-container" style="position: relative ; display: flex; height: 100%;">
+                            <doughnut-chart :data="teamsData" ></doughnut-chart>
+                        </div>
+                    </div>
+
+                    <div style="width: 25%; position: relative ; display: flex; flex-direction: column; ">
+                        <div style="height: 2rem; text-align: center;">יחס ספורטאים  </div>
+                        <div class="chart-container" style="position: relative ; display: flex; height: 100%;">
+                            <doughnut-chart :data="playersData" ></doughnut-chart>
+                        </div>
+                    </div>
+
+                    <div v-if="type == 13" style="position: relative ; display: flex; flex-direction: column; ">
+                        <div style="height: 2rem; text-align: center;">יחס ספורטאי פל"א </div>
+                        <div class="chart-container" style="position: relative ; display: flex; height: 100%;">
+                            <doughnut-chart :data="peleData" ></doughnut-chart>
+                        </div>
+                    </div>
+
+                    <div v-if="type == 13" style="position: relative ; display: flex; flex-direction: column; ">
+                        <div style="text-align: center;">אחוז ספורטאי פל"א </div>
+                        <div class="chart-container" style="position: relative ; display: flex; margin-top: 4rem; justify-content: center;">
+                            <div style="font-size: xx-large">{{pelePercent}}%</div>
+                        </div>
+                    </div>
+
+                    <!-- width: 32%; min-width: 32%;  -->
+                    <div style="width: 50%; display: flex; justify-content: space-between">
+                        <div v-for="(dataColumn, index) in totalDataColumns.ActiveColumns" style="width: 50%; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                            <div v-for="(dataColumnItem, index) in dataColumn.Items" class="block-data" v-on:click="dataColumnItemClick(dataColumnItem)"
+                                 v-bind:style="{backgroundColor: dataColumnItem.backgroundColor, cursor: dataColumnItem.click ? 'pointer' : 'default'}">
+                                <div>{{totals[dataColumnItem.totalsField]}}</div>
+                                <div> {{dataColumnItem.caption}} </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div ng-if="!dataLoading" class="horizontal-flex" style="height: calc(60% - 4rem);">
+        <div class="panel" style="padding: 1rem; box-sizing: border-box; position: relative;">
+            <div style="display: flex;align-items: center">
+                <div style="color: #1453b1; font-weight: bold; font-size: 130%; height: 2rem;" >{{sportsTotalsCaption}}</div>
+            </div>
+            <div class="chart-container" style="position: relative; height: calc(100% - 2rem); display: flex; justify-content: flex-end;">
+                <bar-chart :data="sportsTotals"></bar-chart>
+            </div>
+            <div style="position: absolute; bottom: 5px; width: 100%; text-align: center; background-color: #eaea7e;">
+                <div v-if="type != 13 && type != 15" style="display: flex;justify-content: center; align-items: center; height: 1rem;">
+                    <div>
+                        סה"כ בתי ספר לא מאושרים:
+                        <span v-on:click="openUnconfirmedDialog('schools', 'בתי ספר לא מאושרים')" style="color: blue; cursor: pointer;">{{footerData.TotalUnconfirmedSchools}}</span>
+                    </div>
+                    <div style="margin-right: 15px;">
+                        סה"כ קבוצות לא מאושרות:
+                        <span v-on:click="openUnconfirmedDialog('teams', 'קבוצות לא מאושרות')" style="color: blue; cursor: pointer;">{{footerData.TotalUnconfirmedTeams}}</span>
+                    </div>
+                    <div style="margin-right: 15px;">
+                        סה"כ שחקנים לא מאושרים:
+                        <span v-on:click="openUnconfirmedDialog('players', 'שחקנים לא מאושרים')" style="color: blue; cursor: pointer;">{{footerData.TotalUnconfirmedPlayers}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

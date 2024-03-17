@@ -1,0 +1,146 @@
+<style type="text/css">
+    #pnlAvailableColumns {
+        position: absolute;
+        z-index: 1;
+        background-color: white;
+        padding: 5px 5px 5px 5px;
+        text-align: left;
+        border-left: 1px solid black;
+        border-right: 1px solid black;
+        border-bottom: 1px solid black;
+    }
+</style>
+
+<div class="wide-container" ng-if="Unauthorized">
+    <div class="alert alert-danger" role="alert">
+עמוד זה דורש הרשאות ניהול
+    </div>
+</div>
+
+<div class="wide-container" ng-if="!Unauthorized">
+    <manage-breadcrumbs description="דו&quot;חות"></manage-breadcrumbs>
+    <manage-tabs sender="reports"></manage-tabs>
+    <div class="alert alert-error" ng-show="error">
+        שגיאה בעת  טעינת נתונים
+    </div>
+    <div class="content" ng-show="!error" style="padding-bottom: 25px;">
+        <div class="row">
+            <div class="col-lg-9 col-md-9 col-sm-6 col-xs-12">
+
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="padding-right: 0px;">
+                <ui-select ng-model="selected.View"
+                           theme="bootstrap"
+                           on-select="viewSelected()"
+                           title="בחירת דו&quot;ח רצוי">
+                    <ui-select-match placeholder="בחירת דו&quot;ח רצוי">{{$select.selected.VIEW_CAPTION}}</ui-select-match>
+                    <ui-select-choices repeat="view in data.Views | filter: $select.search">
+                        <div>{{view.VIEW_CAPTION}}</div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <div ng-show="data.Loading" style="margin-top: 25px;">
+            מערכת טוענת נתונים, נא להמתין...
+        </div>
+        <div class="alert alert-error" ng-show="data.Error" style="margin-top: 25px;">
+            {{data.Error}}
+        </div>
+        <div ng-show="!data.Loading && !data.Error && data.Fields.length > 0" style="margin-top: 25px;">
+            <div class="alert alert-warning" style="margin-top: 5px; margin-bottom: 5px;" ng-show="data.CurrentSeasonYear && data.SelectedSeason.Year && data.SelectedSeason.Year != data.CurrentSeasonYear">
+                מציג נתונים ישנים, על מנת להציג נתוני עונה נוכחית יש לנקות בחירת עונה
+            </div>
+            <div style="margin-bottom: 10px;">
+                <span>
+                    סה"כ רשומות:
+                    {{pagingService.pagingData.totalRecords}}
+                </span>
+            </div>
+            <div class="row" style="margin-bottom: 15px;">
+                <div class="col-lg-9 col-md-9 col-sm-6 col-xs-12">
+                    <div class="pull-left reportActionButtons">
+                        <a href="#" id="lnkChooseTableColumns" class="button button_type_icon_medium button_orange" onclick="return false;" ng-click="chooseColumns()" ng-show="data.Rows.length > 0" style="margin-left: 10px;">
+                            בחירת עמודות
+                            <i class="fa fa-columns"></i></a>
+                        <div id="pnlAvailableColumns" ng-show="data.AvailableColumnsVisible">
+                            <div ng-repeat="field in data.Fields" ng-if="field.Visible">
+                                <div ng-click="availableColumnClicked(field)" style="float: left; width: 30px; margin-bottom: 3px; cursor: pointer;">
+                                    <span class="fa fa-check-square-o" ng-show="!field.IsHidden"></span>
+                                    <span class="fa fa-square-o" ng-show="field.IsHidden"></span>
+                                </div>
+                                <div class="available-columns-title" ng-click="availableColumnClicked(field)"
+                                     style="float: right; margin-right: 5px; text-align: right; margin-bottom: 3px; cursor: pointer;">
+                                    {{field.Title}}
+                                </div>
+                            </div>
+                            <div style="clear: both;"></div>
+                            <div style="text-align: right; margin-bottom: 5px;" ng-show="data.HiddenColumnExists">
+                                <a href="#" class="button button_type_icon_small button_grey" onclick="return false;" ng-click="undoColumnSelection()">
+                                    איפוס
+                                    <i class="fa fa-undo"></i></a>
+                            </div>
+                        </div>
+                        <a href="#" class="button button_type_icon_medium button_orange" onclick="return false;" ng-click="clearAllFilters()" ng-show="gotFilters()">
+                            ניקוי כל הבחירות
+                            <i class="fa fa-filter"></i></a>
+                        <a href="#" class="button button_type_icon_medium button_orange" onclick="return false;" ng-click="exportExcel()" ng-show="!data.ExcelInProgress && data.Rows.length > 0">
+                            הורדת גיליון אקסל
+                            <i class="fa fa-file-excel-o"></i></a>
+                        <span ng-show="data.ExcelInProgress">
+                            מערכת מייצרת גיליון אקסל, נא להמתין...
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="padding-right: 0px;">
+                    <input type="text" name="search" ng-model="data.Search" placeholder="חיפוש" />
+                </div>
+            </div>
+            <table class="table_type_1 report-table">
+                <tr class="f_size_large">
+                    <th ng-repeat="field in data.Fields" ng-show="field.Visible && !field.IsHidden" style="position: relative; padding-left: 25px; padding-right: 25px;">
+                        <span ng-click="changeSort(field)" ng-show="!field.Filtered" style="{{(field.IsFile) ? 'cursor: default;' : ''}}">{{field.Title}}</span>
+                        <input type="text" data-field-index="{{field.Index}}" ng-model="field.FilterText" placeholder="{{field.Title}}"
+                               ng-show="field.Filtered" ng-change="filterChanged(field)" style="min-width: 100px;" />
+                        <div class="sortIcon" ng-show="field.Title == data.Sort.Column">
+                            <span class="glyphicon glyphicon-arrow-down" ng-click="changeSort(field)" ng-show="data.Sort.Descending"></span>
+                            <span class="glyphicon glyphicon-arrow-up" ng-click="changeSort(field)" ng-show="!data.Sort.Descending"></span>
+                        </div>
+                        <div class="filterIcon" title="סינון לפי עמודה זו" ng-show="!field.IsFile">
+                            <span class="glyphicon glyphicon-filter" ng-click="toggleFilter(field)" style="{{getFilterStyle(field)}}"></span>
+                        </div>
+                        <div class="clear-filter" title="ניקוי סינון" ng-show="field.FilterText">
+                            <span class="glyphicon glyphicon-filter" ng-click="clearFilter(field)"></span>
+                        </div>
+                    </th>
+                </tr>
+                <tr ng-repeat="row in data.Rows">
+                    <td ng-repeat="field in data.Fields" ng-show="field.Visible && !field.IsHidden">
+                        <span ng-show="!field.IsFile">
+                            {{row[field.Name]}}
+                        </span>
+                        <span class="report-file" ng-if="field.IsFile" data-type="{{field.FileType}}" data-idnumber="{{row.IdNumber}}">
+                            <span class="glyphicon glyphicon-hourglass file-loading-icon" style="font-size: 12px; display: none;"></span>
+                            <a href="#" target="_blank" style="display: none;">
+                                <img src="//:0" class="file-image" style="width: 40px; display: none;" />
+                                <span class="file-pdf fa fa-file-pdf-o" style="font-size: 30px; color: red; display: none;"></span>
+                            </a>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+            <div class="pagination_block var2" ng-if="pagingService.pagingData && pagingService.pagingData.gotPaging" style="margin-top: 15px; float: right;">
+                        <span>
+                            עמוד
+                            {{pagingService.pagingData.selectedPage}}
+                            מתוך
+                            {{pagingService.pagingData.pageCount}}
+                        </span>
+                <ul class="pagination clearfix" style="margin-top: 0px;">
+                    <li><a href="#" ng-click="pagingService.previousPage()" class="{{(pagingService.pagingData.isFirstPage) ? 'disabled-link' : ''}}" onclick="return false;"><i class="fa fa-angle-right"></i></a></li>
+                    <li ng-repeat="page in pagingService.pagingData.pages"><a href="#" class="{{(page == pagingService.pagingData.selectedPage) ? 'active' : ''}}" ng-click="pagingService.changePage(page)" onclick="return false;">{{page}}</a></li>
+                    <li><a href="#" ng-click="pagingService.nextPage()" class="{{(pagingService.pagingData.isLastPage) ? 'disabled-link' : ''}}" onclick="return false;"><i class="fa fa-angle-left"></i></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

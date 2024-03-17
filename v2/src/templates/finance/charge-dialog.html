@@ -1,0 +1,258 @@
+<div class="dialog wide" style="height: 500px; display: flex; justify-content: space-between">
+    <div>
+        <div class="horizontal-flex" style="justify-content: space-between; flex-direction: column; max-height: 430px;">
+            <div class="panel-header" style="display: flex; justify-content: center">
+                <template v-if="charge.id">
+                    עריכת חיוב
+                </template>
+                <template v-if="!charge.id">
+                    הוספת חיוב חדש
+                </template>
+            </div>
+            <div style="display: flex; justify-content: space-between; flex-direction: column;
+        position: relative; overflow-y: auto; padding: 5px; min-height: 250px;">
+                <div class="tight-container" style="width: 100%; box-sizing: border-box; padding-top: 15px;">
+                    <form id="validated-form">
+                        <div>
+                            <div style="float: right; width: 40%;">
+                                <div class="label">סוג חיוב</div>
+                                <select v-model="product" v-on:change="productChanged()" title="סוג חיוב" style="width: 80%;">
+                                    <option v-for="(product, index) in products" v-bind:value="product.id">{{product.name}}</option>
+                                </select>
+                                <button type="button" class="btn small red" v-if="product != null"
+                                        style="font-size: 10px; font-weight: bold;" v-on:click="resetProduct()">X</button>
+                            </div>
+                            <div style="float: right; width: 20%; margin-right: 15px;">
+                                <div class="label">סכום החיוב</div>
+                                <input type="number" v-model="charge.sum" v-on:change="dataChanged()" style="width: 100%;" />
+                            </div>
+                            <div style="float: left; width: 30%;">
+                                <div class="label">מחוז</div>
+                                <select v-model="region" v-on:change="regionChanged()" title="מחוז" style="width: 80%;">
+                                    <option v-for="(region, index) in regions" v-bind:value="region.id">{{region.name}}</option>
+                                </select>
+                                <button type="button" class="btn small red" v-if="region != null"
+                                        style="font-size: 10px; font-weight: bold;" v-on:click="resetRegion()">X</button>
+                            </div>
+                            <div style="clear: both;"></div>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <div style="float: right; width: 30%;">
+                                <div class="label">תאריך החיוב</div>
+                                <input type="date" v-model="charge.creationDate" v-on:change="dataChanged()" style="width: 100%;" />
+                            </div>
+                            <div style="clear: both;"></div>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <div style="float: right; width: 80%;" v-if="!newAccountExpanded">
+                                <template v-if="region != null">
+                                    <div class="label">חשבון לחיוב</div>
+                                    <selectex class="ml-sm" style="width: 250px; margin-right: 10px; font-size: 14px; margin-left: 2px !important;"
+                                              v-bind:options="accounts"
+                                              v-bind:label="'label'"
+                                              v-bind:init="-1"
+                                              placeholder="חשבון..."
+                                              v-model="account"
+                                              v-on:input="dataChanged()"></selectex>
+                                    <button type="button" class="btn green" v-if="account == null"
+                                            style="font-weight: bold;" v-on:click="addAccount()">+</button>
+                                </template>
+                                <template v-if="region == null">
+                                    <div class="label">חשבון לחיוב</div>
+                                    <div>
+                                        נא לבחור מחוז
+                                    </div>
+                                </template>
+                            </div>
+                            <template v-if="newAccountExpanded">
+                                <div style="float: right; width: 35%;">
+                                    <div class="label">שם חשבון חדש</div>
+                                    <input type="text" placeholder="שם חשבון..." id="txtNewAccountName"
+                                           v-on:change="newAccountNameChanged()"
+                                           v-on:input="newAccountNameChanged()"
+                                           v-model="newAccount.name" style="width: 100%;" />
+                                </div>
+                                <div class="newAccountSchoolPanel" style="float: right; width: 60%; margin-right: 15px;">
+                                    <div class="label">בית ספר (אופציונאלי)</div>
+                                    <selectex class="ml-sm" style="width: 250px; margin-right: 10px; font-size: 14px; margin-left: 2px !important;"
+                                              v-bind:options="schools"
+                                              v-bind:label="'label'"
+                                              v-bind:init="-1"
+                                              v-bind:searchOverride="newAccount.name"
+                                              placeholder="בית ספר..."
+                                              v-model="newAccount.school"
+                                              v-on:input="dataChanged()"></selectex>
+                                    <button type="button" class="btn red" style="font-size: 10px; font-weight: bold;"
+                                            v-on:click="cancelNewAccount()">ביטול חשבון חדש</button>
+                                </div>
+                                <div style="clear: both;"></div>
+                            </template>
+                            <div style="clear: both;"></div>
+                        </div>
+                        <div class="label">
+                            <span>
+                                שיוך לתעודת חיוב
+                            </span>
+                            <button type="button" class="btn small red"
+                                    v-if="initialPaymentRequest != null && paymentRequest != null && !removePaymentRequest"
+                                    style="font-size: 10px; font-weight: bold; margin-top: 10px; margin-right: 5px;"
+                                    v-on:click="cancelPaymentRequest()">ביטול שיוך</button>
+                            <button type="button" class="btn small" v-if="paymentRequest != null && removePaymentRequest"
+                                    style="font-size: 10px; font-weight: bold; margin-top: 10px; margin-right: 5px;"
+                                    v-on:click="restorePaymentRequest()">החזרת שיוך</button>
+                            <span style="padding: 0 1rem; font-size: 30px; cursor: pointer; display: inline-block;"
+                                  v-bind:style="{transform: isExpanded('paymentRequest') ? 'rotate(270deg)' : 'none'}"
+                                  v-on:click="togglePaymentRequestsPanel()"> > </span>
+                        </div>
+                        <div class="panel" v-if="isExpanded('paymentRequest')">
+                            <div class="panel-body"  style="overflow: visible; padding-top: 5px; padding-right: 0px;">
+                                <selectex class="ml-sm" style="width: 250px; margin-right: 10px; font-size: 14px; margin-left: 2px !important;"
+                                          v-if="!removePaymentRequest"
+                                          v-bind:options="paymentRequests"
+                                          v-bind:label="'label'"
+                                          v-bind:init="-1"
+                                          placeholder="תעודת חיוב..."
+                                          v-model="paymentRequest"
+                                          v-on:input="dataChanged()"></selectex>
+                                <div style="font-weight: bold;" v-if="removePaymentRequest">
+                                    ---שיוך לתעודת חיוב בוטל---
+                                </div>
+                            </div>
+                        </div>
+                        <div class="label">
+                            <span>
+                                שיוך לאליפות
+                            </span>
+                            <button type="button" class="btn small red"
+                                    v-if="initialChampionship != null && championship != null && !removeChampionship"
+                                    style="font-size: 10px; font-weight: bold; margin-top: 10px; margin-right: 5px;"
+                                    v-on:click="cancelChampionship()">ביטול שיוך</button>
+                            <button type="button" class="btn small" v-if="championship != null && removeChampionship"
+                                    style="font-size: 10px; font-weight: bold; margin-top: 10px; margin-right: 5px;"
+                                    v-on:click="restoreChampionship()">החזרת שיוך</button>
+                            <span style="padding: 0 1rem; font-size: 30px; cursor: pointer; display: inline-block;"
+                                  v-bind:style="{transform: isExpanded('championships') ? 'rotate(270deg)' : 'none'}"
+                                  v-on:click="toggleChampionshipsPanel()"> > </span>
+                        </div>
+                        <div class="panel" v-if="isExpanded('championships')">
+                            <div class="panel-body"  style="overflow: visible; padding-top: 5px; padding-right: 0px;">
+                                <template v-if="!removeChampionship">
+                                    <div style="float: right; width: 20%;">
+                                        <div class="label">עונה</div>
+                                        <nobr>
+                                            <select v-model="season" v-on:change="seasonChanged()" title="עונה">
+                                                <option v-for="(season, index) in seasons" v-bind:value="season.id">{{season.name}}</option>
+                                            </select>
+                                            <button type="button" class="btn small red" v-if="season != null"
+                                                    style="font-size: 10px; font-weight: bold;" v-on:click="resetSeason()">X</button>
+                                        </nobr>
+                                    </div>
+                                    <div style="float: right; width: 30%; margin-right: 5px;">
+                                        <div class="label">ענף ספורט</div>
+                                        <div v-if="season">
+                                            <nobr>
+                                                <select v-model="sport" v-on:change="sportChanged()" title="ענף ספורט" style="width: 85%;">
+                                                    <option v-for="(sport, index) in sports" v-bind:value="sport.id">{{sport.name}}</option>
+                                                </select>
+                                                <button type="button" class="btn small red" v-if="sport != null"
+                                                        style="font-size: 10px; font-weight: bold;" v-on:click="resetSport()">X</button>
+                                            </nobr>
+                                        </div>
+                                        <div v-if="!season" style="font-size: 14px; font-weight: bold;">
+                                            על מנת לבחור ענף ספורט יש לבחור עונה
+                                        </div>
+                                    </div>
+                                    <div style="float: left; width: 45%;">
+                                        <div class="label">אליפות</div>
+                                        <div v-if="season && sport">
+                                            <img src="img/progress.gif" style="width: 36px;" v-if="championshipStatus.loading" />
+                                            <template v-if="!championshipStatus.loading && championshipStatus.loaded">
+                                                <selectex class="ml-sm" style="width: 85%; margin-right: 10px; font-size: 14px; margin-left: 2px !important;"
+                                                          v-bind:options="championships"
+                                                          v-bind:label="'label'"
+                                                          v-bind:init="-1"
+                                                          placeholder="אליפות..."
+                                                          v-model="championship"
+                                                          v-on:input="dataChanged()"></selectex>
+                                            </template>
+                                            <template v-if="!championshipStatus.loading && championshipStatus.failed">
+                                                <div style="color: red; font-weight: bold;">
+                                                    כשלון בעת טעינת נתונים, נא לנסות שוב מאוחר יותר
+                                                </div>
+                                            </template>
+                                        </div>
+                                        <div v-if="!season || !sport" style="font-size: 14px; font-weight: bold;">
+                                            על מנת לבחור אליפות יש לבחור עונה וענף ספורט
+                                        </div>
+                                    </div>
+                                    <div style="clear: both;"></div>
+                                </template>
+                                <template v-if="removeChampionship">
+                                    <div style="font-weight: bold;">
+                                        ---שיוך לאליפות בוטל---
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="display: flex; justify-content: space-evenly;">
+        <div v-if="chargeInvalidReason() != null" style="width: 200px; font-size: 14px; font-weight: bold; color: red; max-height: 40px; overflow: auto;">
+            {{chargeInvalidReason()}}
+            <template v-if="existingAccountId">
+                <br />
+                <button type="button" v-on:click="selectExistingAccount()" style="font-size: 10px;"
+                        class="btn small">בחירת חשבון קיים</button>
+            </template>
+        </div>
+        <img v-if="chargeProgress.creating" src="img/progress.gif" style="height: 30px;" />
+        <span v-if="chargeProgress.created" style="color: blue;">
+            <template v-if="charge.new">
+                חיוב נוצר בהצלחה
+            </template>
+            <template v-if="charge.editing">
+                נתוני חיוב עודכנו בהצלחה
+            </template>
+        </span>
+        <span v-if="chargeProgress.failed" style="color: red;">
+            <template v-if="charge.new">
+                יצירת חיוב נכשלה, נא לנסות מאוחר יותר
+            </template>
+            <template v-if="charge.editing">
+                עריכת חיוב נכשלה, נא לנסות מאוחר יותר
+            </template>
+        </span>
+        <button class="btn"
+                v-if="confirmButtonVisible()"
+                style="width: 100px;"
+                v-on:click="saveCharge()"
+                v-bind:disabled="!isValid || !changed">
+            <template v-if="charge.new">
+                אישור ויצירת חיוב חדש
+            </template>
+            <template v-if="charge.editing">
+                אישור ועדכון נתוני חיוב
+            </template>
+        </button>
+        <span v-if="confirmClosure">
+            כל הנתונים אשר הוזנו ייאבדו! האם לבטל בכל זאת?
+            <br />
+            <button class="btn red" v-on:click="reallyCancel()">כן</button>
+            &nbsp;&nbsp;&nbsp;
+            <button class="btn green" v-on:click="abortCancel()">לא</button>
+        </span>
+        <button v-if="!confirmClosure" class="btn"
+                style="background-color: rgba(217, 1, 17, 0.82); white-space: nowrap"
+                v-on:click="cancel()">
+            <template v-if="charge.new">
+                ביטול ויציאה ללא יצירת חיוב
+            </template>
+            <template v-if="charge.editing">
+                חזרה למסך חיובים ללא עריכה
+            </template>
+        </button>
+    </div>
+</div>

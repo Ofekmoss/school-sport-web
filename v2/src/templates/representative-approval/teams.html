@@ -1,0 +1,112 @@
+<div class="vertical-flex" style="position: absolute; left: 0px; right: 0px;">
+    <div class="ph-lg pt-lg">
+        <div class="float-right">
+            <strong>
+                אישור פרטי קבוצות
+            </strong>
+        </div>
+        <div class="float-left" v-bind:style="{border: user.delegatedUser != null ? '1px dashed black' : '',
+            padding: user.delegatedUser != null ? '5px 5px 5px 5px' : 'inherit'}">
+            <strong v-if="user.delegatedUser">
+                {{user.delegatedUser.name}}
+                &larr;
+                מחובר בתור
+                &larr;
+            </strong>
+            <strong>
+                {{user.name}}
+            </strong>
+            <strong style="color: blue; cursor: pointer" v-on:click="logout()">
+                התנתק
+            </strong>
+        </div>
+    </div>
+
+    <div class="flex-fill ph-lg pv-sm" style="overflow-x: hidden; overflow-y: auto;">
+        <div class="panel mt-lg">
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" v-model="selectAll" /></th>
+                        <th>שם בית ספר</th>
+                        <th>רשות</th>
+                        <th>ענף</th>
+                        <th>אליפות</th>
+                        <th>קטגוריה</th>
+                        <th>מתקן</th>
+                        <th>זמני פעילות</th>
+                        <th>עלות</th>
+                        <th>תאריך הוספת קבוצה</th>
+                        <th>תאריך אישור</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(team, index) in teams" v-bind:class="{selected: team.selected, green: isApproved(team)}" class="table-row">
+                            <td><input type="checkbox" v-model="team.selected" v-if="!isApproved(team)" /></td>
+                            <td>{{team.school.name}}</td>
+                            <td>{{team.school.cityName}}</td>
+                            <td>{{team.sport.name}}</td>
+                            <td>{{team.championship.name}}</td>
+                            <td>{{team.category.name}}</td>
+                            <td>{{getFacilityName(team.facility)}}</td>
+                            <td>{{getActivityText(team.activity)}}</td>
+                            <td>
+                                {{team.price}} <span v-if="team.payment !== null">נשלחה דרישת תשלום</span>
+                            </td>
+                            <td>
+                                {{team.createdAt | date}}
+                            </td>
+                            <td>
+                               <span v-if="isApproved(team)">
+                                    {{team.DateConfirmed | date}}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="panel mt-lg">
+            <div class="panel-header">
+                אישור נציג/ת רשות
+            </div>
+            <div class="panel-body">
+                <p>
+                    אנו מתחייבים לסייע להפעלת קבוצת בית הספר ע"י העברת התמיכה הכספית המתוכננת של משרד התרבות והספורט אל בית הספר באמצעות הרשות המקומית, ומתן תמיכה כספית ו\או שוות ערך בסכום השווה לפחות לגובה תמיכת משרד התרבות והספורט.<br />
+                    אנו מתחייבים להעמיד לרשות בית הספר מתקני ספורט הולמים ותיקנים עפ"י חוק לצורך קיום פעילות האימון והתחרויות וציוד בסיסי הנדרש לפעילות.
+                </p>
+                <p>
+                    הרינו מתחייבים לפעול לחיבור פעילות מועדוני הספורט הבית ספריים לאגודות / עמותות ספורט המקומיות ולשייך את הספורטאים/ות לאגודות / עמותות אלה.
+                </p>
+                <p>
+                    הריני לאשר את כל האמור לעיל באמצעות חתימתי האלקטרונית על גבי מסמך זה.
+                </p>
+                <template v-if="approveCount > 0">
+                    <div>
+                        <input id="chkConfirmation" type="checkbox" v-model="confirmation">
+                        <label for="chkConfirmation">
+                            <span class="label">אישור קריאת ההצהרה</span>
+                        </label>
+                    </div>
+
+                    <div style="text-align: left;">
+                        <button class="btn green" v-on:click="confirm()" v-bind:disabled="!confirmation || selectionCount() === 0">
+                            אישור
+                        </button>
+                    </div>
+                </template>
+
+                <template v-if="approveCount === 0 && confirmedAt">
+                    <div style="font-weight: bold;">
+                        הצהרה אושרה בתאריך
+                        {{confirmedAt.Date}}
+                        בשעה
+                        {{confirmedAt.Time}}
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+</div>

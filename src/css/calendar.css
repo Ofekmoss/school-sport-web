@@ -1,0 +1,209 @@
+.calendar-month-row {
+    position: relative;
+    display: block;
+    margin-bottom: -1px;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.calendar-year .calendar-month-row:first-child {
+    border-top: 1px solid #ddd;
+}
+
+.calendar-year .calendar-month-row:last-child {
+    border-bottom: 1px solid #ddd;
+}
+
+.calendar-year:first-child .calendar-month-row:first-child {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+.calendar-year:last-child .calendar-month-row:last-child {
+    margin-bottom: 0;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.calendar-month {
+    padding: 2px 4px;
+    border-right: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.calendar-month-row:not(:last-child) .calendar-month {
+    border-bottom: 1px solid #ddd;
+}
+
+.calendar-month-row:not(:first-child) .calendar-month {
+    border-top: 1px solid #ddd;
+}
+
+.calendar-year:first-child .calendar-month-row:first-child .calendar-month {
+    border-top-left-radius: 4px;
+}
+
+.calendar-year:last-child .calendar-month-row:last-child .calendar-month {
+    border-bottom-left-radius: 4px;
+}
+
+.calendar-month-days {
+    display: table;
+    width: 100%;
+}
+
+.calendar-days-header {
+    display:table-row;
+    width:auto;
+    clear:both;
+}
+
+.calendar-days-header .calendar-day {
+    font-weight: bold;
+}
+
+.calendar-week{
+    display:table-row;
+    width:auto;
+    clear:both;
+    border: 1px solid #ddd;
+}
+
+.calendar-day{
+    float:left;/*fix for  buggy browsers*/
+    display:table-column;
+    width:14.285%;
+    text-align: center;
+}
+
+.current-calendar-month:not(.bg-primary):hover {
+    background-color: #E8F0F4 !important;
+    cursor: pointer;
+}
+
+.calendar-week .calendar-day {
+    height: 38px;
+    padding-top: 8px;
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.calendar-large .calendar-week .calendar-day {
+    height: 78px;
+    padding: 0px;
+    text-align: inherit;
+}
+
+.calendar-day-header {
+    font-size: 12px;
+    padding: 0px 3px;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap;
+}
+
+.calendar-day.enabled {
+    cursor: pointer;
+}
+
+.calendar-item {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin: 2px;
+    font-size: 12px;
+    background-color: lemonchiffon;
+}
+
+.calendar-week .calendar-day:not(.current-calendar-month) {
+    color: #ddd;
+}
+
+.calendar-week .calendar-day:last-child {
+    border-right: 1px solid #ddd;
+}
+
+.calendar-week:last-child .calendar-day {
+    border-bottom: 1px solid #ddd;
+}
+
+.calendar-week:nth-child(2) .calendar-day:first-child {
+    border-top-left-radius: 4px;
+}
+
+.calendar-week:nth-child(2) .calendar-day:last-child {
+    border-top-right-radius: 4px;
+}
+
+.calendar-week:last-child .calendar-day:first-child {
+    border-bottom-left-radius: 4px;
+}
+
+.calendar-week:last-child .calendar-day:last-child {
+    border-bottom-right-radius: 4px;
+}
+
+.calendar-full-week {
+    display: inline-block;
+}
+
+.calendar-full-day {
+    display: inline-block;
+    width: 12px;
+    border: 1px solid #e9e9e9;
+    text-align: center;
+    font-size: 70%;
+}
+
+.calendar-full-day-header {
+    display: inline-block;
+    width: 12px;
+    padding: 0px;
+    margin: 0px;
+    background: red;
+    text-align: center;
+    font-size: 70%;
+}
+
+.calendar-full-month-header {
+    padding: 2px 4px;
+}
+.calendar-full-day.out-of-month {
+    background-color: #e9e9e9;
+}
+
+.calendar-full-day.out-of-month span {
+    opacity: 0;
+}
+
+.calendar-items1 {
+    background-color: #ffffcc;
+}
+
+.calendar-items2 {
+   background-color: #fffaa6;
+}
+
+.calendar-items3 {
+    background-color: #ffef91;
+}
+
+.calendar-items4 {
+    background-color: #ffcf72;
+}

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+	<meta charset="utf-8">
+	<style type="text/css">
+		div, body { margin: 0; padding: 0; }
+		table { margin: 0; }
+		div, body, td, th, span, p, a { font-family: Arial; font-size: 14px; text-align: center; }
+		img { border: none; }
+		h1 { margin: 0; }
+		h2 { margin: 0; padding: 0; text-decoration: underline; }
+		.header_caption { font-weight: bold; }
+		.dashed_border { border-style: dashed; border-width: 2px; border-color: black; }
+        .playerCardsTable  td {
+            height: 50px;
+            vertical-align: middle;
+        }
+        .playerCardsTable  td, .playerCardsTable  th {
+            padding: 5px 5px 5px 5px;
+        }
+        .footer {
+            width: 90%;
+            position: fixed;
+            left: 5%;
+            right: 5%;
+            bottom: 10%;
+            padding: 5px 5px 5px 5px;
+            border-spacing: 15px;
+        }
+        .footer td {
+            width: 26%;
+            border-top: 1px solid black;
+        }
+        html {
+            height: 100%;
+        }
+        body {
+            min-height: 95%;
+            margin-left: 10px;
+            margin-right: 10px;
+            margin-top: 15px;
+        }
+        body {
+            /* border: 1px solid black; */
+        }
+        .common-table {
+            width: 95%;
+            margin-left: 2%;
+            margin-right: 2%;
+        }
+        .common-table td, .common-table th {
+            border: 1px solid black;
+        }
+        .common-table th {
+            background-color: #87CEEB;
+        }
+        .remarks {
+            font-weight: bold;
+        }
+        .credited-accounts, .payment-requests {
+            margin-top: 15px;
+        }
+	</style>
+	<style type="text/css" media="print">
+		#btnPrint, #btnConfirm, #btnCancel { display: none; }
+	</style>
+	<title></title>
+</head>
+<body>
+{{#pages}}
+<div align="right" dir="rtl" style="text-align: center;">
+    <table border="0" style="width: 100%; padding: 10px 10px 10px 10px;">
+        <tr>
+            <td align="right" style="text-align: right; vertical-align: bottom;">
+                לכבוד:
+                <br />
+                {{payerName}}
+                <br />
+                {{payerAddress}}
+            </td>
+            <td align="center" style="text-align: center; vertical-align: top;">
+                מחוז {{receiptRegion}}
+                <br />
+                {{season}} {{years}}
+            </td>
+            <td align="left" style="text-align: left; vertical-align: top;">
+                <div style="margin-left: 35px; text-align: left;">
+                    התאחדות הספורט
+                    <br />
+                    לבתי ספר בישראל
+                    (ע"ר)
+                    <br /><br />
+                    תיק מ"ה: 58-024-222-0
+                    <br />
+                    תאריך: {{receiptDate}}
+                    <br /><br />
+                    {{title}}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <h1>
+                    קבלה מספר
+                    {{receiptNumber}}
+                </h1>
+                <div class="remarks" style="{{remarkStyle}}">
+                    ({{remarks}})
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table class="common-table" cellpadding="0" cellspacing="0" border="0" style="{{nonVisaPaymentsStyle}}">
+        <tr>
+            <th>
+                אמצעי תשלום
+            </th>
+            <th>
+                סכום
+            </th>
+            <th>
+                בנק
+            </th>
+            <th>
+                סניף
+            </th>
+            <th>
+                חשבון
+            </th>
+            <th>
+                אסמכתא
+            </th>
+            <th>
+                תאריך פרעון
+            </th>
+        </tr>
+        {{#nonVisaPayments}}
+        <tr>
+            <td>{{type}}</td>
+            <td>{{sum}}</td>
+            <td>{{bank}}
+            <td>{{branch}}</td>
+            <td>{{accountNumber}}</td>
+            <td>{{reference}}</td>
+            <td>{{paymentDate}}</td>
+        </tr>
+        {{/nonVisaPayments}}
+    </table>
+    <table class="common-table" cellpadding="0" cellspacing="0" border="0" style="{{visaPaymentsStyle}}">
+        <tr>
+            <th>
+                אמצעי תשלום
+            </th>
+            <th>
+                סכום
+            </th>
+            <th>
+                סוג כרטיס
+            </th>
+            <th>
+                4 ספרות אחרונות
+            </th>
+            <th>
+                תוקף כרטיס
+            </th>
+            <th>
+                מס' תשלומים
+            </th>
+        </tr>
+        {{#visaPayments}}
+        <tr>
+            <td>{{type}}</td>
+            <td>{{sum}}</td>
+            <td>{{cardType}}
+            <td>{{lastDigits}}</td>
+            <td>{{expireDate}}</td>
+            <td>{{creditPayments}}</td>
+        </tr>
+        {{/visaPayments}}
+    </table>
+    <div class="credited-accounts" style="{{creditedAccountStyle}}">
+        <h2 style="text-decoration: none; text-align: right; margin-right: 2%;">
+            שולם עבור המוסדות הבאים:
+        </h2>
+        <table class="common-table" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <th style="width: 25%;">
+                    סמל מוסד
+                </th>
+                <th style="width: 50%;">
+                    שם מוסד
+                </th>
+                <th style="width: 25%;">
+                    סכום
+                </th>
+            </tr>
+            {{#creditedAccounts}}
+            <tr>
+                <td>{{symbol}}</td>
+                <td>{{name}}</td>
+                <td>{{sum}}
+            </tr>
+            {{/creditedAccounts}}
+        </table>
+    </div>
+    <div class="payment-requests" style="{{paymentRequestStyle}}">
+        <h2 style="text-decoration: none; text-align: right; margin-right: 2%;">
+            שיוך לתעודות חיוב:
+        </h2>
+        <table class="common-table" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <th>
+                    תעודת חיוב
+                </th>
+                <th>
+                    אליפות
+                </th>
+                <th>
+                    אינדקס קבוצה
+                </th>
+                <th>
+                    תאריך יצירה
+                </th>
+                <th>
+                    שולם בקבלה זו
+                </th>
+            </tr>
+            {{#paymentRequests}}
+            <tr>
+                <td>{{parsedPaymentRequest}}</td>
+                <td>{{championshipName}}</td>
+                <td>{{teamNumber}}</td>
+                <td>{{createdAtDisplay}}</td>
+                <td>{{paidAmount}}</td>
+            </tr>
+            {{/paymentRequests}}
+        </table>
+    </div>
+    <table class="footer" border="0">
+        <tr>
+            <td class="header_caption">
+                שם
+            </td>
+            <td class="header_caption">
+                חותמת
+            </td>
+            <td class="header_caption">
+                חתימה
+            </td>
+        </tr>
+    </table>
+    <div style="width: 200px; position: fixed; right: 20px; bottom: 5%; padding: 5px 5px 5px 5px;">
+        קבלה מספר
+        {{receiptNumber}}
+    </div>
+</div>
+<p style="{{pageBreakStyle}}"></p>
+{{/pages}}
+</body>
+</html>

@@ -1,0 +1,219 @@
+﻿<link rel="stylesheet" type="text/css" media="all" href="fonts/FlatIcons/sport-fields/flaticon.css" />
+<style type="text/css">
+    .sponsor-img, .partner-img {
+        width: 125px;
+        height: 92px;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-bottom: 10px;
+        position: relative;
+        top: 15%;
+        bottom: 15%;
+        border: 2px solid black;
+        border-radius: 5px;
+        background-color: white;
+        padding-top: 7px;
+        position: relative;
+    }
+
+    .sponsor-img .scale_image, .partner-img .scale_image {
+        max-height: 100%;
+        max-width: 100%;
+        width: auto;
+        height: auto;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        padding: 5px 15px 5px 15px;
+    }
+
+    .owl-carousel .owl-item img {
+        vertical-align: middle;
+    }
+</style>
+<div id="mobile_contents_panel">
+    <div id="pnlMobileFeaturedArticle" class="mobile-featured-page" ng-show="firstFeaturedArticle">
+        <div id="mobileFeaturedArticleCaption" class="hide-when-menu-open mobile-featured-caption">
+            <a ui-sref="article({page: firstFeaturedArticle.Seq})">{{firstFeaturedArticle.Title}}</a>
+        </div>
+        <a ui-sref="article({page: firstFeaturedArticle.Seq})"><img ng-src="{{firstFeaturedArticle.ImagePath}}" /></a>
+    </div>
+    <div id="pnlMobileMoreArticles" class="mobile-more-pages">
+        <button class="button button_grey" ng-click="MoreArticlesClicked()">
+            עוד כתבות
+        </button>
+    </div>
+    <div id="pnlMobileGamePlans">
+        <div class="mobile-wide-button mobile-blue-button" ng-click="ToggleGamePlans()">
+            תוכניות משחקים
+        </div>
+        <div id="mobileGamePlansPlaceholder">
+            <div ng-show="!categoriesLoadFinished && !categoriesLoadError">
+                מערכת טוענת נתונים, נא להמתין<span class="progress-dot"></span>
+            </div>
+            <div class="alert alert-error" role="alert" ng-show="categoriesLoadError">
+שגיאה בעת טעינת נתוני משחקים, נא לנסות שוב מאוחר יותר
+            </div>
+            <div ng-repeat="sportFieldCategories in categoriesData" ng-show="categoriesLoadFinished">
+                <div ng-click="ToggleSportFieldCategories(sportFieldCategories)"
+                     class="mobile-wide-button mobile-sport-field-categories-panel">
+                    <span class="{{sportFieldCategories.SportFieldClass}}">{{sportFieldCategories.SportFieldName}}</span>
+                    <span class="mobile-category-panel-sport-field-icon"><i ng-show="sportFieldCategories.IconClass" class="{{sportFieldCategories.IconClass}}"></i></span>
+                </div>
+                <div class="mobile-sport-field-category-list" data-sport-field-seq="{{sportFieldCategories.SportFieldSeq}}">
+                    <div class="mobile-wide-button mobile-blue-button mobile-sport-field-category-filter-panel"
+                         ng-click="ToggleClubChampionships(sportFieldCategories)"
+                         ng-show="sportFieldCategories.ClubChampionships.length > 0">
+                        מועדון בית ספרי
+                    </div>
+                    <div class="mobile-club-championships-placeholder" ng-style="{height: sportFieldCategories.ClubChampionships.Height + 'px'}">
+                        <div ng-repeat="clubChampionshipRegion in sportFieldCategories.ClubChampionships"
+                             ng-click="clubRegionClicked(sportFieldCategories, clubChampionshipRegion)"
+                             class="{{clubChampionshipRegion.ClassName}}" ng-style="clubChampionshipRegion.Left ? {top: clubChampionshipRegion.Top + 'px', left: clubChampionshipRegion.Left + 'px'} : {top: clubChampionshipRegion.Top + 'px', right: clubChampionshipRegion.Right + 'px'}">
+                            {{clubChampionshipRegion.RegionName}}
+                        </div>
+                        <div class="mobile-club-championships-list" ng-show="sportFieldCategories.SelectedClubRegion" ng-style="{top: (sportFieldCategories.ClubChampionships.OriginalHeight + 10) + 'px', height: sportFieldCategories.SelectedClubRegion.Championships.Height + 'px', width: '100%'}">
+                            <div ng-repeat="regionChampionship in sportFieldCategories.SelectedClubRegion.Championships"
+                                 class="mobile-championships-container" ng-style="{top: regionChampionship.Top + 'px'}">
+                                <div class="mobile-championship-name">
+                                    {{regionChampionship.ChampionshipName}}
+                                </div>
+                                <div ng-repeat="category in regionChampionship.Categories" ng-show="category.CategoryGrades"
+                                     ng-click="CategoryClicked(category)"
+                                     class="{{category.ClassName}}" ng-style="category.Left ? {top: category.Top + 'px', left: category.Left + 'px'} : {top: category.Top + 'px', right: category.Right + 'px'}">
+                                    <span ng-class="{'mobile-category-grades-panel': category.CategoriesInColumn == 2, 'mobile-category-grades-panel-small': category.CategoriesInColumn == 3}">{{category.CategoryGrades}}</span>
+                                    <span ng-class="{'mobile-category-gender-panel': category.CategoriesInColumn == 2, 'mobile-category-gender-panel-small': category.CategoriesInColumn == 3}"><i class="{{category.CategoryGenderClass}}"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mobile-wide-button mobile-blue-button mobile-sport-field-category-filter-panel"
+                         ng-click="ToggleRegionalChampionships(sportFieldCategories)"
+                         ng-show="sportFieldCategories.RegionalChampionships.length > 0">
+אירועי מחוזות
+                    </div>
+                    <div class="mobile-regional-championships-placeholder" ng-style="{height: sportFieldCategories.RegionalChampionships.Height + 'px'}">
+                        <div ng-repeat="regionalChampionshipRegion in sportFieldCategories.RegionalChampionships"
+                             ng-click="regionalRegionClicked(sportFieldCategories, regionalChampionshipRegion)"
+                             class="{{regionalChampionshipRegion.ClassName}}" ng-style="regionalChampionshipRegion.Left ? {top: regionalChampionshipRegion.Top + 'px', left: regionalChampionshipRegion.Left + 'px'} : {top: regionalChampionshipRegion.Top + 'px', right: regionalChampionshipRegion.Right + 'px'}">
+                            {{regionalChampionshipRegion.RegionName}}
+                        </div>
+                        <div class="mobile-regional-championships-list" ng-show="sportFieldCategories.SelectedRegionalRegion" ng-style="{top: (sportFieldCategories.RegionalChampionships.OriginalHeight + 10) + 'px', height: sportFieldCategories.SelectedRegionalRegion.Championships.Height + 'px', width: '100%'}">
+                            <div ng-repeat="regionChampionship in sportFieldCategories.SelectedRegionalRegion.Championships"
+                                 class="mobile-championships-container" ng-style="{top: regionChampionship.Top + 'px'}">
+                                <div class="mobile-championship-name">
+                                    {{regionChampionship.ChampionshipName}}
+                                </div>
+                                <div ng-repeat="category in regionChampionship.Categories" ng-show="category.CategoryGrades"
+                                     ng-click="CategoryClicked(category)"
+                                     class="{{category.ClassName}}" ng-style="category.Left ? {top: category.Top + 'px', left: category.Left + 'px'} : {top: category.Top + 'px', right: category.Right + 'px'}">
+                                    <span ng-class="{'mobile-category-grades-panel': category.CategoriesInColumn == 2, 'mobile-category-grades-panel-small': category.CategoriesInColumn == 3}">{{category.CategoryGrades}}</span>
+                                    <span ng-class="{'mobile-category-gender-panel': category.CategoriesInColumn == 2, 'mobile-category-gender-panel-small': category.CategoriesInColumn == 3}"><i class="{{category.CategoryGenderClass}}"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mobile-wide-button mobile-blue-button mobile-sport-field-category-filter-panel"
+                         ng-click="TogglePermanentChampionships(sportFieldCategories)"
+                         ng-show="sportFieldCategories.PermanentChampionships.length > 0">
+                        אליפות התיכונים
+                    </div>
+                    <div class="mobile-permanent-championships-categories-list" ng-style="{height: sportFieldCategories.PermanentChampionships.Height + 'px'}">
+                        <div ng-repeat="permanentChampionship in sportFieldCategories.PermanentChampionships" ng-show="permanentChampionship.CategoryGrades"
+                             ng-click="CategoryClicked(permanentChampionship)"
+                             class="{{permanentChampionship.ClassName}}" ng-style="permanentChampionship.Left ? {top: permanentChampionship.Top + 'px', left: permanentChampionship.Left + 'px'} : {top: permanentChampionship.Top + 'px', right: permanentChampionship.Right + 'px'}">
+                            <span class="mobile-category-grades-panel">{{permanentChampionship.CategoryGrades}}</span>
+                            <span class="mobile-category-gender-panel"><i class="{{permanentChampionship.CategoryGenderClass}}"></i></span>
+                        </div>
+                    </div>
+                    <div class="mobile-wide-button mobile-blue-button mobile-sport-field-category-filter-panel"
+                         ng-click="ToggleCentralRegionChampionships(sportFieldCategories)"
+                         ng-show="sportFieldCategories.CentralRegionChampionships.length > 0">
+                        אליפות ארצית
+                    </div>
+                    <div class="mobile-central-region-championships-list" ng-style="{height: sportFieldCategories.CentralRegionChampionships.Height + 'px'}">
+                        <div ng-repeat="centralRegionChampionship in sportFieldCategories.CentralRegionChampionships"
+                             class="mobile-championships-container" ng-style="{top: centralRegionChampionship.Top + 'px'}">
+                            <div class="mobile-championship-name">
+                                {{centralRegionChampionship.ChampionshipName}}
+                            </div>
+                            <div ng-repeat="category in centralRegionChampionship.Categories" ng-show="category.CategoryGrades"
+                                    ng-click="CategoryClicked(category)"
+                                    class="{{category.ClassName}}" ng-style="category.Left ? {top: category.Top + 'px', left: category.Left + 'px'} : {top: category.Top + 'px', right: category.Right + 'px'}">
+                                <span ng-class="{'mobile-category-grades-panel': category.CategoriesInColumn == 2, 'mobile-category-grades-panel-small': category.CategoriesInColumn == 3}">{{category.CategoryGrades}}</span>
+                                <span ng-class="{'mobile-category-gender-panel': category.CategoriesInColumn == 2, 'mobile-category-gender-panel-small': category.CategoriesInColumn == 3}"><i class="{{category.CategoryGenderClass}}"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="pnlMobileMoreLinks">
+        <div class="mobile-wide-button mobile-blue-button" ng-click="ToggleMoreLinks()">
+            קישורים נוספים
+        </div>
+        <div id="mobileMoreLinksPlaceholder">
+            <div ng-show="!linksLoadFinished && !linksLoadError">
+                מערכת טוענת נתונים, נא להמתין<span class="progress-dot"></span>
+            </div>
+            <div class="alert alert-error" role="alert" ng-show="linksLoadError">
+                שגיאה בעת טעינת קישורים נא לנסות שוב מאוחר יותר
+            </div>
+            <div ng-repeat="link in links" ng-show="linksLoadFinished">
+                <a href="{{link.Url}}">
+                    <div class="mobile-wide-button mobile-sport-field-categories-panel">
+                        <span class="mobile-link-panel">{{link.Description}}</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div id="pnlMobileRoadTripPartners" class="mobile-image-slider" ng-show="contentMapping.RoadTripPartners.Seq && contentMapping.RoadTripPartners.Images && contentMapping.RoadTripPartners.Images.length > 0">
+        <h2 class="section_title">
+            <a href="#/page/{{contentMapping.RoadTripPartners.Seq}}">{{contentMapping.RoadTripPartners.Description}}</a>
+        </h2>
+        <owl-carousel loop="1" id="mobilePartnersCarousel" data-auto-slide-seconds="{{partnersAutoSlideInterval}}" data-arrows-top="35">
+            <owl-item ng-repeat="image in contentMapping.RoadTripPartners.Images">
+                <div class="scale_image_container sponsor-img">
+                    <a ng-if="image.ExternalLink" ng-href="{{image.ExternalLink}}" target="_blank">
+                        <img ng-src="/content/Images/{{contentMapping.RoadTripPartners.Seq}}/{{image.FileName}}" alt="" class="scale_image">
+                    </a>
+                    <img ng-if="!image.ExternalLink" ng-src="/content/Images/{{contentMapping.RoadTripPartners.Seq}}/{{image.FileName}}" alt="" class="scale_image">
+                </div>
+            </owl-item>
+        </owl-carousel>
+    </div>
+    <h2 class="section_title">
+        גלריית תמונות
+    </h2>
+    <div id="pnlMobileFeaturedGallery" class="mobile-featured-page" ng-show="firstFeaturedGallery">
+        <div id="mobileFeaturedGalleryCaption" class="hide-when-menu-open mobile-featured-caption">
+            <a ui-sref="gallery({page: firstFeaturedGallery.Seq})">{{firstFeaturedGallery.Title}}</a>
+        </div>
+        <a ui-sref="gallery({page: firstFeaturedGallery.Seq})"><img ng-src="{{firstFeaturedGallery.ImagePath}}" /></a>
+    </div>
+    <div id="pnlMobileMoreArticles" class="mobile-more-pages">
+        <button class="button button_grey" ng-click="MoreGalleriesClicked()">
+            עוד גלריות
+        </button>
+    </div>
+    <div id="pnlMobileBusinessPartners" class="mobile-image-slider" ng-show="contentMapping.BusinessPartners.Seq && contentMapping.BusinessPartners.Images && contentMapping.BusinessPartners.Images.length > 0">
+        <h2 class="section_title">
+            <a href="#/page/{{contentMapping.BusinessPartners.Seq}}">{{contentMapping.BusinessPartners.Description}}</a>
+        </h2>
+        <owl-carousel loop="1" id="mobileBusinessPartnersCarousel" data-auto-slide-seconds="{{partnersAutoSlideInterval}}" data-arrows-top="35">
+            <owl-item ng-repeat="image in contentMapping.BusinessPartners.Images">
+                <div class="scale_image_container sponsor-img">
+                    <a ng-if="image.ExternalLink" ng-href="{{image.ExternalLink}}" target="_blank">
+                        <img ng-src="/content/Images/{{contentMapping.BusinessPartners.Seq}}/{{image.FileName}}" alt="" class="scale_image">
+                    </a>
+                    <img ng-if="!image.ExternalLink" ng-src="/content/Images/{{contentMapping.BusinessPartners.Seq}}/{{image.FileName}}" alt="" class="scale_image">
+                </div>
+            </owl-item>
+        </owl-carousel>
+    </div>
+</div>

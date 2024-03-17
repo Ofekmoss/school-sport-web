@@ -1,0 +1,29 @@
+<div class="panel p-sm"  style="width: auto; position: absolute; left: 39px; right: 39px; top: 13px; bottom: 0px;">
+    <data-table v-bind:enableExport="true" v-bind:title="'בתי ספר'" v-bind:columns="columns" v-bind:data="schools" v-on:selection-change="handleSelectionChange()">
+        <div>
+            <label style="color: white">&nbsp</label>
+            <button class="btn small" v-on:click="generateClubReport()">דו"ח מועדונים</button>
+        </div>
+        <div>
+            <label>עונה</label>
+            <select  style="width: 100%;" v-model="season">
+                <option v-for="season in seasons" v-bind:value="season.Id">{{season.Name}}</option>
+            </select>
+        </div>
+        <div>
+            <label>סוג אליפות</label>
+            <select  style="width: 100%;" v-model="competitionType">
+                <option value="1">מועדונים</option>
+                <option value="2">ליגות תיכוניים</option>
+            </select>
+        </div>
+        <div>
+            <label>מחוז</label>
+            <select  style="width: 100%;" v-model="region">
+                <template v-for="(reg, index) in regions">
+                    <option :value="reg.id" v-if="reg.id !== 0">{{reg.name}}</option>
+                </template>
+            </select>
+        </div>
+    </data-table>
+</div>

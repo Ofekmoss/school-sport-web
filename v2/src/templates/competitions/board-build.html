@@ -1,0 +1,43 @@
+<div class="dialog board-build" style="min-height: 10rem; margin: 5%; max-height: 80%; width: auto; display: flex; justify-content: space-between; flex-direction: column; min-width: 500px;">
+    <div class="caption">
+        בניית משחקים מלוח
+    </div>
+    <div>
+        <select v-model="boardId" autofocus v-on:change="onBoardChanged()" style="width: 300px;">
+            <option v-bind:value="null">בחירת לוח משחקים...</option>
+            <option v-for="board in boards" v-bind:value="board.id">{{board.name}}</option>
+        </select>
+    </div>
+    <div class="horizontal-flex" style="overflow-x: auto;">
+        <div class="m-md" class="participants">
+            <div class="participant" v-bind:class="{active: participant == index}" v-for="(name, index) in participants" v-on:click="toggleParticipant(index)">
+                {{name}}
+            </div>
+        </div>
+        <div class="flex-fill" style="overflow: auto;">
+            <table class="board">
+                <tr>
+                    <td></td>
+                    <td v-for="cycleName in cycleNames">{{cycleName}}</td>
+                </tr>
+                <tr v-for="round in rounds">
+                    <td>{{round.name}}</td>
+                    <td v-for="cycle in round.cycles">
+                        <div v-for="match in cycle.matches" class="match">
+                            <div class="match-participant" v-bind:class="{active: participant == match.a.number}" v-on:click="toggleParticipant(match.a.number)">{{match.a.name}}</div>
+                            <div class="vs"></div>
+                            <div class="match-participant" v-bind:class="{active: participant == match.b.number}" v-on:click="toggleParticipant(match.b.number)">{{match.b.name}}</div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <span v-if="error" style="color: red; font-weight: bold; font-size: 12px; display: inline-block; max-width: 100px; padding-left: 10px;">
+        {{error}}
+    </span>
+    <div class="horizontal-flex" style="justify-content: center">
+        <button class="btn gray ml-sm" style="width: 5rem" v-on:click="cancel()">ביטול</button>
+        <button v-bind:disabled="error.length > 0 || board == null" class="btn mr-sm" style="width: 5rem" v-on:click="confirm()">אישור</button>
+    </div>
+</div>

@@ -1,0 +1,239 @@
+<div>
+    <div v-for="team in teams">
+        <div class="panel" v-if="team.approved != null && team.approved != 0">
+            <div class="panel-header" style="display: flex; align-items: center; justify-content: space-between">
+                <div style="display: flex; align-items: center;">
+                    <span>{{getTeamName(team)}}</span>
+                    <span style="padding: 0 1rem; font-size: 30px; cursor: pointer;"
+                          v-if="team.payment != null"
+                          v-bind:style="{transform: team.__panelOpen ? 'rotate(270deg)' : 'none'}"
+                          v-on:click="togglePanel(team)"> > </span>
+                </div>
+                <div style="display: flex; align-items: center; font-size: 16px; color: black;">
+                    <div v-if="team.payment == null" style="color: red; margin-left: 10px;">
+                        יש לאשר תשלום על מנת לרשום שחקנים
+                    </div>
+                    <div v-if="team.payment != null" style="display: flex; align-items: center; margin-left: 1rem;">
+                        <span class="tooltip" style="color: red;">
+                            <div class="player-count-circle" v-if="team.players && team.players.length > 0"
+                                 v-bind:style="{color: team.players.length >= maxTeamPlayers ? 'red' : '', marginLeft: '5px'}">{{team.players.length}}/{{maxTeamPlayers}}</div>
+                            <img style="width: 2rem; padding: 0 0.5rem;" v-if="!team.players || team.players.length == 0" src="img/x-grey.svg">
+                        </span>
+                        <div>תלמידים\ות</div>
+                    </div>
+
+                    <div v-if="team.payment != null" style="display: flex; align-items: center; margin-left: 1rem;">
+                        <span class="tooltip" style="color: red;">
+                            <img style="width: 2rem; padding: 0 0.5rem;" v-bind:src="(team.approved >> 1 & 1) !== 0 ? 'img/v.svg' : 'img/x-grey.svg'">
+                                <div class="tooltip-content">
+                                    <p v-if="(team.approved  >> 1 & 1) !== 0">יש אישור של מנהל\ת</p>
+                                    <p v-if="(team.approved  >> 1 & 1) == 0">אין אישור של מנהל\ת</p>
+                                    <i></i>
+                                </div>
+                        </span>
+
+                        <div>מנהל\ת</div>
+                    </div>
+
+                    <div v-if="team.payment != null" style="display: flex; align-items: center; margin-left: 1rem;">
+                        <span class="tooltip" style="color: red;">
+                            <img style="width: 2rem; padding: 0 0.5rem;" v-bind:src="(team.approved  >> 2 & 1) !== 0 ? 'img/v.svg' : 'img/x-grey.svg'">
+                                <div class="tooltip-content">
+                                    <p v-if="(team.approved  >> 2 & 1) !== 0">יש אישור של נציג\ת רשות {{team.representative.name}}</p>
+                                    <p v-if="(team.approved  >> 2 & 1) == 0">אין אישור של נציג\ת רשות {{team.representative.name}}</p>
+                                    <i></i>
+                                </div>
+                        </span>
+                        <div>נציג\ת רשות</div>
+                    </div>
+
+                    <div v-if="team.payment != null" style="display: flex; align-items: center; margin-left: 1rem;">
+                        <span class="tooltip" style="color: red;">
+                        <img style="width: 2rem; padding: 0 0.5rem;" v-bind:src="team.adminStatus ==  2 ? 'img/v.svg' : 'img/x-grey.svg'">
+                            <div class="tooltip-content">
+                                <p v-if="team.adminStatus == 2">יש אישור של רכז\ת {{team.school.regionName}} {{team.coordinator.coordinatorName}}</p>
+                                <p v-if="team.adminStatus == 1">אין אישור של רכז\ת {{team.school.regionName}} {{team.coordinator.coordinatorName}}</p>
+                                <p v-if="team.adminStatus != 1 && team.adminStatus != 2">אין אישור רכז\ת {{team.school.regionName}} {{team.coordinator.coordinatorName}}</p>
+                                <i></i>
+                            </div>
+                        </span>
+                        <div>רכז\ת</div>
+                    </div>
+
+                    <div v-if="team.payment != null" style="display: flex; align-items: center; margin-left: 1rem;">
+                        <span class="tooltip" style="color: red;">
+                        <img style="width: 2rem; padding: 0 0.5rem;" v-bind:src="((team.approved >> 3 & 1) !== 0) ? 'img/v.svg' : (((team.approved >> 4 & 1) !== 0) ? 'img/x.svg' : 'img/x-grey.svg')">
+                                <div class="tooltip-content">
+                                    <p v-if="(team.approved  >> 3 & 1) !== 0">יש אישור של מפקח\ת</p>
+                                    <p v-if="(team.approved  >> 3 & 1) == 0 && (team.approved  >> 4 & 1) == 0">אין אישור של מפקח\ת</p>
+                                    <p v-if="(team.approved  >> 4 & 1) !== 0">מפקח\ת לא אישר</p>
+                                    <i></i>
+                                </div>
+                        </span>
+                        <div>מפקח\ת</div>
+                    </div>
+
+                    <div v-if="loginTokenLinks && loginTokenLinks.length > 0"
+                         v-on:click="loginTokenLinksClicked()"
+                         style="display: flex; align-items: center; margin-left: 1rem;">
+                        <img src="img/link-blue-icon.svg" style="width: 32px;" />
+                    </div>
+
+                </div>
+            </div>
+            <div v-if="team.__panelOpen">
+                <div class="panel-body">
+                    <div class="tool-bar">
+                        <button class="float-left btn"
+                                style="pointer-events: auto;"
+                                v-bind:title="team.players.length >= maxTeamPlayers ? 'קבוצה הגיעה למכסת שחקנים מקסימלית' : ''"
+                                v-on:click="newPlayer(team)"
+                                v-bind:disabled="inactiveSeason || team.players.length >= maxTeamPlayers">הוספת תלמידים</button>
+                        <div class="float-left button-group pb-md">
+                            <button v-bind:disabled="inactiveSeason || team.selectionCount != 1" v-on:click="editPlayer(team)"><span class="icon">&#x1F589;</span> עריכה</button>
+                            <button v-bind:disabled="inactiveSeason || team.selectionCount == 0" v-on:click="deletePlayers(team)"><span class="icon">&#x2715;</span> מחיקה</button>
+                        </div>
+                        <div class="float-left">
+                            <button class="btn"
+                                    v-bind:disabled="!team.team ||
+                                        !team.players ||
+                                        team.players.length === 0 ||
+                                        validPlayersCount(team) === 0"
+                                    v-on:click="openPrint(team)">
+                                הדפסת קובץ קבוצתי
+                                <template v-if="validPlayersCount(team) > 0">
+                                    ({{validPlayersCount(team)}})
+                                </template>
+                            </button>
+                            <span v-if="!team.team" style="color: red; font-size: smaller;">
+                                קבוצה לא עברה אישור על ידי רכז\ת
+                            </span>
+                            <span v-if="team.team && (!team.players || team.players.length === 0)" style="color: red; font-size: smaller;">
+                                אין שחקנים בקבוצה זו
+                            </span>
+                            <span v-if="team.team && validPlayersCount(team) === 0" style="color: red; font-size: smaller;">
+                                אין שחקנים מאושרים עם כיתה ותאריך לידה בקבוצה זו
+                            </span>
+                            <span v-if="team.team && validPlayersCount(team) > 0 && team.gotStudentWithoutGrade" style="color: red; font-size: smaller;">
+                                <span style="color: red;">&#9888;</span>
+                                אזהרה! קיימים שחקנים ללא כיתה
+                            </span>
+                            <span v-if="team.team && validPlayersCount(team) > 0 && team.gotStudentWithoutBirthday" style="color: red; font-size: smaller;">
+                                <span style="color: red;">&#9888;</span>
+                                אזהרה! קיימים שחקנים ללא תאריך לידה
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if="team.players && team.players.length > 0">
+                    <div v-if="team.sportsmanCount > 0" style="border: 1px dashed black; padding: 3px 3px 3px 3px; display: inline-block;">
+                        עקב שינוי פנימי במערכת ייתכן ויש בקבוצה זו שחקנים שנמחקו בעבר
+                        <br />
+                        נא למחוק אותם מחדש על מנת שלא יופיעו שוב
+                    </div>
+                    <table class="table mt-md" style="width: 100%">
+                        <thead>
+                        <tr>
+                            <th v-if="!inactiveSeason"></th>
+                            <th style="text-align: center">תעודת זהות</th>
+                            <th style="text-align: center">שם פרטי</th>
+                            <th style="text-align: center">שם משפחה</th>
+                            <th style="text-align: center">ת. לידה</th>
+                            <th style="text-align: center">תאריך הוספה</th>
+                            <th style="text-align: center">כיתה</th>
+                            <th style="text-align: center">תמונה</th>
+                            <th style="text-align: center">בדיקה רפואית</th>
+                            <th style="text-align: center">ספח ת"ז</th>
+                            <th style="text-align: center">סטטוס</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="(player, index) in team.players" v-bind:style="{backgroundColor:
+                            !player.transfer && player.grade == null ? '#ff000087' :
+                            player.aboveMaxAge == true ? '#ffff0057' :
+                            player.isfOverage == true ? '#F899FF' : ''}" v-if="!player.transfer || (player.transfer && player.grade < 12)">
+                            <td v-if="!inactiveSeason">
+                                <input type="checkbox" v-model="player.selected" v-on:change="handleSelectionChange(team)">
+                            </td>
+                            <td align="center">{{player.idNumber}}</td> <!--  | idNumber -->
+                            <td align="center">{{player.firstName}}</td>
+                            <td align="center">{{player.lastName }}</td>
+                            <td align="center">{{player.birthDate | date}}
+                                <span class="tooltip" v-if="player.aboveMaxAge" style="color: red;">&#9888;
+                             <div class="tooltip-content">
+                                    <p>התלמיד מעבר לטווח הגילאים שמוגדר לקטגוריה</p>
+                                    <i></i>
+                                </div></span>
+                                <span class="tooltip" v-if="player.isfOverage" style="color: red;">&#9888;
+                                <div class="tooltip-content">
+                                    <p>
+                                        חריג גיל ISF
+                                    </p>
+                                    <i></i>
+                             </div></span>
+                                <span class="tooltip" v-if="!player.aboveMaxAge && player.birthDate == null" style="color: red;">&#9888;
+                                    <div class="tooltip-content">
+                                        <p>שימו לב! חובה להזין תאריך לידה (ע"י לחיצה על כפתור העריכה)</p>
+                                        <i></i>
+                                    </div>
+                                </span>
+                            </td>
+                            <td align="center">{{player.createdAt | date}}</td>
+                            <td align="center">
+                                <span class="tooltip" v-if="!player.transfer && getGrade(player.grade).length === 0" style="color: red;">&#9888;
+                                     <div class="tooltip-content">
+                                            <p>שימו לב! חובה להזין כיתה (ע"י לחיצה על כפתור העריכה)</p>
+                                            <i></i>
+                                        </div>
+                                </span>
+                                {{getGrade(player.grade)}}
+                            </td>
+                            <!--<td align="center"><span v-if="player.picture">&#x2714</span></td>-->
+                            <td align="center">
+                                <div style="display: flex; justify-content: space-between; width: 100px;">
+                                    <template v-if="!inactiveSeason">
+                                        <div class="file-button"
+                                             style="background-image: url('img/photo.png'); width: 60px; height: 28px;"
+                                             v-bind:class="{ disable : player.previousSchool != null}"
+                                             v-on:click="uploadPicture(team, index)"></div>
+                                        <input :id="'t-' + (team.team || team.id) + '-picture-input'+index" type="file" name="picture" v-on:change="handlePicture(team, index)" />
+                                    </template>
+                                    <a v-if="player.picture" v-bind:href="'/api/v2/document/' + player.picture" target="_blank">
+                                        <img v-if="player.picture" v-bind:src="'/api/v2/document/' + player.picture" style="max-height: 30px;" />
+                                    </a>
+                                </div>
+                            </td>
+                            <td align="center">
+                                <div style="display: flex; justify-content: space-between; width: 100px;">
+                                    <template v-if="!inactiveSeason">
+                                        <div class="file-button" style="background-image: url('img/user-id.png');  width: 60px; height: 28px;"
+                                             v-on:click="uploadMedicalApproval(team, index)"></div>
+                                        <input :id="'t-' + (team.team || team.id) + '-medical-approval-input'+index" type="file" name="medical-approval" v-on:change="handleMedicalApproval(team, index)" />
+                                    </template>
+                                    <a class="btn" v-if="player.medicalApproval" v-bind:href="'/api/v2/document/' + player.medicalApproval" target="_blank"><span class="icon">&#x1F441;</span></a>
+                                </div>
+
+                            </td>
+                            <td align="center">
+                                <div style="display: flex; justify-content: space-between; width: 100px;">
+                                    <template v-if="!inactiveSeason">
+                                        <div class="file-button"  style="background-image: url('img/article.png'); width: 60px; height: 28px;"
+                                             v-on:click="uploadIdSlip(team, index)"></div>
+                                        <input :id="'t-' + (team.team || team.id) + '-id-slip-input'+index" type="file" name="id-slip" v-on:change="handleIdSlip(team, index)">
+                                    </template>
+                                    <a class="btn" v-if="player.idSlip" v-bind:href="'/api/v2/document/' + player.idSlip" target="_blank"><span class="icon">&#x1F441;</span></a>
+                                </div>
+                            </td>
+                            <td align="center">
+                                <span v-if="player.transfer && !player.previousSchool">ממתין לאישור העברה</span>
+                                <span v-else>{{player.parsedStatus}}</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

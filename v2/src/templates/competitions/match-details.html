@@ -1,0 +1,246 @@
+<div class="dialog" style="min-height: 10rem; display: flex; justify-content: space-between; flex-direction: column; max-height: inherit; width: 500px;">
+
+    <div>
+        <div id="MatchCreationDate" style="display: none;"></div>
+        <div class="caption" style="position: relative;">
+            <div style="position: absolute; right: 5px; top: -5px; cursor: pointer; font-size: 18px; font-weight: bold;"
+                 title="ביטול וסגירת חלונית"
+                 v-on:click="cancel()">
+                X
+            </div>
+            <template v-if="edit">
+                עריכת פרטי משחק -
+            </template>
+            <template v-if="!edit">
+                הוספת משחק -
+            </template>
+            {{groupName}}
+        </div>
+        <div style="display: flex; justify-content: space-between; flex-direction: column; padding: 5px;">
+            <div class="horizontal-flex">
+                <div class="flex-fill">
+                    <div style="white-space: nowrap; margin-left: 5px;">קבוצה א'</div>
+                    <select v-model="teamA" autofocus v-on:change="teamChanged()" style="width: 100%;">
+                        <option v-bind:value="-1">בחירת קבוצה...</option>
+                        <option v-for="(team, index) in teams" v-bind:value="index">{{team.name}}</option>
+                    </select>
+                </div>
+                <div class="text-center ph-md">
+                    <div class="fa fa-exchange mt-sm" v-on:click="switchTeams();" style="cursor: pointer;" title="החלפת קבוצות"></div>
+                </div>
+                <div class="flex-fill">
+                    <div style="white-space: nowrap; margin-left: 5px;">קבוצה ב'</div>
+                    <select v-model="teamB" autofocus v-on:change="teamChanged()" style="width: 100%;">
+                        <option v-bind:value="-1">בחירת קבוצה...</option>
+                        <option v-for="(team, index) in teams" v-bind:value="index">{{team.name}}</option>
+                    </select>
+                </div>
+            </div>
+            <div style="clear: both;"></div>
+            <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                <div style="width: 65%;">
+                    <div style="white-space: nowrap; margin-left: 5px;">תאריך</div>
+                    <div style="position: relative;">
+                        <span v-on:click="clearDate()"
+                              style="position: absolute; left: 18px; top: 3px; z-index: 999; background-color: white; font-size: 15px; font-weight: bold; cursor: pointer;">X</span>
+                        <datepicker v-model="date" :language="Hebrew" :inline="false" v-on:selected="dateChanged($event)" style="width: 95%; "></datepicker>
+                    </div>
+                </div>
+                <div>
+                    <div v-if="date" style="white-space: nowrap; margin-left: 5px;">שעה</div>
+                    <div v-if="date">
+                        <input v-model="matchTime.minute" type="number" style="width: 36px;" min="0" max="59" v-on:change="timeChanged()" />
+                        :
+                        <input type="number" v-model="matchTime.hour" style="width: 36px;" min="0" max="23" v-on:change="timeChanged()" />
+                        <span v-on:click="clearTime()"
+                              style="font-size: 15px; font-weight: bold; cursor: pointer; display: inline-block; margin-right: 5px;">X</span>
+                    </div>
+                </div>
+            </div>
+            <div style="clear: both;"></div>
+            <div class="label" style="position: relative;">
+                <div v-if="isExpanded('facility')" style="position: absolute; left: 15px; top: 5px;">
+                    <button type="button" class="btn red" style="font-size: 80%;"  v-on:click="resetFacility();">איפוס מתקן</button>
+                </div>
+                <span>
+                    מתקן
+                </span>
+                <span style="padding: 0 1rem; font-size: 30px; cursor: pointer; display: inline-block;"
+                      v-bind:style="{transform: isExpanded('facility') ? 'rotate(270deg)' : 'none'}"
+                      v-on:click="toggleExpanded('facility')"> > </span>
+            </div>
+            <template v-if="isExpanded('facility')">
+                <div class="panel" style="margin-bottom: 0px;">
+                    <div class="panel-body"  style="overflow: visible; padding: 3px 3px 3px 3px;">
+                        <select v-model="facilityRegion" name="facilityRegion" v-on:change="facilityRegionChanged()" style="width: 30%;">
+                            <option v-for="(region, index) in facilityRegions" v-bind:value="region.id">{{region.name}}</option>
+                        </select>
+                        <select v-model="facility" v-if="facilityRegion >= 0" name="facility" style="margin-right: 10px; width: 60%;">
+                            <option v-for="(facilityObject, index) in facilities" v-bind:value="facilityObject.id">{{facilityObject.name}}</option>
+                        </select>
+                    </div>
+                </div>
+            </template>
+            <template v-if="date && teamA >= 0 && teamB >= 0">
+                <div style="clear: both;"></div>
+                <div class="label" style="position: relative;">
+                    <div v-if="isExpanded('result')" style="position: absolute; left: 15px; top: 5px;">
+                        <button type="button" class="btn red" style="font-size: 80%;"  v-on:click="resetScore();">איפוס תוצאה</button>
+                    </div>
+                    <span>
+                        תוצאה
+                    </span>
+                    <span style="padding: 0 1rem; font-size: 30px; cursor: pointer; display: inline-block;"
+                          v-bind:style="{transform: isExpanded('result') ? 'rotate(270deg)' : 'none'}"
+                          v-on:click="toggleExpanded('result')"> > </span>
+                    <button v-if="isExpanded('result') && resultA != null && resultB != null"
+                            class="btn btn-xs" v-on:click="toggleExpanded('sets')" style="font-size: 70%; font-weight: bold;">
+                        ניקוד מערכות
+                        <span style="display: inline-block;" v-bind:style="{transform: isExpanded('sets') ? 'rotate(270deg)' : 'none'}"> > </span>
+                    </button>
+                </div>
+                <template v-if="isExpanded('result')">
+                    <div class="panel">
+                        <div class="panel-body"  style="overflow: visible; padding-top: 5px;">
+                            <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                                <div>
+                                    <div style="white-space: nowrap; margin-left: 5px;">
+                                        קבוצה א'
+                                        ({{getTeamName(teamA)}})
+                                    </div>
+                                    <div>
+                                        <input v-model="resultA" type="number" style="width: 40px;" min="0" max="999"
+                                               v-bind:disabled="technicalWinA || technicalWinB" v-on:change="resultChanged()" />
+                                        <label for="chkTechnicalWinA" style="margin-right: 10px; font-size: 12px; font-weight: bold">טכני</label>
+                                        <input v-model="technicalWinA" type="checkbox" id="chkTechnicalWinA" v-on:change="technicalWinChanged('A')" />
+                                    </div>
+                                    <div v-if="isExpanded('sets')">
+                                        <table border="0" cellpadding="0" cellspacing="0" v-if="setsA">
+                                            <tr>
+                                                <td style="border: 1px solid black;">
+                                                   מערכה
+                                                </td>
+                                                <td v-for="(set, index) in setsA"
+                                                    style="border: 1px solid black; font-weight: bold; text-align: center;"
+                                                    v-bind:style="{ 'font-size': isOverTime(index) ? '50%' : 'inherit'}">
+                                                    {{index + 1}}
+                                                    <template v-if="isOverTime(index)">
+                                                        <br />
+                                                        <button type="button" class="btn red btn-xs" style="font-size: 40%;"  v-on:click="removeSet(index);">-</button>
+                                                    </template>
+                                                </td>
+                                                <td rowspan="2" style="font-size: 140%; text-align: center; vertical-align: middle;" valign="middle">
+                                                    <button type="button" class="btn" v-on:click="addSet();">+</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid black;">
+                                                    ניקוד
+                                                </td>
+                                                <td v-for="(set, index) in setsA" style="border: 1px solid black;">
+                                                    <input type="text" v-model="set.score"
+                                                           v-bind:disabled="technicalWinA || technicalWinB"
+                                                           v-on:change="setScoreChanged(index, 'A')"
+                                                           style="width: 20px; padding: 0; border: none;" min="0" max="99" />
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style="white-space: nowrap; margin-left: 5px;">
+                                        קבוצה ב'
+                                        ({{getTeamName(teamB)}})
+                                    </div>
+                                    <div>
+                                        <input v-model="resultB" type="number" style="width: 40px;" min="0" max="999"
+                                               v-bind:disabled="technicalWinA || technicalWinB" v-on:change="resultChanged()" />
+                                        <label for="chkTechnicalWinB" style="margin-right: 10px; font-size: 12px; font-weight: bold">טכני</label>
+                                        <input v-model="technicalWinB" type="checkbox" id="chkTechnicalWinB" v-on:change="technicalWinChanged('B')" />
+                                    </div>
+                                    <div v-if="isExpanded('sets')">
+                                        <table border="0" cellpadding="0" cellspacing="0" v-if="setsB">
+                                            <tr>
+                                                <td style="border: 1px solid black;">
+                                                    מערכה
+                                                </td>
+                                                <td v-for="(set, index) in setsB"
+                                                    style="border: 1px solid black; font-weight: bold; text-align: center;"
+                                                    v-bind:style="{ 'font-size': isOverTime(index) ? '50%' : 'inherit'}">
+                                                    {{index + 1}}
+                                                    <template v-if="isOverTime(index)">
+                                                        <br />
+                                                        <button type="button" class="btn red btn-xs" style="font-size: 40%;"  v-on:click="removeSet(index);">-</button>
+                                                    </template>
+                                                </td>
+                                                <td rowspan="2" style="font-size: 140%; text-align: center; vertical-align: middle;" valign="middle">
+                                                    <button type="button" class="btn" v-on:click="addSet();">+</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid black;">
+                                                    ניקוד
+                                                </td>
+                                                <td v-for="(set, index) in setsB" style="border: 1px solid black;">
+                                                    <input type="text" v-model="set.score"
+                                                           v-bind:disabled="technicalWinA || technicalWinB"
+                                                           v-on:change="setScoreChanged(index, 'B')"
+                                                           style="width: 20px; padding: 0; border: none;" min="0" max="99" />
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </template>
+            <template v-if="functionaryTypes != null && functionaryTypes.length > 0">
+                <div style="clear: both;"></div>
+                <div class="label" style="position: relative;">
+                    <div v-if="isExpanded('functionaries')" style="position: absolute; left: 15px; top: 5px;">
+                        <button type="button" class="btn red" style="font-size: 80%;"  v-on:click="resetFunctionaries();">איפוס בעלי תפקידים</button>
+                    </div>
+                    <span>
+                        בעלי תפקידים
+                    </span>
+                    <span style="padding: 0 1rem; font-size: 30px; cursor: pointer; display: inline-block;"
+                          v-bind:style="{transform: isExpanded('functionaries') ? 'rotate(270deg)' : 'none'}"
+                          v-on:click="toggleExpanded('functionaries')"> > </span>
+                </div>
+                <template v-if="isExpanded('functionaries')">
+                    <div class="panel">
+                        <div class="panel-body" style="overflow: visible; padding: 0;">
+                            <div v-for="(functionaryType, index) in functionaryTypes">
+                                <div style="display: flex; flex-direction: row;">
+                                    <div style="width: 25%;">
+                                        {{functionaryType.caption}}
+                                    </div>
+                                    <div style="width: 50%;">
+                                        <select v-model="functionaryType.functionary" name="functionaryTypeFunctionary" style="width: 100%;">
+                                            <option v-for="(functionary, index) in functionaryType.getFunctionaries()"
+                                                    v-bind:value="functionary.id">{{functionary.name}}</option>
+                                        </select>
+                                    </div>
+                                    <div style="width: 20%; margin-right: 10px;">
+                                        <select v-model="functionaryType.region" style="width: 100%;">
+                                            <option v-for="(region, index) in functionaryType.regions"
+                                                    v-bind:value="region.id">{{region.name}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </template>
+        </div>
+    </div>
+    <div class="horizontal-flex" style="justify-content: center">
+        <span v-if="error" style="color: red; font-weight: bold; font-size: 12px; display: inline-block; max-width: 100px; padding-left: 10px;">
+            {{error}}
+        </span>
+        <button v-bind:disabled="error.length > 0" class="btn" style="width: 5rem" v-on:click="confirm()">אישור</button>
+    </div>
+</div>

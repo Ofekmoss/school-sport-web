@@ -1,0 +1,114 @@
+<div class="vertical-flex" style="position: absolute; left: 0px; right: 0px;">
+    <div class="flex-fill ph-lg pv-sm">
+        <div class="panel p-sm"  style="width: auto; position: absolute; left: 39px; right: 39px; top: 13px; bottom: 0px;">
+            <data-table v-bind:columns="columns" v-bind:data="charges" v-bind:enableExport="true"
+                        v-on:search-change="handleSearchChange()"
+                        v-bind:clickToTick="true"
+                        v-bind:new-entity-caption="newEntityText"
+                        v-on:new-entity="newCharge()"
+                        v-on:selection-change="handleSelectionChange()">
+                <template v-if="selectedRows.length === 0">
+                    <div>
+                        <label style="position: relative;">
+                            <div style="position: absolute; left: 0px;" v-if="cachedDateRange">
+                                <button type="button" class="btn"
+                                        v-on:click="resetDateRange()"
+                                        style="font-size: 10px; font-weight: bold; margin-top: -3px;">איפוס</button>
+                            </div>
+                            טווח תאריכים
+                        </label>
+                        <nobr>
+                            <span v-if="unlimitedDateRange" style="padding: 3px 3px 3px 3px; border: 1px dashed red;">
+                                ללא הגבלת זמן
+                            </span>
+                            <button v-if="!unlimitedDateRange" class="btn gray"
+                                    style="font-size: 12px; font-weight: bold; color: #1453b1; background-color: #ddd;"
+                                    v-on:click="openDateSelection()">
+                                {{dateDisplay(dateRange.start)}} - {{dateDisplay(dateRange.end)}}
+                            </button>
+                        </nobr>
+                    </div>
+                    <div>
+                        <label>מחוז</label>
+                        <select class="auto-select" v-model="region" v-bind:disabled="getAccountId() > 0">
+                            <option :value="-1">כל המחוזות</option>
+                            <option v-for="(region, index) in regions" v-bind:value="region.id">{{region.name}}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>ענף ספורט</label>
+                        <select class="auto-select" v-model="sport" v-bind:disabled="getAccountId() > 0">
+                            <option :value="null">כל ענפי הספורט</option>
+                            <option v-for="(sport, index) in sports" v-bind:value="sport.id">{{sport.name}}</option>
+                        </select>
+                    </div>
+                    <div v-if="sport">
+                        <label>אליפות</label>
+                        <select class="auto-select" v-model="championship" v-bind:disabled="getAccountId() > 0">
+                            <option :value="null">כל  האליפויות</option>
+                            <option v-for="(championship, index) in chargeChampionships" v-bind:value="championship.id">{{championship.name}}</option>
+                        </select>
+                    </div>
+                    <div v-if="championship">
+                        <label>קטגורייה</label>
+                        <select class="auto-select" v-model="category" v-bind:disabled="getAccountId() > 0">
+                            <option :value="null">כל  הקטגוריות</option>
+                            <option v-for="(category, index) in chargeCategories" v-bind:value="category.id">{{category.name}}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>סוג אליפות</label>
+                        <select class="auto-select" v-model="type"  v-bind:disabled="getAccountId() > 0">
+                            <option :value="null">כל סוגי האליפות</option>
+                            <option v-for="(t, index) in types" v-bind:value="t.id">{{t.name}}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>חשבון</label>
+                        <select class="auto-select" v-model="account">
+                            <option :value="null">כל החשבונות</option>
+                            <option v-for="(account, index) in accounts" v-bind:value="account.id">{{account.name}}</option>
+                        </select>
+                    </div>
+                </template>
+                <div v-if="selectedRows.length === 1">
+                    <label style="color: white">&nbsp</label>
+                    <button class="btn small" v-on:click="editSelectedCharge()">עריכת חיוב</button>
+                </div>
+                <div v-if="selectedRows.length > 0">
+                    <label style="color: white">&nbsp</label>
+                    <template v-if="deleting">
+                        נא להמתין, מערכת מוחקת חיובים...
+                    </template>
+                    <template v-if="deleteFailed">
+                        <span style="color: red; font-weight: bold;">
+                            מחיקה נכשלה, נא לנסות שוב מאוחר יותר
+                        </span>
+                    </template>
+                    <template v-if="!deleting && !deleteFailed">
+                        <button class="btn red small" v-if="selectedRows.length === 1" v-on:click="deleteSelectedCharges()">מחיקת חיוב מסומן</button>
+                        <button class="btn red small" v-if="selectedRows.length > 1"
+                                v-bind:disabled="selectedRows.length > 5"
+                                v-on:click="deleteSelectedCharges()">
+                            מחיקת חיובים מסומנים ({{selectedRows.length}})
+                            <template v-if="selectedRows.length > 5">
+                                 - ניתן למחוק עד 5 במקביל
+                            </template>
+                        </button>
+                    </template>
+                </div>
+                <div v-if="selectedRows.length === 1 && selectedRows[0].order != null">
+                    <label style="color: white">&nbsp</label>
+                    <button class="btn small" v-on:click="generateReceipt()">הוצאת קבלה</button>
+                </div>
+                <div style="margin-right: 10px;">
+                    <label style="font-weight: bold;">סה"כ חיובים:</label>
+                    <div style="font-weight: bold; color: blue;">
+                        {{sumAll()}}
+                    </div>
+                </div>
+            </data-table>
+        </div>
+    </div>
+
+</div>

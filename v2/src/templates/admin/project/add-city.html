@@ -1,0 +1,42 @@
+<div class="dialog">
+    <div class="float-left clickable" v-on:click="close">&#x2715;</div>
+    <div class="caption">
+        הוספת רשות
+    </div>
+    <div class="ph-md">
+        <table class="mb-sm" style="width: 100%;">
+            <tr>
+                <td><div class="label">רשות</div></td>
+            </tr>
+            <tr>
+                <td>
+                    <select v-model="city" style="width: 100%;">
+                        <option v-for="city in cities" v-bind:value="city.id">{{city.name}}</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><div class="label">שם משתמש</div></td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" v-model="login" v-bind:disabled="city == null" style="width: 100%;">
+                </td>
+            </tr>
+            <tr>
+                <td><div class="label">ססמה</div></td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="password" v-model="password" v-bind:disabled="city == null" style="width: 100%;" v-bind:placeholder="hasUser ? '******' : ''">
+                </td>
+            </tr>
+            <tr v-if="!hasUser && city">
+                <td><small>יש להגדיר שם משתמש וססמה עבור הרשות</small></td>
+            </tr>
+        </table>
+        <div class="pb-md" style="text-align: center;">
+            <button type="button" class="btn wide" v-on:click="confirm()" v-bind:disabled="!city || (!hasUser && (!login || !password))">אישור</button>
+        </div>
+    </div>
+</div>

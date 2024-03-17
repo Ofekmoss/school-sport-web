@@ -1,0 +1,53 @@
+<div class="vertical-flex" style="position: relative; padding: 2rem 0;">
+    <div class="ph-lg pt-lg" style="text-align: center; margin-bottom: 10px;">
+        <span style="color: red; font-weight: bold; border: 2px dashed red; padding: 5px 5px 5px 5px;" v-if="inactiveSeason()">
+            שימו לב!
+            עונה זו היא לא עונת הרישום הפעילה<template v-if="!seasonAuthorized">,
+            לא ניתן לבצע פעולות רישום
+            </template>
+        </span>
+        <div class="float-right">
+            <strong>
+                רישום מועדון -
+                {{getSeason()}}
+            </strong>
+
+        </div>
+        <div class="float-left" v-bind:style="{border: user.delegatedUser != null ? '1px dashed black' : '',
+            padding: user.delegatedUser != null ? '5px 5px 5px 5px' : 'inherit'}">
+            <strong v-if="user.delegatedUser">
+                {{user.delegatedUser.name}}
+                &larr;
+                מחובר בתור
+                &larr;
+            </strong>
+            <strong>
+                {{user.name}}
+            </strong>
+            <strong style="color: blue; cursor: pointer" v-on:click="logout()">
+                התנתק
+            </strong>
+        </div>
+    </div>
+    <div class="step-progress">
+        <div class="step-bar"></div>
+        <div class="step-mark p1-5" v-bind:class="{active: currentPage == 0, enabled: pageNumber >= 0}" v-on:click="goToPage(0)">
+            <span>פרטים כלליים</span>
+        </div>
+        <div class="step-mark p2-5" v-bind:class="{active: currentPage == 1, enabled: pageNumber >= 1}" v-on:click="goToPage(1)">
+            <span>הרשמת קבוצות</span>
+        </div>
+        <div class="step-mark p3-5" v-bind:class="{active: currentPage == 2, enabled: pageNumber >= 2}" v-on:click="goToPage(2)">
+            <span>תשלום</span>
+        </div>
+        <div class="step-mark p4-5" v-bind:class="{active: currentPage == 3, enabled: pageNumber >= 3}" v-on:click="goToPage(3)">
+            <span>רישום תלמידים\ות</span>
+        </div>
+        <div class="step-mark p5-5" v-bind:class="{active: currentPage == 4, enabled: pageNumber >= 3}" v-on:click="goToPage(4)">
+            <span>סיכום</span>
+        </div>
+    </div>
+    <div class="flex-fill ph-lg pv-sm"> <!-- style="overflow-x: hidden; overflow-y: auto; -->
+        <component v-bind:is="page" v-on:next="handleNext"></component>
+    </div>
+</div>

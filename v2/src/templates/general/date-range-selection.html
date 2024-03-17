@@ -1,0 +1,28 @@
+<div class="dialog">
+    <div class="caption">
+        בחירת טווח תאריכים
+    </div>
+    <div v-if="maxDaysDiff > 0" style="text-align: center; font-size: 12px; font-weight: bold;"
+         v-bind:style="{color: maxDiffReached() ? 'red' : '#666'}">
+        (הפרש: עד {{maxDaysDiff}} ימים)
+    </div>
+    <div class="pb-md ph-sm">
+        <p>
+            תאריך התחלה:
+            <input type="date" v-model="startDate" style="float: left;" />
+        </p>
+        <div style="clear: both;"></div>
+        <p>
+            תאריך סיום:
+            <input type="date" v-model="endDate" style="float: left;" />
+        </p>
+        <div style="clear: both;"></div>
+    </div>
+    <div class="pb-md ph-sm" v-if="allowUnlimited">
+        <button class="btn blue" style="font-weight: bold;" v-on:click="setUnlimited()">ללא הגבלת זמן</button>
+    </div>
+    <div class="pb-md" style="text-align: center;">
+        <button class="btn red" v-on:click="cancel()">ביטול</button>
+        <button class="btn" v-bind:disabled="confirmDisabled()" v-on:click="confirm()">אישור</button>
+    </div>
+</div>

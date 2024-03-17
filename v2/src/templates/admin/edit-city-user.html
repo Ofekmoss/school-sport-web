@@ -1,0 +1,35 @@
+<div class="dialog">
+    <div class="caption">
+        עדכון משתמש רשות
+    </div>
+    <div class="ph-md" v-if="city">
+        <table class="mb-sm" style="width: 100%;">
+            <tr>
+                <td><div class="label">רשות</div></td>
+            </tr>
+            <tr>
+                <td>{{city.name}}</td>
+            </tr>
+            <tr>
+                <td><div class="label">שם משתמש</div></td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" v-model="login" style="width: 100%;">
+                </td>
+            </tr>
+            <tr>
+                <td><div class="label">ססמה</div></td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="password" v-model="password" style="width: 100%;" v-bind:placeholder="hasUser ? '******' : ''">
+                </td>
+            </tr>
+        </table>
+        <div class="pb-md" style="text-align: center;">
+            <button type="button" class="btn dark-gray" v-on:click="close()">ביטול</button>
+            <button type="button" class="btn" v-on:click="confirm()" v-bind:disabled="!hasUser && (!login || !password)">אישור</button>
+        </div>
+    </div>
+</div>

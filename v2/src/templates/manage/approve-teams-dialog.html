@@ -1,0 +1,37 @@
+<div class="dialog wide">
+    <div class="caption">
+        שינוי סטטוס קבוצות
+    </div>
+    <div class="p-md" v-if="teams.length > 0">
+        <h2>
+            הקבוצות הבאות עומדות להיות
+            <template v-if="status == 2">
+                מאושרות
+            </template>
+            <template v-if="status == 1">
+                רשומות
+            </template>
+        </h2>
+        <div v-for="t of teams">
+             {{getTeamName(t)}}
+        </div>
+    </div>
+    <div class="p-md" v-if="alreadyInStatus.length > 0">
+        <h2>
+            הקבוצות הבאות כבר
+            <template v-if="status == 2">
+                מאושרות
+            </template>
+            <template v-if="status == 1">
+                רשומות
+            </template>
+        </h2>
+        <div v-for="t of alreadyInStatus">
+            {{getTeamName(t)}}
+        </div>
+    </div>
+    <div style="display: flex; justify-content: center;">
+        <button class="btn medium" v-if="teams.length > 0" v-on:click="select()">אישור</button>
+        <button class="btn medium red" v-on:click="cancel()">ביטול</button>
+    </div>
+</div>

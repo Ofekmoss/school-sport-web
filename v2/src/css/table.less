@@ -1,0 +1,83 @@
+@import "colors";
+
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+.table {
+  width: 100%;
+}
+
+.table th {
+  padding: 8px;
+  border-top: 1px solid @primary-light-color;
+  border-bottom: 1px solid @primary-light-color;
+  text-align: right;
+  position: relative;
+}
+
+.table td {
+  padding: 8px;
+  border-top: 1px solid #b4b4b4;
+  border-bottom: 1px solid #b4b4b4;
+}
+
+.table th:first-child {
+  border-right: 1px solid @primary-light-color;
+}
+
+.table th:last-child {
+  border-left: 1px solid @primary-light-color;
+}
+
+.table td:first-child {
+  border-right: 1px solid #b4b4b4;
+}
+
+.table td:last-child {
+  border-left: 1px solid #b4b4b4;
+}
+
+
+.table select {
+  margin-bottom: 0px;
+}
+
+.table select:not(:focus) {
+  border: 1px solid #eee;
+}
+
+.table input[type="text"] {
+  width: 90%;
+  text-align: center;
+  margin-bottom: 0px;
+}
+
+.table input[type="text"]:not(:focus) {
+  border: 1px solid #eee;
+}
+
+.table tr.disabled {
+  background-color: #ddd;
+}
+
+.table tr.green {
+  background-color: #0dee7e;
+}
+
+.table tr.red {
+  background-color: #e28585;
+}
+
+.table tbody tr:hover {
+  background-color: #e9f1fd;
+}
+
+.table tbody tr.selected {
+  background-color: #9dc0f4;
+}
+
+.table tbody tr.selectedRed {
+  background-color: #e28585;
+}

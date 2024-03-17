@@ -1,0 +1,21 @@
+<div class="vertical-flex" style="position: absolute; left: 0px; right: 0px;">
+    <div class="flex-fill ph-lg pv-sm">
+        <div class="panel p-sm"  style="width: auto; position: absolute; left: 39px; right: 39px; top: 13px; bottom: 0px;">
+            <data-table v-bind:columns="columns" v-bind:data="payments" v-bind:enableExport="true"
+                        v-on:selection-change="handleSelectionChange()">
+                <div>
+                    <label>סוג אליפות</label>
+                    <select  style="width: 100%;" v-model="competitionType">
+                        <option value="1">מועדונים</option>
+                        <option value="2">ליגות תיכוניים</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="color: white">&nbsp</label>
+                    <button class="btn" v-bind:disabled="selectedPayments.length == 0" v-on:click="payAll()">אישור תשלום</button>
+                </div>
+            </data-table>
+        </div>
+    </div>
+
+</div>

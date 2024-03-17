@@ -1,0 +1,242 @@
+<div class="dialog wide" style="overflow: hidden">
+    <div style="display: flex; justify-content: flex-end;">
+        <div class="float-left clickable" v-on:click="cancel">&#x2715;</div>
+    </div>
+    <div class="caption" v-if="state != states.edit">
+        הוספת
+        <template v-if="projectId">
+            משתתף/ת
+        </template>
+        <template v-if="!projectId">
+            שחקנים
+        </template>
+        <template v-if="team">
+            לקבוצת
+            {{team}}
+        </template>
+        <template v-if="projectTeam">
+            - {{projectTeam}}
+        </template>
+    </div>
+    <div class="caption" v-if="state == states.edit">
+        עריכת פרטי
+        <template v-if="projectId">
+            משתתף/ת
+        </template>
+        <template v-if="!projectId">
+            שחקן
+        </template>
+    </div>
+    <div v-if="!projectId && state != states.edit && teamStatus != null && teamStatus != 2" style="color: red; font-weight: bold; margin-top: 10px;">
+        קבוצה לא מאושרת על ידי רכז, לא ניתן להוסיף שחקנים
+        <div class="pb-md" style="text-align: center; margin-top: 10px;">
+            <button type="button" class="btn wide" v-on:click="cancel()">חזרה למסך שחקנים</button>
+        </div>
+    </div>
+    <form v-if="state == states.edit || teamStatus == null || teamStatus == 2 || projectId != null" style="overflow: hidden; max-height: -webkit-fill-available; overflow-y: auto;">
+        <template v-if="projectId == null || projectId == 0">
+            <input type="text" v-model="search"
+                   placeholder="חיפוש או הוספה לפי תעודת זהות"
+                   v-bind:class="{ error: searchButtonState.invalidId}"
+                   v-on:keydown="searchKeyDown($event)"
+                   v-if="!addingSinglePlayer && state != states.edit && (availablePlayers.selected.length > 0 || availablePlayers.notSelected.length > 0)"
+                   style="margin: 0; width: 60%;"/>
+            <button type="button" class="btn" id="btnSearch"
+                    v-if="!addingSinglePlayer && searchButtonState.visible"
+                    v-on:click="searchButtonClicked"
+                    style="margin-right: 15px;">
+                <span>
+                    {{searchButtonState.text}}
+                </span>
+            </button>
+        </template>
+        <div id="pnlAvailablePlayers" style="height: 350px; overflow: scroll;" v-if="projectId == null && !addingSinglePlayer && state != states.edit">
+            <table class="table mt-md" style="width: 100%; margin-top: 5px !important;">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th style="text-align: center">תעודת זהות</th>
+                    <th style="text-align: center">שם פרטי</th>
+                    <th style="text-align: center">שם משפחה</th>
+                    <th style="text-align: center">כיתה</th>
+                    <th style="text-align: center">הערות</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(player, index) in availablePlayers.selected" style="background-color: #3fffa4;" v-if="!player.hidden">
+                    <td>
+                        <input type="checkbox" v-model="player.selected" v-on:change="handleSelectionChange(player)" style="position: relative;">
+                    </td>
+                    <td align="center">{{player.idNumber | idNumber}}</td>
+                    <td align="center">{{player.firstName}}</td>
+                    <td align="center">{{player.lastName }}</td>
+                    <td align="center">
+                        {{getGrade(player.grade)}}
+                    </td>
+                    <td align="center">{{player.remarks }}</td>
+                </tr>
+                <tr v-for="(player, index) in availablePlayers.notSelected" v-if="!player.hidden">
+                    <td>
+                        <input type="checkbox" v-model="player.selected" v-on:change="handleSelectionChange(player)" style="position: relative;">
+                    </td>
+                    <td align="center">{{player.idNumber | idNumber}}</td>
+                    <td align="center">{{player.firstName}}</td>
+                    <td align="center">{{player.lastName }}</td>
+                    <td align="center">
+                        {{getGrade(player.grade)}}
+                    </td>
+                    <td align="center">{{player.remarks }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div v-if="!projectId && availablePlayers.selected.length > (maxTeamPlayers - existingTeamPlayers.length)" style="color: red; font-weight: bold; text-align: center;">
+            ניתן להוסיף עד
+            {{(maxTeamPlayers - existingTeamPlayers.length)}}
+            שחקנים לקבוצה זו
+        </div>
+        <div class="p-md" v-if="state == states.edit || addingSinglePlayer || projectId != null">
+            <div class="pb-sm" style="display: flex; flex-direction: column;">
+                <div class="label">תעודת זהות</div>
+                <div class="horizontal-flex" style="justify-content: space-between;">
+                    <input style="position: relative; width: 90%" type="text" v-model="idNumber"
+                           id="txtIdNumber"
+                           v-on:keyup="keyUp($event)"
+                           v-on:input="isIdValidCheck"
+                           v-bind:disabled="state != states.notLoaded"
+                           v-bind:class="{ error: !isIdValid && idNumber != ''}">
+                    <button id="btnSend" type="button" v-if="!playerAlreadyInTeam && state == states.notLoaded && state != states.edit" class="float-left btn" v-on:click="sendId">שלח</button>
+                    <button type="button" v-if="state == states.new || state == states.import || playerAlreadyInTeam" class="float-left btn" v-on:click="clearId">איפוס</button>
+                    <div  v-if="state == states.loading" class="loader" style="margin-top: -6px"></div>
+                </div>
+            </div>
+
+            <table class="mb-sm" style="width: 100%">
+                <tr>
+                    <td style="width: 50%;"><div class="label">שם פרטי</div></td>
+                    <td style="width: 50%;"><div class="label">שם משפחה</div></td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <input style="position: relative; width: 100%" type="text" v-model="firstName" required
+                               v-bind:disabled="status == 2 || state == states.notLoaded || state == states.loading || external">
+                    </td>
+
+                    <td>
+                        <input style="position: relative; width: 100%" type="text" v-model="lastName" required
+                               v-bind:disabled="status == 2 || state == states.notLoaded || state == states.loading || external">
+                    </td>
+
+                </tr>
+            </table>
+
+            <table v-if="status != 2" class="mb-sm" style="width: 100%">
+                <tr>
+                    <td style="width: 50%;">
+                        <div v-if="projectId == null" class="label">תאריך לידה</div>
+                        <div v-if="projectId != null" class="label">שנת לידה</div>
+                    </td>
+                    <td style="width: 50%;">
+                        <div v-if="projectId == null" class="label">כיתה</div>
+                        <div v-if="projectId != null" class="label">מגדר</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <input type="text" v-if="projectId == null" style="position: relative; width: 100%" required v-model="birthDateText"
+                               v-on:input="convertBirthDate"
+                               v-bind:class="{ error: birthDate == null && birthDateText != '' }"
+                               v-bind:disabled="status == 2 || state == states.notLoaded || state == states.loading || external" />
+                        <input type="text" v-if="projectId != null"
+                               maxlength="4" v-model="yearOfBirth"
+                               v-bind:class="{ error: validateYearOfBirth() === false }"
+                               v-bind:disabled="state == states.notLoaded || state == states.loading || external"/>
+                    </td>
+                    <td>
+                        <select v-if="projectId == null" style="position: relative; width: 100%" v-model="grade" required
+                                v-bind:disabled="status == 2 || state == states.notLoaded || state == states.loading || external">
+                            <option v-if="clubs" value="3">ד'</option>
+                            <option v-if="clubs" value="4">ה'</option>
+                            <option v-if="clubs" value="5">ו'</option>
+                            <option v-if="clubs" value="6">ז'</option>
+                            <option v-if="clubs" value="7">ח'</option>
+                            <option v-if="clubs" value="8">ט'</option>
+                            <option value="9">י'</option>
+                            <option value="10">י"א</option>
+                            <option value="11">י"ב</option>
+                        </select>
+                        <template v-if="projectId != null">
+                            <label for="rdMale">זכר</label>
+                            <input id="rdMale" type="radio" v-model="gender" value="1"
+                                   v-bind:disabled="state == states.notLoaded || state == states.loading || external">
+                            <label for="rdFemale">נקבה</label>
+                            <input id="rdFemale" type="radio" v-model="gender" value="2"
+                                   v-bind:disabled="state == states.notLoaded || state == states.loading || external">
+                        </template>
+                    </td>
+                </tr>
+            </table>
+
+            <table class="mb-sm" v-if="projectId != null" style="width: 100%">
+                <tr>
+                    <td style="width: 50%;"><div class="label">תאריך הצטרפות</div></td>
+                    <td style="width: 50%;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <input type="date" style="width: 100%;" v-model="projectJoinDate"
+                               v-bind:disabled="status == 2 || state == states.notLoaded || state == states.loading || external">
+                    </td>
+                    <td>&nbsp;</td>
+                </tr>
+            </table>
+
+            <div class="pb-md" v-if="status == 2" style="text-align: center; color: red; font-weight: bold;">
+                שחקן זה אושר על ידי רכז התאחדות ולכן ניתן לערוך רק תמונה, ספח ת"ז, או בדיקה רפואית
+            </div>
+
+            <div class="pb-sm" style="display: flex; justify-content: space-between;">
+                 <label style="background-image: url('img/photo.png')" class="file-button"
+                       v-bind:class="{disable: state == states.notLoaded || state == states.loading || external, loaded: pictureLoaded}"
+                       v-on:click="uploadPicture()"
+                >תמונה</label>
+                <input id="fiPicture" type="file" name="picture" v-on:change="handlePicture()">
+
+                <label style="background-image: url('img/article.png')" class="file-button"
+                       v-bind:class="{disable: state == states.notLoaded || state == states.loading || external, loaded: idSlipLoaded}"
+                       v-on:click="uploadIdSlip()"
+                >ספח ת"ז</label>
+                <input id="fiIdSlip" type="file" name="id-slip" v-on:change="handleIdSlip()">
+
+                <label style="background-image: url('img/user-id.png')" class="file-button"
+                       v-bind:class="{disable: state == states.notLoaded || state == states.loading || external, loaded: medicalApprovalLoaded}"
+                       v-on:click="uploadMedicalApproval()"
+                >בדיקה רפואית</label>
+                <input id="fiMedicalApproval" type="file" name="medical-approval" v-on:change="handleMedicalApproval()">
+            </div>
+            <div v-if="external && grade < 11" style="color: red; text-align: center;">
+                השחקן משויך לבית ספר אחר,
+                <span v-if="needTransferRequest">
+                    באפשרותך לשלוח בקשת העברה
+                </span>
+                <span v-if="!needTransferRequest">
+                    מאחר ובית הספר באותה רשות תבוצע העברה אוטומטית לאחר האישור
+                </span>
+            </div>
+            <div v-if="external && grade >= 11 && !projectId" style="color: red; font-weight: bold; text-align: center;">
+                לא ניתן לבצע העברות בכיתה י"ב
+            </div>
+            <div v-if="playerAlreadyInTeam" style="color: red; font-weight: bold; text-align: center;">
+                שחקן כבר רשום בקבוצה זו
+            </div>
+            <div v-if="playerAlreadyInIFA" style="color: red; font-weight: bold; text-align: center;">
+                שחקן כבר רשום באיגוד כדורגל
+            </div>
+        </div>
+        <div class="pb-md" style="text-align: center;">
+            <button type="button" v-if="projectId != null || state == states.edit || (addingSinglePlayer && (state != states.edit && !external || (external && !needTransferRequest)))" v-bind:disabled="playerAlreadyInTeam || (!(state == states.new || state == states.edit) || (!external && !isFormValid()))" class="btn wide" v-on:click="confirm()">אישור</button>
+            <button type="button" v-if="external && needTransferRequest"  v-bind:disabled="grade >= 11" class="btn wide" v-on:click="transfer()">שליחת בקשת העברה</button>
+            <button type="button" v-if="projectId == null && state != states.edit && !addingSinglePlayer" v-bind:disabled="availablePlayers.selected.length === 0 || availablePlayers.selected.length > (maxTeamPlayers - existingTeamPlayers.length)" class="btn wide" v-on:click="sendSelectedPlayers()">הוספת שחקנים נבחרים לקבוצה</button>
+        </div>
+    </form>
+</div>

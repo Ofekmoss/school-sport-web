@@ -1,0 +1,914 @@
+@import "colors";
+
+.team-drop {
+  display: none;
+  position: absolute;
+  left: 4px;
+  top: 2px;
+}
+
+.flat-button {
+  outline-style: none;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  margin: 3px;
+  border-radius: 3px;
+  padding: 3px 8px;
+}
+
+.orange-button {
+  .flat-button;
+  border: 1px solid @color-orange;
+  color: @color-orange;
+  background-color: @color-background;
+
+  &:hover {
+    border: 1px solid lighten(@color-orange, 10%);
+    color: lighten(@color-orange, 10%);
+  }
+  &:active {
+    border: 1px solid shade(@color-orange, 10%);
+    color: shade(@color-orange, 10%);
+  }
+
+  &.active {
+    background-color: @color-orange;
+    color: @color-active-text;
+    border: 1px solid shade(@color-orange, 10%);
+
+    &:hover {
+      background-color: lighten(@color-orange, 10%);
+    }
+    &:active {
+      background-color: shade(@color-orange, 10%);
+    }
+  }
+}
+
+.orange-solid-button {
+  .flat-button;
+  border: 1px solid shade(@color-orange, 10%);
+  background-color: @color-orange;
+  color: @color-active-text;
+
+  &:hover {
+    background-color: lighten(@color-orange, 10%);
+  }
+  &:active {
+    background-color: shade(@color-orange, 10%);
+  }
+}
+
+.green-button {
+  .flat-button;
+  border: 1px solid @color-green;
+  color: @color-green;
+  background-color: @color-background;
+
+  &:hover {
+    border: 1px solid lighten(@color-green, 10%);
+    color: lighten(@color-green, 10%);
+  }
+  &:active {
+    border: 1px solid shade(@color-green, 10%);
+    color: shade(@color-green, 10%);
+  }
+
+  &.active {
+    background-color: @color-green;
+    color: @color-active-text;
+    border: 1px solid shade(@color-green, 10%);
+
+    &:hover {
+      background-color: lighten(@color-green, 10%);
+    }
+    &:active {
+      background-color: shade(@color-green, 10%);
+    }
+  }
+}
+
+.green-solid-button {
+  .flat-button;
+  border: 1px solid shade(@color-green, 10%);
+  background-color: @color-green;
+  color: @color-active-text;
+
+  &:hover {
+    background-color: lighten(@color-green, 10%);
+  }
+  &:active {
+    background-color: shade(@color-green, 10%);
+  }
+}
+
+.gray-button {
+  .flat-button;
+  border: 1px solid @color-gray;
+  color: @color-gray;
+  background-color: @color-background;
+
+  &:hover {
+    border: 1px solid lighten(@color-gray, 10%);
+    color: lighten(@color-gray, 10%);
+  }
+  &:active {
+    border: 1px solid shade(@color-gray, 10%);
+    color: shade(@color-gray, 10%);
+  }
+
+  &.active {
+    background-color: @color-gray;
+    color: @color-active-text;
+    border: 1px solid shade(@color-gray, 10%);
+
+    &:hover {
+      background-color: lighten(@color-gray, 10%);
+    }
+    &:active {
+      background-color: shade(@color-gray, 10%);
+    }
+  }
+}
+
+.phases {
+
+  > * {
+    display: inline-block;
+  }
+
+  .phase {
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    margin: 3px;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    padding: 3px 8px;
+
+    &:hover img {
+      visibility: visible;
+    }
+
+    &img {
+      visibility: visible;
+    }
+
+    &.active {
+      background-color: @color-active;
+      color: @color-active-text;
+      border: 1px solid @color-active-border;
+    }
+
+  }
+}
+
+.events {
+
+  > * {
+    display: inline-block;
+  }
+
+  .meeting {
+    margin-bottom: 3px;
+    margin-top: 3px;
+    margin-left: 20px;
+    margin-right: 2px;
+  }
+
+  .event {
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    margin: 3px;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    padding: 3px 8px;
+
+    &.active {
+      background-color: @color-active;
+      color: @color-active-text;
+      border: 1px solid @color-active-border;
+
+    }
+  }
+}
+
+.content-tabs {
+
+  > * {
+    display: inline-block;
+  }
+
+  .content-tab {
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    margin: 3px;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    padding: 3px 8px;
+
+    &:hover img {
+      visibility: visible;
+    }
+
+    &img {
+      visibility: visible;
+    }
+
+    &.active {
+      background-color: @color-active;
+      color: @color-active-text;
+      border: 1px solid @color-active-border;
+
+    }
+  }
+
+  &.small {
+    font-size: 90%;
+    .content-tab {
+      padding: 1px 4px;
+    }
+  }
+
+}
+
+.teams {
+  margin: 3px;
+  border-radius: 3px;
+  border: 1px solid #ddd;
+
+  .caption {
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .list {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+}
+
+.groups {
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding-bottom: 10px;
+
+  > .add {
+    display: inline-block;
+    margin: 3px;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    height: 100%;
+  }
+
+  > .tab {
+    display: inline-block;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    margin: 3px;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    padding: 3px 8px;
+    &.active {
+      background-color: @color-active;
+      color: @color-active-text;
+      border: 1px solid @color-active-border;
+
+    }
+  }
+
+  > .group {
+    display: inline-block;
+    margin: 3px;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    height: 100%;
+    position: relative;
+    vertical-align: top;
+    min-width: 240px;
+    max-width: 360px;
+
+    > * {
+      height: 100%;
+    }
+
+    .caption {
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .list {
+      overflow-y: auto;
+    }
+
+    &.active {
+      border: 1px solid @color-active-border;
+
+      .caption {
+        background-color: @color-active;
+        color: @color-active-text;
+        border-bottom: 1px solid @color-active-border;
+      }
+    }
+  }
+  .add {
+    cursor: pointer;
+    width: 80px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: 300%;
+    font-weight: bold;
+    background-color: #f6f6ff;
+
+    > * {
+      display: flex;
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+    }
+    &:hover {
+      background-color: @color-active;
+      color: @color-active-text;
+      border: 1px solid @color-active-border;
+    }
+
+    &:active {
+      background-color: @color-active-border;
+    }
+  }
+}
+
+.assigning-team {
+  .teams .list {
+    background-color: @color-shade;
+  }
+
+  .groups .group {
+    background-color: @color-shade;
+
+    .caption {
+      background-color: @color-background;
+      color: @color-text;
+    }
+
+    .team:hover {
+      background-color: @color-background;
+
+      .team-drop {
+        display: block;
+      }
+    }
+  }
+
+  .assign-empty {
+    opacity: 0;
+  }
+}
+
+.group.assigning-team {
+  .team:hover .team-drop {
+    display: block;
+  }
+}
+
+.matches {
+  padding: 12px;
+
+  > div {
+    border-radius: 3px;
+    border: 1px solid #ddd;
+
+    table {
+      width: 100%;
+
+      th {
+        text-align: right;
+      }
+
+      thead {
+        border-bottom: 1px solid #ddd;
+      }
+
+      tr {
+        > td, > th {
+          padding: 4px 8px;
+        }
+      }
+      tr:not(:last-child) {
+        > td {
+          border-bottom: 1px solid #ddd;
+        }
+      }
+
+    }
+  }
+
+
+  .phase-level {
+    font-size: 85%;
+    font-weight: bold;
+    padding: 8px 30px;
+    background-color: #ddd;
+  }
+}
+
+.team {
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  border: 1px solid @color-border;
+
+  &:hover {
+    border: 1px solid @color-highlight;
+  }
+
+  > .placement {
+    white-space: nowrap;
+    font-size: 85%;
+    padding-right: 5px;
+    text-align: left;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  > .position {
+    font-size: 85%;
+    font-weight: bold;
+    min-width: 2.5em;
+  }
+
+  &.assign {
+    border: 1px solid #e1c300;
+    color: #e1c300;
+    background-color: @color-background;
+  }
+}
+
+.teams .team {
+  margin: 2px 0px;
+  padding: 6px 12px;
+}
+
+.group .team {
+  margin: 1px 2px;
+  padding: 2px 4px;
+  background-color: @color-background;
+
+  &.selected {
+    border: 1px solid @color-active-border;
+    color: @color-active-border;
+
+    z-index: 1000;
+  }
+}
+
+.match-team {
+  position: relative;
+  
+  padding: 0px 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+
+  &.win {
+    background-color: @color-win;
+    color: #000;
+  }
+
+  &.loss {
+    background-color: @color-loss;
+    color: #000;
+  }
+
+  &.tie {
+    background-color: @color-tie;
+  }
+
+  .tooltip {
+    visibility: hidden;
+    position: absolute;
+    right: 0px;
+    top: 100%;
+    margin-right: 6px;
+    opacity: 0;
+    transition: opacity 0.8s;
+    background-color: #fffcdb;
+    border: 1px solid #dedbbc;
+    border-radius: 2px;
+    padding: 2px;
+    z-index: 1000;
+  }
+
+  &:hover {
+
+    .tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+}
+
+.action-button {
+  cursor: pointer;
+  display: inline-block;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  font-size: 85%;
+  z-index: 1000;
+  border-radius: 3px;
+  border: 1px solid #ddd;
+  padding: 1px 8px;
+
+  background-color: @color-active;
+  color: @color-active-text;
+  border: 1px solid @color-active-border;
+
+  &:hover {
+    background-color: @color-active-border;
+  }
+
+  &:active {
+    background-color: @color-active;
+  }
+
+  &.danger {
+    background-color: @color-danger;
+    border: 1px solid @color-danger-border;
+
+    &:hover {
+      background-color: @color-danger-border;
+    }
+
+    &:active {
+      background-color: @color-danger;
+    }
+  }
+
+  &.light {
+    background-color: @color-background;
+    border: 1px solid @color-highlight;
+    color: @color-highlight;
+
+    &:hover {
+      border: 1px solid @color-active;
+      color: @color-active;
+    }
+
+    &:active {
+      border: 1px solid @color-active-border;
+      color: @color-active-border;
+    }
+  }
+}
+
+
+.board td {
+  border: 1px solid @color-border;
+  padding: 2px;
+}
+
+.board-build .participants {
+  border: 1px solid @color-border;
+}
+
+.board-build .participant {
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  padding: 2px 1px;
+  margin: 2px;
+
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+
+  &:hover {
+    color: @color-active;
+  }
+
+  &.active {
+    background-color: @color-highlight;
+  }
+}
+
+.board .match {
+  font-size: 80%;
+  text-align: center;
+  white-space: nowrap;
+  margin: 2px;
+  padding: 1px;
+  border: 1px solid @color-active-border;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+
+  .match-participant {
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+
+    &:hover {
+      color: @color-active;
+    }
+
+    &.active {
+      background-color: @color-highlight;
+    }
+  }
+
+  .vs {
+    color: @color-active;
+    line-height: 0.5;
+
+    &:after {
+      content: '\00B7';
+    }
+  }
+}
+
+.match-result {
+  display: inline-block;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  padding:  1px 3px;
+  min-width: 36px;
+  text-align: center;
+}
+
+.current-phase .match-result {
+  cursor: pointer;
+
+  &:hover {
+    border: 1px solid @color-active;
+    padding: 1px 2px;
+  }
+}
+
+.match-result-table {
+  width: 100%;
+
+  td {
+    text-align: center;
+  }
+}
+
+.score-input {
+  text-align: center;
+  width: 4em;
+  padding-right: 12px;
+}
+
+.ruleset {
+  .rule-table {
+    overflow: hidden;
+    border: 1px solid @color-active-border;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+  }
+
+  .list {
+    border-left: 1px solid @color-active-border;
+
+    .caption {
+      border-bottom: 1px solid @color-active-border;
+    }
+
+    .item {
+      cursor: pointer;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      padding: 8px 40px;
+      &:not(:last-child) {
+        border-bottom: 1px solid @color-active-border;
+      }
+
+      &.disabled {
+        cursor: none;
+        background-color: #eee;
+      }
+
+      &.active {
+        background-color: @color-active;
+        color: @color-active-text;
+      }
+    }
+
+
+  }
+
+  .rule-view {
+    &.disabled {
+      background-color: #eee;
+    }
+
+    &.changed {
+      background-color: #fcf3ec;
+    }
+
+    .caption {
+      font-size: 120%;
+    }
+  }
+
+  .ranking-item {
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+}
+
+.score-table {
+  .score {
+    font-size: 90%;
+  }
+}
+
+.matches-edit {
+
+  .tab {
+    cursor: pointer;
+    color: @primary-color;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 2px 14px;
+    margin: 6px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+
+    &:hover {
+      background-color: @color-light-gray;
+    }
+
+    &:active {
+      background-color: @color-highlight;
+    }
+
+    &.active {
+      color: @green;
+      background-color: @very-light-green;
+    }
+  }
+
+  .match-details {
+    th {
+      text-align: right;
+    }
+  }
+
+  .match-list {
+    .caption {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    table {
+      cursor: pointer;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    tr {
+      &:first-child > td {
+        border-top: 1px solid #ddd;
+      }
+      > td {
+        border-bottom: 1px solid #ddd;
+      }
+
+      &.active > td {
+        background-color: @very-light-green;
+      }
+    }
+  }
+}
+
+.rank-team {
+  cursor: pointer;
+
+  &.active {
+    background-color: @color-active;
+    color: @color-active-text;
+  }
+
+  .position {
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+
+    &.set {
+      background-color: @color-orange;
+      color: @color-active-text;
+    }
+  }
+}
+
+
+.column-list {
+  margin: auto;
+  border: 1px solid @color-border;
+  min-width: 220px;
+  padding: 4px;
+
+}
+
+.column-item {
+  cursor: pointer;
+  color: @color-gray;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  padding: 0px 12px;
+
+  &:hover {
+    background-color: @color-active;
+    color: #fff;
+  }
+  &.selected {
+    color: @color-text;
+  }
+}
+
+.match-dragged {
+  background-color: @very-light-green;
+}
+
+.team-assign-popup {
+  z-index: 1000;
+  border: 1px solid #b4b4b4;
+  border-radius: 4px;
+  color: #2a2a2a;
+  background-color: #fff;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  padding: 4px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  white-space: nowrap;
+
+  .assign-item:hover,
+  .assign-item.assign {
+    background-color: @color-active;
+    color: #fff;
+  }
+}

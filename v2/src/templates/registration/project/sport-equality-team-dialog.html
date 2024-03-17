@@ -1,0 +1,248 @@
+<div class="dialog wide">
+    <div class="float-left clickable" v-on:click="cancel">&#x2715;</div>
+    <div class="caption">
+        {{newTeam ? "קבוצה חדשה" : "עריכת קבוצה"}}
+    </div>
+    <div class="ph-md" style="overflow: auto;">
+        <table class="pb-sm">
+            <tr>
+                <td colspan="2"><div class="label">ענף</div></td>
+            </tr>
+            <tr>
+                <td class="pl-sm">
+
+                    <select v-model="selectedSport" style="min-width: 100px;" autofocus required name="sport">
+                        <option v-for="(sport, index) in sports" v-bind:value="index">{{sport.name}}</option>
+                    </select>
+                </td>
+                <td class="pl-sm" style="display: flex;">
+                    <span style="padding-left: 5px;">תחרותי</span>
+                    <input type="radio" v-model="team.sport.sportType" value="1" name="sportType">
+                    <span style="padding-left: 5px;">עממי</span>
+                    <input type="radio" v-model="team.sport.sportType" value="2" name="sportType">
+                </td>
+            </tr>
+        </table>
+        <table class="pb-sm">
+            <tr>
+                <td style="padding-right: 1rem;"><div>מגדר</div></td>
+            </tr>
+            <tr>
+                <td class="pl-sm" style="display: flex;padding-right: 1rem; align-items: baseline">
+                    <span style="padding-left: 5px;">ספורטאים</span>
+                    <input type="radio" v-model="team.sport.gender" value="1" name="gender">
+                    <span style="padding-left: 5px;">ספורטאיות</span>
+                    <input type="radio" v-model="team.sport.gender" value="2" name="gender">
+                    <span style="padding-left: 5px;">מעורב</span>
+                    <input type="radio" v-model="team.sport.gender" value="3" name="gender">
+                </td>
+            </tr>
+        </table>
+        <table class="pb-sm">
+            <tr>
+                <td><div class="label mt-md">גילאים</div></td>
+            </tr>
+            <tr>
+                <td class="pl-sm"><div> <label for="chk12to16">12-16</label> </div></td>
+                <td class="pl-sm"><div> <label for="chk17to21">17-21</label> </div></td>
+                <td class="pl-sm"><div> <label for="chk21to40">21-40</label> </div></td>
+                <td class="pl-sm"><div> <label for="chk40plus">40+</label> </div></td>
+                <td class="pl-sm"><div> <label for="chk60plus">60+</label> </div></td>
+                <td class="pl-sm"><div> <label for="chk80plus">80+</label> </div></td>
+            </tr>
+            <tr>
+                <td class="pl-sm"><input type="checkbox" id="chk12to16" v-model="ages.a10"></td>
+                <td class="pl-sm"><input type="checkbox" id="chk17to21" v-model="ages.a11"></td>
+                <td class="pl-sm"><input type="checkbox" id="chk21to40" v-model="ages.a12"></td>
+                <td class="pl-sm"><input type="checkbox" id="chk40plus" v-model="ages.a13"></td>
+                <td class="pl-sm"><input type="checkbox" id="chk60plus" v-model="ages.a14"></td>
+                <td class="pl-sm"><input type="checkbox" id="chk80plus" v-model="ages.a15"></td>
+            </tr>
+        </table>
+
+        <table class="pb-sm">
+            <tr>
+                <td colspan="2"><div>שיוך לאגודה</div></td>
+            </tr>
+            <tr>
+                <td class="pl-sm">
+                    <select v-model="team.association.type" style="min-width: 100px;" autofocus required name="associationType">
+                        <option value="0">
+                            אין שיוך לאגודה
+                        </option>
+                        <option value="1">
+                            התאחדות לספורט נכים
+                        </option>
+                        <option value="2">
+                            ספיישל אולימפיקס
+                        </option>
+                        <option value="5">
+                            אחר
+                        </option>
+                    </select>
+                </td>
+                <td class="pl-sm">
+                    <input v-if="team.association.type == 5" type="text" placeholder="אגודה..." v-model="team.association.name">
+                </td>
+            </tr>
+            <tr>
+                <td class="pl-sm" colspan="2">
+                    <template v-if="team.association.type != null && team.association.type > 0">
+                        <input type="checkbox" v-model="team.associationApprove">
+                        <span>אני מצהיר שהקבוצה שייכת לאגודה</span>
+                    </template>
+                </td>
+            </tr>
+        </table>
+
+
+        <table class="pb-sm">
+            <tr>
+                <td><div class="label mt-md">פרטי מתקן</div></td>
+            </tr>
+
+            <tr>
+                <td class="pl-sm">
+                    <select style="width: 8rem;" v-model="selectedFacility">
+                        <option v-for="(option, index) in facilities" v-bind:value="index"
+                                v-bind:disabled="newFacility == true">{{option.name}}</option>
+                        <option v-bind:value="-1">אחר...</option>
+                    </select>
+                </td>
+            </tr>
+            <tr v-if="newFacility">
+                <td class="pl-sm"><div>שם</div></td>
+                <td class="pl-sm"><div>כתובת</div></td>
+                <td class="pl-sm"><div>סוג</div></td>
+            </tr>
+            <tr v-if="newFacility">
+                <td class="pl-sm"><input v-model="team.facility.name" type="text"></td>
+                <td class="pl-sm"><input v-model="team.facility.address" type="text"></td>
+                <td class="pl-sm" style="display: flex">
+                    <select v-model="selectedFacilityType">
+                        <option v-for="(option, index) in facilityTypes" v-bind:value="index">{{option.name}}</option>
+                    </select>
+                </td>
+                <td v-if="newFacilityType">
+                    <input type="text" v-model="otherFacilityType" style="width: 100%; margin-right: 1rem;">
+                </td>
+            </tr>
+        </table>
+        <div class="pb-sm mt-md">
+            <div class="label">זמני פעילות</div>
+
+            <table v-for="(activity, index) in team.activity">
+                <tr>
+                    <td>יום</td>
+                    <td>משעה</td>
+                    <td>עד שעה</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <select required v-model="activity.day" style="min-width: 60px;">
+                            <option value="0">א'</option>
+                            <option value="1">ב'</option>
+                            <option value="2">ג'</option>
+                            <option value="3">ד'</option>
+                            <option value="4">ה'</option>
+                            <option value="5">ו'</option>
+                        </select>
+                    </td>
+                    <td class="pl-sm">
+                        <select v-model="activity.startTime" v-on:change="computeEndTime(index)"
+                                v-bind:disabled="activity.day == null" style="min-width: 80px;" required>
+                            <option v-for="hour in startHours" v-bind:value="hour.value">{{hour.text}}</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select v-model="activity.endTime"
+                                v-bind:disabled="activity.day == null || activity.startTime == null"
+                                required
+                                style="min-width: 80px;">
+                            <option v-for="hour in activity.endHours" v-bind:value="hour.value">{{hour.text}}</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button type="button" v-if="team.activity.length > 1 && index > 1" class="mr-sm btn red" v-on:click="removeActivityDay(index)">הסרת יום</button>
+                        <button type="button" v-if="index == team.activity.length - 1
+                                            && team.activity[team.activity.length - 1].day
+                                            && team.activity[team.activity.length - 1].startTime
+                                            && team.activity[team.activity.length - 1].endTime"
+                                class="mr-sm btn" v-on:click="addActivityDay()">הוספת יום</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="pb-sm">
+            <div class="label">פרטי מתקן נוסף</div>
+            <input type="text" style="width: 100%;" v-model="team.alternativeFacility" name="alternativeFacility">
+        </div>
+
+        <div class="pb-sm" style="display: flex">
+            <table>
+                <tr>
+                    <td>תאריך תחילת פעילות</td>
+                    <td>תאריך סיום פעילות</td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <input type="text" pattern="^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{2}$" placeholder="dd/mm/yy" style="width: 100%;" v-model="team.startDate" name="startDate">
+                    </td>
+                    <td class="pl-sm">
+                        <input type="text" pattern="^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{2}$" placeholder="dd/mm/yy" style="width: 100%;" v-model="team.endDate" name="endDate">
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="pb-sm">
+            <div class="label">מאמנ/ת</div>
+            <table>
+                <tr>
+                    <td>שם</td>
+                    <td>טלפון</td>
+                    <td>מייל</td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <input type="text" style="width: 100%;" v-model="team.coach.name" name="coachName" required>
+                    </td>
+                    <td class="pl-sm">
+                        <input pattern="(0[0-9]{2}-[0-9]{7}|0[0-9]{1}-[0-9]{7}|0[0-9]{2}[0-9]{7}|0[0-9]{1}[0-9]{7})" required
+                               type="text" style="width: 100%;" v-model="team.coach.phoneNumber" name="coachPhone">
+                    </td>
+                    <td class="pl-sm">
+                        <input pattern="^\S+@\S+$" required
+                               type="text" style="width: 100%;" v-model="team.coach.email" name="coachEmail">
+                    </td>
+                </tr>
+                <tr>
+                    <td>מגדר</td>
+                    <td>הסמכה</td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>בנים</span>
+                        <input type="radio" value="1" v-model="team.coach.gender">
+                        <span>בנות</span>
+                        <input type="radio" value="0" v-model="team.coach.gender">
+                    </td>
+                    <td>
+                        <span>מאמנ/ת</span>
+                        <input type="radio" value="1" v-model="team.coach.certification">
+                        <span>מדריכ/ה</span>
+                        <input type="radio" value="0" v-model="team.coach.certification">
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="pb-md" style="text-align: center; position: relative;">
+        <div v-if="validationError" style="position: absolute; left: 10px; top: 5px; color: red; font-size: 14px; font-weight: bold;">
+            {{validationError}}
+        </div>
+        <button type="button" class="btn wide" v-on:click="confirm()" v-bind:disabled="!validateForm()">אישור</button>
+    </div>
+</div>

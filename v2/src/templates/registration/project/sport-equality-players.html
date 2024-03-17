@@ -1,0 +1,169 @@
+<div>
+    <table class="sport-equality-players" style="border: none;" border="0" cellpadding="5" cellspacing="0">
+        <thead>
+        <tr>
+            <th align="right" style="text-align: right;">
+                ענף ומס' קבוצה
+            </th>
+            <th align="right" style="text-align: right;">
+                &nbsp;
+            </th>
+            <th align="right" style="text-align: right;">
+                משתתפים/ות
+            </th>
+            <th align="left" style="text-align: center;">
+                אישור מנהל/ת
+            </th>
+            <th align="left" style="text-align: center;">
+                אישור מפקח/ת
+            </th>
+            <th align="left" style="text-align: center;">
+                סטטוס בקשה
+            </th>
+        </tr>
+        </thead>
+        <tbody v-for="(team, index) in teams">
+        <tr>
+            <td align="right" style="text-align: right;">
+                <div class="panel-header" v-on:click="togglePanel(team)" style="cursor: pointer;">
+                    <div>{{team.sport}} {{getTeamGender(team.gender)}} - {{team.id}}</div>
+                </div>
+            </td>
+            <td align="right">
+                <div class="panel-header" style="padding: 0 1rem; font-size: 30px; cursor: pointer;"
+                     v-bind:style="{transform: team.__panelOpen ? 'rotate(270deg)' : 'none'}"
+                     v-on:click="togglePanel(team)"> > </div>
+            </td>
+            <td align="right">
+                <div class="panel-header" style="font-size: 14px;">
+                    {{team.players.length}} משתתפים/ות
+                </div>
+            </td>
+            <td align="left">
+                <div class="panel-header" style="font-size: 14px;">
+                    <span class="tooltip" style="color: red;">
+                        <img style="width: 2rem; padding: 0 0.5rem;" v-bind:src="isApprovedByAdmin(team) ? 'img/v.svg' : 'img/x-grey.svg'">
+                            <div class="tooltip-content" v-bind:style="{top: index > 0 ? '-20px' : '20px'}">
+                                <p v-if="isApprovedByAdmin(team)">יש אישור של רכז\ת</p>
+                                <p v-else>אין אישור של רכז\ת</p>
+                                <i></i>
+                            </div>
+                        </span>
+                </div>
+            </td>
+            <td align="left">
+                <div class="panel-header" style="font-size: 14px;">
+                    <span class="tooltip" style="color: red;">
+                        <img style="width: 2rem; padding: 0 0.5rem;" v-bind:src="isApprovedBySportAdmin(team) ? 'img/v.svg' : 'img/x-grey.svg'">
+                            <div class="tooltip-content" v-bind:style="{top: index > 0 ? '-20px' : '20px'}">
+                                <p v-if="isApprovedBySportAdmin(team)">יש אישור של מפקח\ת  מנהל הספורט</p>
+                                <p v-else>אין אישור של מפקח\ת  מנהל הספורט</p>
+                                <i></i>
+                            </div>
+                        </span>
+                </div>
+            </td>
+            <td align="left">
+                <div class="panel-header" style="font-size: 14px;">
+                    <span class="tooltip" style="color: red;">
+                        <img style="width: 2rem; padding: 0 0.5rem;" v-bind:src="isApproved(team) ? 'img/v.svg' : 'img/x-grey.svg'">
+                            <div class="tooltip-content" v-bind:style="{top: index > 0 ? '-20px' : '20px'}">
+                                <p v-if="isApproved(team)">קבוצה מאושרת</p>
+                                <p v-else>קבוצה לא מאושרת</p>
+                                <i></i>
+                            </div>
+                        </span>
+                </div>
+            </td>
+        </tr>
+        <tr v-if="team.__panelOpen">
+            <td colspan="6" align="right">
+                <div class="panel-body" style="overflow: unset">
+                    <div class="tool-bar" style="display: flex; justify-content: space-between">
+                        <div>
+                            <div>
+                                <input type="checkbox" v-model="team.selectAll" v-on:change="handleSelectAll(team)">
+                                <span>כל המשתתפים/ות</span>
+                            </div>
+                        </div>
+
+                        <div style="display: flex;">
+                            <div style="color: red; font-size: 14px">
+                                <div style="display: flex; margin: 4px">
+                                    <div v-if="team.players.length > 15 || team.players.length < 10">ניתן לצרף בין 10 ל 15 משתתפים/ות לקבוצה</div>
+                                </div>
+                            </div>
+                            <div class="button-group">
+                                <button v-bind:disabled="team.selectionCount != 1" v-on:click="editPlayer(team)"><span class="icon">&#x1F589;</span> עריכה</button>
+                                <button v-bind:disabled="team.selectionCount == null || team.selectionCount == 0" v-on:click="deletePlayers(team)"><span class="icon">&#x2715;</span> מחיקה</button>
+                            </div>
+                            <button class="btn"
+                                    style="pointer-events: auto;"
+                                    v-bind:title="team.players.length >= maxTeamPlayers ? 'קבוצה הגיעה למכסת משתתפים/ות מקסימלית' : ''"
+                                    v-on:click="newPlayer(team)"
+                                    v-bind:disabled="team.players.length >= maxTeamPlayers">הוספת משתתף/ת</button>
+
+                        </div>
+                    </div>
+                    <div v-if="team.players && team.players.length > 0">
+                        <table class="table mt-md" style="width: 100%">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th style="text-align: center">שם פרטי</th>
+                                <th style="text-align: center">שם משפחה</th>
+                                <th style="text-align: center">מספר תעודת זהות</th>
+                                <th style="text-align: center">שנת לידה</th>
+                                <th style="text-align: center">מגדר</th>
+                                <th style="text-align: center">תאריך הצטרפות</th>
+                                <th style="text-align: center">תמונה</th>
+                                <th style="text-align: center">ספח ת"ז</th>
+                                <th style="text-align: center">בדיקה רפואית</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="(player, index) in team.players" v-bind:class="{ multipleTeamsRow: player.multipleTeams }">
+                                <td><input type="checkbox" v-model="player.selected" v-on:change="handleSelectionChange(team)"></td>
+                                <td align="center">{{player.firstName}}</td>
+                                <td align="center">{{player.lastName }}</td>
+                                <td align="center" v-bind:title="player.tooltip">{{player.idNumber}}</td>
+                                <td align="center">{{player.yearOfBirth}}</td>
+                                <td align="center">{{getGender(player.gender)}}</td>
+                                <td align="center">{{formatDate(player.projectJoinDate)}}</td>
+                                <td>
+                                    <template v-if="player.picture">
+                                        <a v-bind:href="'/api/v2/document/' + player.picture" target="_blank">
+                                            <img v-bind:src="'/api/v2/document/' + player.picture"
+                                                 style="max-height: 30px; max-width: 30px;"
+                                                 onerror="imageError(this);" />
+                                        </a>
+                                    </template>
+                                </td>
+                                <td>
+                                    <template v-if="player.idSlip">
+                                        <a v-bind:href="'/api/v2/document/' + player.idSlip" target="_blank">
+                                            <img v-bind:src="'/api/v2/document/' + player.idSlip"
+                                                 style="max-height: 30px; max-width: 30px;"
+                                                 onerror="imageError(this);" />
+                                        </a>
+                                    </template>
+                                </td>
+                                <td>
+                                    <template v-if="player.medicalApproval">
+                                        <a v-bind:href="'/api/v2/document/' + player.medicalApproval" target="_blank">
+                                            <img v-bind:src="'/api/v2/document/' + player.medicalApproval"
+                                                 style="max-height: 30px; max-width: 30px;"
+                                                 onerror="imageError(this);" />
+                                        </a>
+                                    </template>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

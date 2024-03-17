@@ -1,0 +1,132 @@
+<div class="wide-container">
+    <div class="row">
+        <div class="section_3" style="margin-top: 30px;">
+            <h2 class="section_title section_title_big">
+                טופס הרשמה למחנה אימון
+            </h2>
+            <div ng-show="data.IsLoading">
+                מערכת טוענת נתונים, נא להמתין...
+            </div>
+            <div class="alert alert-danger" role="alert" ng-show="!data.IsLoading && data.availableCamps.length == 0">
+                אין מחנות אימון פתוחים לרישום, עמכם הסליחה
+            </div>
+            <form  class="form_type_1 type_2" ng-show="!data.IsLoading && data.availableCamps.length > 0">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <label class="control-label" for="ddlPracticeCamp">
+                            מחנה אימון רצוי
+                            <span class="required">*</span></label>
+                        <ui-select id="ddlPracticeCamp" tabindex="1"
+                                   ng-model="participant.practiceCamp"
+                                   theme="bootstrap"
+                                   title="בחירת מחנה אימון">
+                            <ui-select-match placeholder="נא לבחור מחנה אימון">{{$select.selected.Name}}</ui-select-match>
+                            <ui-select-choices repeat="availableCamp in data.availableCamps | filter: $select.search">
+                                <div>{{availableCamp.Name}}</div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 10px;">
+                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                        <label class="control-label" for="ddlGender">
+                            מגדר
+                        </label>
+                        <ui-select id="ddlGender"
+                                   ng-model="participant.gender"
+                                   theme="bootstrap"
+                                   tabindex="3"
+                                   title="בחירת מגדר">
+                            <ui-select-match placeholder="נא לבחור מגדר">{{$select.selected.Name}}</ui-select-match>
+                            <ui-select-choices repeat="gender in data.genders | filter: $select.search">
+                                <div>{{gender.Name}}</div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                        <label class="control-label" for="txtFullName">שם מלא<span class="required">*</span></label>
+                        <input type="text" name="ParticipantName" tabindex="2" id="txtFullName" ng-model="participant.Name" />
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 10px;">
+                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                        <label class="control-label" for="txtAddress">
+                            כתובת
+                            <span class="required">*</span></label>
+                            <input type="text" name="ParticipantAddress" tabindex="5" id="txtAddress" ng-model="participant.Address" />
+                    </div>
+                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                        <label class="control-label" for="txtEmail">דואר אלקטרוני<span class="required">*</span></label>
+                        <input type="text" tabindex="4" name="ParticipantEmail" id="txtEmail" ng-model="participant.Email" />
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 10px;">
+                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                        <label class="control-label" for="txtPhone">
+                            טלפון בית
+                        </label>
+                        <input type="text" name="ParticipantPhone" tabindex="7" id="txtPhone" ng-model="participant.Phone" />
+                    </div>
+                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                        <label class="control-label" for="txtCellular">טלפון נייד<span class="required">*</span></label>
+                        <input type="text" name="ParticipantCellular" tabindex="6" id="txtCellular" ng-model="participant.Cellular" />
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 10px;">
+                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                        <label class="control-label" for="txtSchool">
+שם בית ספר
+                        </label>
+                        <input type="text" name="ParticipantSchool" tabindex="9" id="txtSchool" ng-model="participant.School" />
+                    </div>
+                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                        <label class="control-label" for="txtBirthday">תאריך לידה</label>
+                        <input type="date" name="ParticipantBirthday" tabindex="8" id="txtBirthday" ng-model="participant.Birthday" />
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 10px;">
+                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                        <label class="control-label" for="txtHMO">
+                            קופת חולים
+                        </label>
+                        <input type="text" name="ParticipantHMO" tabindex="11" id="txtHMO" ng-model="participant.HMO" />
+                    </div>
+                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                        <label class="control-label" for="txtCoach">שם המאמן/ת</label>
+                        <input type="text" name="ParticipantCoach" tabindex="10" id="txtCoach" ng-model="participant.Coach" />
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 10px;">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div id="recaptcha" class="g-recaptcha" data-sitekey="6LfL2DEUAAAAAPEHzbSd-4yUJEAmMxs57Ip2pGY8"></div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 10px;" ng-if="formValidationErrors && formValidationErrors.length > 0">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="alert alert-danger" role="alert">
+                            <div ng-repeat="formValidationError in formValidationErrors">
+                                {{formValidationError}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 10px;">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <button class="button button_grey" ng-show="!formSending && !sendResult" ng-click="SubmitForm()">
+                            שליחת טופס
+                        </button>
+                        <span ng-show="formSending">
+                                        נא להמתין...
+                        </span>
+                        <div class="alert alert-danger" role="alert" ng-show="sendResult && sendResult.Error">
+                            {{sendResult.Error}}
+                        </div>
+                        <div class="alert alert-success" role="alert" ng-show="sendResult && sendResult.Success">
+                            תודה, טופס רישום נקלט בהצלחה במערכת
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

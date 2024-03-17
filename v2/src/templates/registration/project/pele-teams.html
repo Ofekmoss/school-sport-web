@@ -1,0 +1,87 @@
+<div>
+    <div class="panel">
+        <div class="panel-header">
+            קבוצות
+        </div>
+        <div style="color: red; font-weight: bold;" v-if="teamRegistrationDisabled">
+            הרישום לקבוצות פל"א לשנת {{currentSeasonName}} נסגר.
+        </div>
+        <div class="panel-body" style="display: flex; flex-direction: column">
+            <div class="tool-bar">
+                <button class="float-left btn" v-if="!teamRegistrationDisabled" v-on:click="newTeam()">הוספת קבוצה חדשה</button>
+
+                <div class="float-left button-group pb-md">
+                    <button v-if="!teamRegistrationDisabled" v-bind:disabled="selectionCount != 1" v-on:click="editTeam()"><span class="icon">&#x1F589;</span> עריכה</button>
+                    <button v-if="!teamRegistrationDisabled" v-bind:disabled="selectionCount == 0" v-on:click="deleteTeam()"><span class="icon">&#x2715;</span> מחיקה</button>
+                </div>
+                <div class="float-right pb-md">
+                    <div style="display: flex; flex-direction: row; align-items: center;">
+                        <div style="white-space: nowrap; padding-left: 10px">
+                            <input type="checkbox" class="checkbox" v-model="selectAll" v-on:change="handleSelectAll">
+                            <span>כל הקבוצות</span>
+                        </div>
+                        <div style="white-space: nowrap; padding-left: 10px; margin-right: 30px;"></div>
+                        <div style="white-space: nowrap; padding-left: 10px;"> סה"כ קבוצות <strong>{{totalTeams}}</strong></div>
+                        <div style="white-space: nowrap; padding-left: 10px;"> עומד בקריטריון <strong>{{totalOkTeams}} </strong></div>
+                        <div style="white-space: nowrap; padding-left: 10px;"> לא עומד בקריטריון <strong>{{totalNotOkTeams}} </strong></div>
+                        <div style="white-space: nowrap; padding-left: 10px;"> סה"כ קבוצות מאושרות <strong>{{totalApprovedTeams}} </strong></div>
+                    </div>
+                </div>
+            </div>
+            <div style="overflow: auto">
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <td style="width: 22px;"></td>
+                        <td class="pl-lg">זיהוי קבוצה</td>
+                        <td class="pl-lg">ענף</td>
+                        <td class="pl-lg">גילאים</td>
+                        <td class="pl-lg">מתקן</td>
+                        <td class="pl-lg">כתובת מתקן</td>
+                        <td class="pl-lg">סוג מתקן</td>
+                        <td class="pl-lg">ימי אימון</td>
+                        <td class="pl-lg">מאמנ/ת</td>
+                        <td class="pl-lg">טלפון מאמנ/ת</td>
+                        <td class="pl-lg">מייל מאמנ/ת</td>
+                        <td class="pl-lg">מגדר מאמנ/ת</td>
+                        <td class="pl-lg">הסמכת מאמנ/ת</td>
+                        <td class="pl-lg">אישור מנהל/ת פרוייקט</td>
+                        <td class="pl-lg">אישור מפקח/ת מחוז</td>
+                        <td class="pl-lg">האם הקבוצה מאושרת?</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr v-for="(team, index) in teams">
+                        <td class="pl-lg" style="position: relative;">
+                            <input type="checkbox" v-model="team.selected" v-on:change="handleSelectionChange">
+                        </td>
+                        <td class="pl-lg" style="white-space: nowrap">{{team.id}}</td>
+                        <td class="pl-lg">{{team.sport.name}}
+                            <span> {{getGender(team.sport.gender)}}</span>
+                        </td>
+                        <td class="pl-lg">{{getAgesText(team.ages)}}</td>
+                        <td class="pl-lg">{{team.facility.name}}</td>
+                        <td class="pl-lg">{{team.facility.address}}</td>
+                        <td class="pl-lg">{{team.facility.type}}</td>
+                        <td class="pl-lg">{{getActivityText(team.activity)}}</td>
+                        <td class="pl-lg">{{team.coach.name}}</td>
+                        <td class="pl-lg">{{team.coach.phoneNumber}}</td>
+                        <td class="pl-lg">{{team.coach.email}}</td>
+                        <td class="pl-lg">{{team.coach.gender == 1 ? 'זכר' : 'נקבה'}}</td>
+                        <td class="pl-lg">{{getCertificationText(team.coach.certification)}}</td>
+                        <td class="pl-lg">{{isApprovedByAdmin(team)}}</td>
+                        <td class="pl-lg">{{isApprovedBySportAdmin(team)}}</td>
+                        <td class="pl-lg">{{isApproved(team)}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <button v-if="true" class="btn green float-left" v-bind:disabled="!isFormValid()" v-on:click="next()">
+        אישור והמשך
+    </button>
+</div>

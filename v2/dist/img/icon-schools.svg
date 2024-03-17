@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="18"
+   height="19"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="icon-schools.svg"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+  <metadata
+     id="metadata10">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     id="namedview6"
+     showgrid="false"
+     inkscape:zoom="12.421053"
+     inkscape:cx="9"
+     inkscape:cy="9.5"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4" />
+  <path
+     fill="#1453B1"
+     fill-rule="evenodd"
+     d="M15.75 11H15V9.125a6.007 6.007 0 0 0-3.375-5.394v-.606A2.629 2.629 0 0 0 9 .5a2.629 2.629 0 0 0-2.625 2.625v.606A6.007 6.007 0 0 0 3 9.125V11h-.75A2.252 2.252 0 0 0 0 13.25v3a2.252 2.252 0 0 0 2.25 2.25h13.5A2.252 2.252 0 0 0 18 16.25v-3A2.252 2.252 0 0 0 15.75 11zM7.875 3.125C7.875 2.505 8.38 2 9 2s1.125.505 1.125 1.125v.107A6.044 6.044 0 0 0 9 3.125c-.385 0-.76.038-1.125.107v-.107zM9 4.625c2.481 0 4.5 2.019 4.5 4.5V11h-9V9.125c0-2.481 2.019-4.5 4.5-4.5zM1.5 16.25v-3a.75.75 0 0 1 .75-.75H3V17h-.75a.75.75 0 0 1-.75-.75zm3-3.75h9V17h-9v-4.5zm12 3.75a.75.75 0 0 1-.75.75H15v-4.5h.75a.75.75 0 0 1 .75.75v3zm-9-6.375h3a.75.75 0 0 0 .75-.75v-2.25a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75v2.25c0 .414.336.75.75.75zm.75-2.25h1.5v.75h-1.5v-.75zM12.375 14a.75.75 0 0 1-.75.75h-5.25a.75.75 0 0 1 0-1.5h5.25a.75.75 0 0 1 .75.75z"
+     id="path2"
+     style="fill:#7da5e3;fill-opacity:1" />
+</svg>

@@ -1,0 +1,643 @@
+<style type="text/css">
+    .tabs_nav li {
+        height: 40px;
+    }
+
+    .tabs_nav li .step-index {
+        font-size: 3em;
+    }
+
+    .tabs_nav li a:hover, .tabs_nav li a {
+        text-decoration: none !important;
+    }
+
+    .delete-icon, .edit-icon {
+        padding: 5px;
+        cursor: pointer;
+    }
+
+    .delete-icon {
+        color: red;
+        margin-left: 5px;
+    }
+
+    .edit-icon {
+        color: #13b7ff;
+    }
+
+    .delete-icon:hover {
+        background-color: #ffa0a0;
+    }
+
+    .edit-icon:hover {
+        background-color: #B2E8FF;
+    }
+</style>
+
+<div class="wide-container" ng-if="!loggedUser">
+    <form class="login-form">
+        <div style="margin-bottom: 15px;">
+            <label for="register_username">שם משתמש</label><br>
+            <input type="text" class="auto-click" data-button-id="btnRegisterLogin" name="username" id="register_username" ng-model="globalModel.username" />
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="register_password">סיסמא</label><br>
+            <input type="password" class="auto-click" data-button-id="btnLogin" name="password" id="register_password" ng-model="globalModel.password" />
+        </div>
+        <div style="margin-bottom: 15px;">
+            <a id="btnRegisterLogin" href="#" class="button button_grey" ng-click="globalMethods.login()" onclick="return false;">
+                התחברות
+            </a>
+        </div>
+        <div>
+            <div class="alert alert-danger" role="alert" ng-show="globalData.errorMessage">
+                {{globalData.errorMessage}}
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="wide-container" ng-if="loggedUser">
+    <manage-breadcrumbs description="טופס רישום מועדון"></manage-breadcrumbs>
+    <manage-tabs sender="club-register"></manage-tabs>
+    <div class="content" ng-if="loggedUser.Role == 1">
+        טופס רישום מועדון זמין רק למשתמשי בית ספר בשלב זה
+    </div>
+    <div class="content" ng-if="loggedUser.Role == 2">
+        <div class="section" style="margin-top: 0px;">
+            <h2 class="section_title section_title_big">
+                {{loggedUser.SchoolName}},
+                סמל בית ספר
+                {{loggedUser.SchoolSymbol}}
+            </h2>
+        </div>
+        <div class="section_7">
+            <div class="clearfix tabs_container" style="margin-bottom: 20px;">
+                <ul class="tabs_nav clearfix">
+                    <li ng-repeat="tab in data.clubFormTabs" style="{{getFormTabStyle(tab, 1)}}">
+                        <a href="#" onclick="return false;" style="{{getFormTabStyle(tab, 2)}}" ng-click="tabClicked(tab)">
+                            <span class="step-index">{{tab.Index}}</span>&nbsp;&nbsp;
+                            {{tab.Caption}}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div ng-show="data.selectedTab && data.selectedTab.Index == 1">
+                <div class="alert alert-info" role="alert">
+                    יש למלא את הפרטים הבאים
+                </div>
+                <form class="form_type_1 type_2 check-dirty" data-tab-index="1">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <span style="font-weight: bold;">
+                                    פרטי רשות מקומית
+                                </span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtMunicipalityAddress">כתובת</label>
+                            <input type="text" name="MunicipalityAddress" tabindex="2" id="txtMunicipalityAddress" ng-model="school.MunicipalityAddress" />
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtMunicipalityName">שם</label>
+                            <input type="text" name="SchoolMunicipalityName" tabindex="1" id="txtMunicipalityName" ng-model="school.SchoolMunicipalityName" />
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtMunicipalityZipCode">מיקוד</label>
+                            <input type="text" name="MunicipalityZipCode" tabindex="5" id="txtMunicipalityZipCode" ng-model="school.MunicipalityZipCode" />
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtMunicipalityCityName">עיר</label>
+                            <input type="text" name="MunicipalityCityName" tabindex="4" id="txtMunicipalityCityName" ng-model="school.MunicipalityCityName" />
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <span style="font-weight: bold;">
+פרטי בית הספר
+                                </span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtManagerEmail">דואר אלקטרוני</label>
+                            <input type="text" name="ManagerEmail" tabindex="7" id="txtManagerEmail" ng-model="school.ManagerEmail" />
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtManagerName">שם מנהל/ת בית הספר</label>
+                            <input type="text" name="ManagerName" tabindex="6" id="txtManagerName" ng-model="school.ManagerName" />
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px; padding-bottom: 10px;">
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtSchoolFax">פקס</label>
+                            <input type="text" name="SchoolFax" tabindex="10" id="txtSchoolFax" ng-model="school.FaxNumber" />
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtSchoolPhone">טלפון</label>
+                            <input type="text" name="SchoolPhone" tabindex="8" id="txtSchoolPhone" ng-model="school.PhoneNumber" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <span style="font-weight: bold;">
+יו"ר הנהלת המועדון הבית ספרי
+                                </span>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtChairmanAddress">כתובת פרטית</label>
+                            <input type="text" name="ChairmanAddress" tabindex="12" id="txtChairmanAddress" ng-model="school.ChairmanAddress" />
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtChairmanName">שם</label>
+                            <input type="text" name="ChairmanName" tabindex="11" id="txtChairmanName" ng-model="school.ChairmanName" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtChairmanZipCode">מיקוד</label>
+                            <input type="text" name="ChairmanZipCode" tabindex="14" id="txtChairmanZipCode" ng-model="school.ChairmanZipCode" />
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtChairmanCity">עיר</label>
+                            <input type="text" name="ChairmanCity" tabindex="13" id="txtChairmanCity" ng-model="school.ChairmanCity" />
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px; padding-bottom: 10px;"> <!--  border-bottom: 1px solid #a0a0a0; -->
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtChairmanFax">פקס</label>
+                            <input type="text" name="ChairmanFax" tabindex="16" id="txtChairmanFax" ng-model="school.ChairmanFax" />
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtChairmanPhoneNumber">טלפון</label>
+                            <input type="text" name="ChairmanPhoneNumber" tabindex="15" id="txtChairmanPhoneNumber" ng-model="school.ChairmanPhoneNumber" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <span style="font-weight: bold;">
+רכז/ת מועדון הספורט הבית ספרי
+                                </span>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtCoordinatorAddress">כתובת פרטית</label>
+                            <input type="text" name="CoordinatorAddress" tabindex="18" id="txtCoordinatorAddress" ng-model="school.CoordinatorAddress" />
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtCoordinatorName">שם</label>
+                            <input type="text" name="CoordinatorName" tabindex="17" id="txtCoordinatorName" ng-model="school.CoordinatorName" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtCoordinatorZipCode">מיקוד</label>
+                            <input type="text" name="CoordinatorZipCode" tabindex="20" id="txtCoordinatorZipCode" ng-model="school.CoordinatorZipCode" />
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtCoordinatorCity">עיר</label>
+                            <input type="text" name="CoordinatorCity" tabindex="19" id="txtCoordinatorCity" ng-model="school.CoordinatorCity" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtCoordinatorCellPhone">נייד</label>
+                            <input type="text" name="CoordinatorCellPhone" tabindex="23" id="txtCoordinatorCellPhone" ng-model="school.CoordinatorCellPhone" />
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtCoordinatorPhoneNumber">טלפון</label>
+                            <input type="text" name="CoordinatorPhoneNumber" tabindex="22" id="txtCoordinatorPhoneNumber" ng-model="school.CoordinatorPhoneNumber" />
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px; padding-bottom: 10px;">
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtCoordinatorFax">פקס</label>
+                            <input type="text" name="CoordinatorFax" tabindex="25" id="txtCoordinatorFax" ng-model="school.CoordinatorFax" />
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtCoordinatorEmailAddress">דואר אלקטרוני</label>
+                            <input type="text" name="CoordinatorEmailAddress" tabindex="24" id="txtCoordinatorEmailAddress" ng-model="school.CoordinatorEmailAddress" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <span style="font-weight: bold;">
+פרטי מפקח/ת
+                                </span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtSupervisorName">שם</label>
+                            <input type="text" name="SupervisorName" tabindex="26" id="txtSupervisorName" ng-model="school.SupervisorName" />
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <span style="font-weight: bold;">
+פרטי נציג/ת רשות
+                                </span>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtRecommenderLastName">שם משפחה</label>
+                            <input type="text" name="RecommenderLastName" tabindex="28" id="txtRecommenderLastName" ng-model="school.RecommenderLastName" />
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtRecommenderFirstName">שם פרטי</label>
+                            <input type="text" name="RecommenderFirstName" tabindex="27" id="txtRecommenderFirstName" ng-model="school.RecommenderFirstName" />
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtRecommenderPhoneNumber">טלפון</label>
+                            <input type="text" name="RecommenderPhoneNumber" tabindex="30" id="txtRecommenderPhoneNumber" ng-model="school.RecommenderPhoneNumber" />
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtRecommenderRole">תפקיד</label>
+                            <input type="text" name="RecommenderRole" tabindex="29" id="txtRecommenderRole" ng-model="school.RecommenderRole" />
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtRecommenderEmailAddress">דואר אלקטרוני</label>
+                            <input type="text" name="RecommenderEmailAddress" tabindex="32" id="txtRecommenderEmailAddress" ng-model="school.RecommenderEmailAddress" />
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtRecommenderFax">פקס</label>
+                            <input type="text" name="RecommenderFax" tabindex="31" id="txtRecommenderFax" ng-model="school.RecommenderFax" />
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <span style="font-weight: bold;">
+פרטי עמותה
+                                </span>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 10px; padding-bottom: 10px; border-bottom: 1px solid #a0a0a0;">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <span class="{{getAssociationClass()}}" ng-click="associationClicked()"></span> &nbsp;
+                            <span ng-click="associationClicked()">
+                                האם המועדון הבית ספרי מוגדר או משויך לעמותה?
+                            </span>
+                            <div ng-show="school.IsAssociation">
+                                <label class="control-label" for="txtAssociationNumber">מס' עמותה</label>
+                                <input type="text" name="AssociationNumber" tabindex="33" id="txtAssociationNumber" ng-model="school.AssociationNumber" />
+                                <br />
+                                <span class="{{getAssociationConfirmedClass()}}" ng-click="associationConfirmedClicked()"></span> &nbsp;
+                            <span ng-click="associationConfirmedClicked()">
+                                האם יש בידי העמותה אישור ניהול תקין לשנה נוכחית?
+                            </span>
+                             </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <span>
+                                הרינו מבקשים בזאת להקים מועדון ספורט בית ספרי ולהפעילו במסגרת התאחדות הספורט לבתי-הספר בישראל.
+                            </span>
+                            <br />
+                            <span class="required">*</span> &nbsp;
+                            <span class="{{getHasConfirmedClubTermsClass()}}" ng-click="hasConfirmedClubTermsClicked()"></span> &nbsp;
+                            <span>
+                                אנו מצהירים בזאת על התחייבותנו לפעול על פי עקרונות ותקנון התאחדות הספורט לבתי הספר בישראל כפי שהם יעודכנו מעת לעת ויופיעו במסמך המידע ועקרונות הפעולה.
+                            </span>
+                            <br /><br />
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div ng-show="data.selectedTab && data.selectedTab.Index == 2">
+                <div class="alert alert-info" role="alert">
+יש לרשום את הקבוצות הבאות למסגרת התחרותית במועדוני הספורט הבית ספריים של התאחדות הספורט לבתיה"ס
+                    <br />
+                    להוספת קבוצה/ות יש ללחוץ על כפתור "הוספת קבוצה"
+                </div>
+                <form class="form_type_1 type_2 check-dirty" data-tab-index="2">
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div>
+                                <a href="#" ng-click="addTeam()"
+                                   class="button button_type_icon_medium button_orange" onclick="return false;" style="margin-right: 5px; margin-bottom: 10px;">
+                                    הוספת קבוצה חדשה
+                                    <i class="fa fa-pencil-square-o"></i>
+                                </a>
+                            </div>
+                            <table class="table_type_1">
+                                <tr class="f_size_large">
+                                    <th>#</th>
+                                    <th>ענף</th>
+                                    <th>אליפות</th>
+                                    <th>קטגוריה</th>
+                                    <th>כמות</th>
+                                    <th>פעולות</th>
+                                </tr>
+                                <tr ng-repeat="order in school.OrdersBasket">
+                                    <td>
+                                        {{order.Index}}
+                                    </td>
+                                    <td>
+                                        {{order.SPORT_NAME}}
+                                    </td>
+                                    <td>
+                                        {{order.CHAMPIONSHIP_NAME}}
+                                    </td>
+                                    <td>
+                                        {{order.CATEGORY_NAME}}
+                                    </td>
+                                    <td>
+                                        {{order.Amount}}
+                                    </td>
+                                    <td>
+                                        <span class="glyphicon glyphicon-trash delete-icon" ng-click="deleteTeamOrder(order)"
+                                              title="מחיקת הזמנת קבוצה"></span>
+                                        <span class="glyphicon glyphicon-pencil edit-icon" ng-click="editTeamOrder(order)"
+                                              title="עריכת הזמנה"></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                 </form>
+            </div>
+
+            <div ng-show="data.selectedTab && data.selectedTab.Index == 3">
+                <form class="form_type_1 type_2 check-dirty" data-tab-index="3">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtChequeSumHebrew">במילים</label>
+                            <input type="text" readonly="readonly" id="txtChequeSumHebrew" value="{{ParseChequeSum()}}"  />
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtChequeSum">סכום המחאה/ות</label>
+                            <input type="text" name="ChequeSum" tabindex="1" id="txtChequeSum" ng-model="school.Cheque.Sum" />
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtChequeBranch">מספר הסניף</label>
+                            <input type="text" name="ChequeBranch" tabindex="5" id="txtChequeBranch" ng-model="school.Cheque.Branch" />
+                        </div>
+                        <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtChequeBank">שם או מספר הבנק</label>
+                            <input type="text" name="ChequeBank" tabindex="3" id="txtChequeBank" ng-model="school.Cheque.Bank" />
+                        </div>
+                        <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                            <label class="control-label" for="txtChequeNumber">מספר המחאה/ות</label>
+                            <input type="text" name="ChequeNumber" tabindex="2" id="txtChequeNumber" ng-model="school.Cheque.Number" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div ng-show="data.selectedTab && data.selectedTab.Index == 4">
+                <form class="form_type_1 type_2 check-dirty" data-tab-index="4">
+                    <div ng-repeat="sportField in data.facilitySportFields" style="padding-bottom: 10px; border-bottom: 1px solid #a0a0a0;">
+                        <div class="row" style="margin-top: 10px;">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <span style="font-weight: bold;">
+                                    ענף
+                                    {{sportField.Name}}
+                                </span>
+                            </div>
+                        </div>
+                        <!-- div class="row" style="margin-top: 10px;">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <span>
+                                    ימי המשחקים שנקבעו לתחרויות
+
+                                </span>
+                                <br />
+                                <span ng-repeat="weekDay in data.hebrewWeekDays" ng-click="facilitySportWeekdayClicked(sportField, weekDay)">
+                                    <i class="{{getFacilitySportWeekdayClass(sportField, weekDay)}}" style="cursor: pointer;"></i>
+                                    <label style="cursor: pointer; margin-left: 5px;">
+                                        יום
+                                        {{weekDay.Name}}
+                                    </label>
+                                </span>
+                            </div>
+                        </div -->
+                        <div class="row" style="margin-top: 10px;">
+                            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 facility-contact" data-sportfield-id="{{sportField.Id}}">
+                                <label class="control-label" ng-click="focusFacilityField(sportField, 'contact')" >איש הקשר ומייל</label>
+                                <input type="text" tabindex="{{sportField.ContactTabIndex}}" ng-model="sportField.Contact" />
+                            </div>
+                            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 facility-address" data-sportfield-id="{{sportField.Id}}">
+                                <label class="control-label" ng-click="focusFacilityField(sportField, 'address')" >שם וכתובת האולם / המגרש הביתי</label>
+                                <input type="text" tabindex="{{sportField.AddressTabIndex}}" ng-model="sportField.Address" />
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 10px;">
+                            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 facility-fax" data-sportfield-id="{{sportField.Id}}">
+                                <!-- label class="control-label" ng-click="focusFacilityField(sportField, 'fax')">פקס אולם</label>
+                                <input type="text" tabindex="{{sportField.FaxTabIndex}}" ng-model="sportField.Fax" / -->
+                            </div>
+                            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 facility-hours" data-sportfield-id="{{sportField.Id}}">
+                                <!-- label class="control-label" ng-click="focusFacilityField(sportField, 'phone')">טלפון אולם</label>
+                                <input type="text" tabindex="{{sportField.PhoneTabIndex}}" ng-model="sportField.Phone" / -->
+                                <label class="control-label" ng-click="focusFacilityField(sportField, 'hours')">שעות אירוח הפעילות</label>
+                                <input type="text" tabindex="{{sportField.PhoneTabIndex}}" ng-model="sportField.HostingHours" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <span class="required">*</span> &nbsp;
+                            <span class="{{getHasConfirmedFacilityTermsClass()}}" ng-click="hasConfirmedFacilityTermsClicked()"></span> &nbsp;
+                            <span>
+                                ידוע לנו כי המתקן/אולם המשחקים ייבדק ויאושר ע"י הרכז במחוז ובמידה ויימצא כבלתי מתאים אנו מתחייבים בזאת כי נעמיד אולם חלופי בסביבתנו הקרובה לבדיקה. במידה ולא ימצא אולם תיקני אנו מתחייבים בזאת להתארח בכל הטורנירים בליגת מועדוני הספורט הבית-ספריים עפ"י התוכנית שתקבע ע"י רכז ההתאחדות במחוז. בנוסף אנו מתחייבים לארח משחקים/תחרויות בהתאם לנהלים ולהוראות המפורסמים בתקנון לאירועי החנ"ג, תקנון התאחדות הספורט לבתיה"ס וכל ההוראות בחוזרי מנכ"ל.
+                            </span>
+                            <br /><br />
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <div ng-show="data.selectedTab && data.selectedTab.Index == 5">
+                <form class="form_type_1 type_2 check-dirty" data-tab-index="5">
+                    <div ng-repeat="member in data.managementBoardMembers" style="margin-top: 10px;">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <span style="font-weight: bold;">
+                                        {{member.Caption}}
+                                    </span>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 10px;">
+                            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                <label class="control-label">תפקיד</label>
+                                <input type="text" tabindex="{{member.RoleTabIndex}}"  ng-model="member.Role" />
+                            </div>
+                            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                <label class="control-label">שם</label>
+                                <input type="text" tabindex="{{member.NameTabIndex}}"  ng-model="member.Name" />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div ng-show="data.selectedTab && data.selectedTab.Index == 6">
+                <form class="form_type_1 type_2 check-dirty" data-tab-index="7">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <table class="table_type_1">
+                                <tr class="f_size_large">
+                                    <th>ענף</th>
+                                    <th>שם המאמן/ת</th>
+                                    <th>ת"ז</th>
+                                    <th>שכבת הגיל</th>
+                                    <th>מין</th>
+                                    <th>סוג הסמכה</th>
+                                    <th>האם עבר השתלמות של מאמן במערכת החינוך?</th>
+                                    <th>מספר נייד</th>
+                                    <th>דואר אלקטרוני</th>
+                                </tr>
+                                <tr ng-repeat="coach in data.coachesData">
+                                    <td>
+                                        <input type="text" tabindex="{{coach.SportFieldTabIndex}}"  ng-model="coach.SportField" />
+                                    </td>
+                                    <td>
+                                        <input type="text" tabindex="{{coach.NameTabIndex}}"  ng-model="coach.Name" />
+                                    </td>
+                                    <td>
+                                        <input type="text" tabindex="{{coach.IdNumberTabIndex}}"  ng-model="coach.IdNumber" ng-change="coachIdNumberChanged(coach)" />
+                                    </td>
+                                    <td>
+                                        <input type="text" tabindex="{{coach.AgeRangeTabIndex}}"  ng-model="coach.AgeRange" />
+                                    </td>
+                                    <td>
+                                        <input type="text" tabindex="{{coach.GenderTabIndex}}"  ng-model="coach.Gender" />
+                                    </td>
+                                    <td nowrap="nowrap">
+                                        <span ng-repeat="authorizationLevel in data.authorizationLevels" ng-click="authorizationLevelClicked(authorizationLevel, coach)">
+                                            <i class="{{getAuthorizationLevelClass(coach, authorizationLevel)}}"></i>&nbsp;
+                                            {{authorizationLevel.Caption}}
+                                            <br ng-if="authorizationLevel.Id < 3" />
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div ng-show="coach.AuthorizationLevel && coach.AuthorizationLevel.Id != 1">
+                                            <span ng-repeat="yesNoOption in data.yesNoOptions" ng-click="passedCoachTrainingClicked(yesNoOption, coach)">
+                                                <i class="{{getPassedCoachTrainingClass(coach, yesNoOption)}}"></i>&nbsp;
+                                                {{yesNoOption.Caption}}
+                                                <br ng-if="yesNoOption.Id < 2" />
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="text" tabindex="{{coach.CellularTabIndex}}"  ng-model="coach.Cellular" />
+                                    </td>
+                                    <td>
+                                        <input type="text" tabindex="{{coach.EmailTabIndex}}"  ng-model="coach.Email" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- form class="form_type_1 type_2 check-dirty" data-tab-index="6">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <table class="table_type_1">
+                                <tr class="f_size_large">
+                                    <th>ענף</th>
+                                    <th>קטגוריה</th>
+                                    <th>יום פעילות</th>
+                                    <th>שעות אירוח הפעילות</th>
+                                </tr>
+                                <tbody ng-repeat="hostingDay in data.hostingDays">
+                                    <tr ng-repeat="category in hostingDay.Categories">
+                                        <td valign="middle" rowspan="{{hostingDay.Categories.length}}" ng-if="category.Index == 1">
+                                            {{hostingDay.SportField}}
+                                        </td>
+                                        <td>
+                                            <input type="text" tabindex="{{category.NameTabIndex}}" placeholder="{{category.NamePlaceholder}}"  ng-model="category.Name" />
+                                        </td>
+                                        <td>
+                                            <input type="text" tabindex="{{category.WeekdayTabIndex}}" placeholder="{{category.WeekdayPlaceholder}}"  ng-model="category.Weekday" />
+                                        </td>
+                                        <td>
+                                            <input type="text" tabindex="{{category.HostingHourTabIndex}}" placeholder="{{category.HostingHoursPlaceholder}}"  ng-model="category.HostingHour" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </form -->
+            </div>
+
+            <div ng-show="data.selectedTab && data.selectedTab.Index == 7">
+
+            </div>
+
+            <div class="row" style="margin-top: 10px; padding-bottom: 20px" ng-if="data.selectedTab">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="pull-left" ng-if="data.selectedTab">
+                        <div ng-show="data.selectedTab.SaveInProgress">
+                                    <span>
+                                    נא להמתין...
+                                    </span>
+                        </div>
+                        <div ng-show="!data.selectedTab.SaveInProgress">
+                            <span ng-show="!data.selectedTab.NoData && data.selectedTab.Index == 6" style="margin-left: 30px;">
+                                <span id="lblConfirmFinalSubmission" class="{{getHasConfirmedFinalSubmissionClass()}}" ng-click="hasConfirmedFinalSubmissionClicked()"></span> &nbsp;
+                                <span ng-click="hasConfirmedFinalSubmissionClicked()">
+                                אישור שליחת נתונים ורישום קבוצות
+                                </span>
+                                <br />
+                            </span>
+                            <span style="color: green; display: inline-block; margin-top: 5px;" ng-show="data.selectedTab.SavedSuccessfully">
+                                <i class="fa fa-check"></i>
+                                                                נתונים נשמרו בהצלחה
+                            </span>
+                            <span style="color: red; display: inline-block; margin-top: 5px;" ng-show="data.selectedTab.SaveFailed">
+                                <i class="fa fa-close"></i>
+שגיאה בעת שמירת נתונים, נא לנסות שוב מאוחר יותר
+                            </span>
+                            <button class="button button_grey"  ng-click="saveTab()" style="margin-right: 10px;" ng-show="!data.selectedTab.NoData">
+                                שמירת נתונים
+                            </button>
+                            <button class="button button_grey"  ng-click="saveAndMove()" style="margin-right: 15px;">
+                                <a href="/sport/club-register-form.html?s={{loggedUser.SchoolSymbol}}"
+                                   ng-show="!data.selectedTab.NoData && data.selectedTab.Index == 6"
+                                   target="_blank" style="color: white;" onclick="return CheckFinalSubmission();">
+הדפסת טופס רישום
+                                </a>
+                                <span ng-show="!data.selectedTab.NoData && data.selectedTab.Index != 6">
+                                                                        שמירה ומעבר לטופס הבא
+                                </span>
+                                <span ng-show="data.selectedTab.NoData">
+                                                                        מעבר לטופס הבא
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,750 @@
+<style type="text/css">
+    tags-input .tags .tag-item, tags-input .tags .input {
+        float: right;
+    }
+
+    .centered {
+        text-align: center;
+    }
+
+    .contact-social-icon {
+        margin-left: 10px;
+    }
+
+    .content-tags-input .tags {
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+        transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    }
+
+    .content-tags-input .tags .tag-item {
+        background: #60666b;
+        border: none;
+        /* margin-left: 5px; */
+        font-size: 13px;
+        line-height: 18px;
+        color: #fff;
+        padding: 3px 10px;
+        text-shadow: none;
+        /* margin: 0 1px 5px 0; */
+        /* background: #428bca;
+        border: 1px solid #357ebd;
+        border-radius: 4px;
+        color: #fff; */
+    }
+
+    .content-tags-input .tags .tag-item .remove-button {
+        background: transparent;
+        color: #fff;
+        /* opacity: .4; */
+    }
+
+    .common_rounded_rectangle {
+        padding-top: 7px !important;
+        padding-bottom: 7px !important;
+    }
+
+
+    .button.button_type_icon_small {
+        font-size: 14px !important;
+        font-weight: bold !important;
+        text-align: center !important;
+        padding-right: 10px !important;
+        padding-left: 10px !important;
+    }
+
+    .button.button_type_icon_big {
+        font-size: 18px !important;
+        font-weight: bold !important;
+        text-align: center !important;
+        width: 100%;
+        margin-top: 15px;
+    }
+
+    .remove-championship-button {
+        position: absolute;
+        top: 10px;
+        left: 7px;
+        font-size: 15px;
+        cursor: pointer;
+    }
+
+    /*
+    .content-tags-input .tags.focused {
+        border-color: #66afe9;
+        box-shadow: inset 0 1px 1px rgba(0,0,0,0.075), 0 0 8px rgba(102,175,233,0.6);
+    }
+
+
+
+    .content-tags-input .tags .tag-item.selected {
+        background: #d9534f;
+        border: 1px solid #d43f3a;
+        border-radius: 4px;
+        color: #fff;
+    }
+
+    .content-tags-input .tags .tag-item button {
+        background: transparent;
+        color: #000;
+        opacity: .4;
+    }
+
+    .content-tags-input .autocomplete {
+        border-radius: 4px;
+    }
+
+    .content-tags-input .autocomplete .suggestion-item.selected {
+        color: #262626;
+        background-color: #e9e9e9;
+    }
+
+    .content-tags-input .autocomplete .suggestion-item em {
+        font-weight: normal;
+        background-color: #ffff00;
+    }
+
+    .content-tags-input .autocomplete .suggestion-item.selected em {
+        color: #262626;
+        background-color: #ffff00;
+    }
+    */
+</style>
+
+<div class="wide-container" ng-if="Unauthorized">
+    <div class="alert alert-danger" role="alert">
+        עמוד זה דורש הרשאות ניהול
+    </div>
+</div>
+
+<div class="wide-container" ng-if="!Unauthorized">
+    <!--==============================Breadcrumb================================-->
+    <div class="breadcrumb">
+        <div>
+            <span><a ui-sref="home">בית </a></span> /
+            <span><a ui-sref="pages.manage">כלי ניהול</a></span> /
+            <span ng-if="pageData.Seq">
+                עריכת
+                {{pageTypeHebrew}}
+            </span>
+            <span ng-if="!pageData.Seq">
+                {{pageTypeHebrew}}
+                <span ng-if="pageTypeIsHebrewMale">
+                    חדש
+                </span>
+                <span ng-if="!pageTypeIsHebrewMale">
+                 חדשה
+                </span>
+            </span>
+        </div>
+    </div>
+
+    <!--==============================content================================-->
+    <div class="row">
+        </br>
+        <div class="section_3">
+            <h2 class="section_title section_title_big">
+<span ng-if="pageData.Seq">
+	עריכת
+    {{pageTypeHebrew}}
+</span>
+<span ng-if="!pageData.Seq">
+    {{pageTypeHebrew}}
+    <span ng-if="pageTypeIsHebrewMale">
+        חדש
+    </span>
+    <span ng-if="!pageTypeIsHebrewMale">
+     חדשה
+    </span>
+</span>
+
+                <div class="pull-left" ng-show="pageData.Seq">
+                    <button class="button button_orange" ng-click="Delete()" ng-disabled="deleting">
+            <span ng-show="deleting">
+                נא להמתין...
+            </span>
+            <span ng-show="!deleting">
+            מחיקת
+                {{pageTypeHebrew}}
+            </span>
+
+                    </button>
+                </div>
+            </h2>
+
+                <form  class="form_type_1 type_2">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                        <label class="control-label" for="txtSubCaption">
+תיאור קצר
+                        </label>
+                        <textarea id="txtSubCaption" name="SubCaption"  rows="2" ng-model="pageData.SubCaption"></textarea>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                        <label class="control-label" for="txtGalleryDescription">
+כותרת
+                            <span class="required">*</span></label>
+                        <input type="text" id="txtGalleryDescription" name="GalleryDescription" ng-model="pageData.Description" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-xs-12">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                <div class="form-group" ng-if="canApplyChampionships()">
+                                    <span class="control-label" style="margin-bottom: 10px;">
+                                        <span ng-show="selected.sportField && selected.sportField.Seq == flowersFieldSeq">
+                                            אירועים משוייכים
+                                        </span>
+                                        <span ng-show="selected.sportField && selected.sportField.Seq != flowersFieldSeq">
+                                            <span class="glyphicon glyphicon-plus" ng-if="canApplyChampionships()"
+                                                  style="cursor: pointer; position: absolute; left: 20px; top: 2px; background-color: #00ADEE; color: white; padding: 5px;"
+                                                  ng-click="assignChampionship()"></span>
+                                        אליפויות משוייכות
+                                        </span>
+                                        <!-- button type="button" class="pull-left button button_grey button_type_icon_small" ng-click="clearChampionship()">
+                                            ניקוי שיוך
+                                        </button -->
+                                    </span>
+
+                                    <div class="{{getRoundedRectangleClass(selected.sportField)}}" ng-repeat="championshipCategory in pageData.ChampionshipCategories"
+                                         ng-click="assignChampionship(championshipCategory)" change-background colorcode="{{getSportFieldColor(selected.sportField.Seq)}}" selected="true"
+                                         style="{{getSportFieldFilterStyle(selected.sportField)}}">
+                                        <div class="remove-championship-button" ng-click="removeChampionship(championshipCategory); $event.stopPropagation();">X</div>
+                                        {{championshipCategory.Championship + ' ' + championshipCategory.Name}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="padding-right: 0px;">
+                                <div class="form-group">
+                                    <label for="ddlSportField" class="control-label">ענף ספורט<span class="required">*</span></label>
+                                    <ui-select id="ddlSportField"
+                                               ng-model="selected.sportField"
+                                               on-select="clearChampionships()"
+                                               theme="bootstrap"
+                                               title="בחירת ענף ספורט">
+                                        <ui-select-match placeholder="בחרו ענף ספורט...">{{$select.selected.Name}}</ui-select-match>
+                                        <ui-select-choices repeat="sportField in generalData.sportFields | filter: $select.search">
+                                            <div>{{sportField.Name}}</div>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                        <label class="control-label">תאריך<span class="required">*</span></label>
+                        <input type="date" name="GalleryDate" id="txtGalleryDate" ng-model="pageData.Date" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3 col-lg-3 col-xs-12" ng-if="pageType == 'article'">
+                        <div class="control-group form-elements">
+                            <input type="checkbox" id="chkAuthorDetails" />
+                            <label for="chkAuthorDetails" class="control-label">
+                                האם  לשים פרטים?
+                            </label>
+                        </div>
+                        <div class="section" ng-show="pageData.ShowAuthorDetails && selected.AuthorDetails && selected.AuthorDetails.AboutMe">
+                            <h3 class="section_title">
+                                אודות
+                                {{selected.AuthorDetails.Name}}
+                            </h3>
+                            <div class="author_details clearfix">
+                                <div class="f_left">
+                                    <div class="article_author_picture" ng-if="selected.AuthorDetails.PictureName">
+                                        <img ng-src="/content/Authors/{{selected.AuthorDetails.Seq}}/{{selected.AuthorDetails.PictureName}}" alt="" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <p ng-bind-html="selected.AuthorDetails.AboutMe"></p>
+                                    <div class="widget widget_social_icons type_2 type_border clearfix">
+                                        <ul>
+                                            <li class="website" ng-show="selected.AuthorDetails.HomePage">
+                                                <span class="tooltip">Website</span>
+                                                <a href="{{selected.AuthorDetails.HomePage}}" target="_blank">
+                                                    <i class="fa fa-home"></i>
+                                                </a>
+                                            </li>
+                                            <li class="facebook" ng-show="selected.AuthorDetails.FacebookUrl">
+                                                <span class="tooltip">Facebook</span>
+                                                <a href="{{selected.AuthorDetails.FacebookUrl}}" target="_blank">
+                                                    <i class="fa fa-facebook"></i>
+                                                </a>
+                                            </li>
+                                            <li class="twitter" ng-show="selected.AuthorDetails.TwitterUrl">
+                                                <span class="tooltip">Twitter</span>
+                                                <a href="{{selected.AuthorDetails.TwitterUrl}}" target="_blank">
+                                                    <i class="fa fa-twitter"></i>
+                                                </a>
+                                            </li>
+                                            <li class="google_plus" ng-show="selected.AuthorDetails.GooglePlusUrl">
+                                                <span class="tooltip">Google+</span>
+                                                <a href="{{selected.AuthorDetails.GooglePlusUrl}}" target="_blank">
+                                                    <i class="fa fa-google-plus"></i>
+                                                </a>
+                                            </li>
+                                            <li class="rss" ng-show="selected.AuthorDetails.RssFeedUrl">
+                                                <span class="tooltip">Rss</span>
+                                                <a href="{{selected.AuthorDetails.RssFeedUrl}}" target="_blank">
+                                                    <i class="fa fa-rss"></i>
+                                                </a>
+                                            </li>
+                                            <li class="pinterest" ng-show="selected.AuthorDetails.PinterestUrl">
+                                                <span class="tooltip">Pinterest</span>
+                                                <a href="{{selected.AuthorDetails.PinterestUrl}}" target="_blank">
+                                                    <i class="fa fa-pinterest"></i>
+                                                </a>
+                                            </li>
+                                            <li class="instagram" ng-show="selected.AuthorDetails.InstagramUrl">
+                                                <span class="tooltip">Instagram</span>
+                                                <a href="{{selected.AuthorDetails.InstagramUrl}}" target="_blank">
+                                                    <i class="fa fa-instagram"></i>
+                                                </a>
+                                            </li>
+                                            <li class="linkedin" ng-show="selected.AuthorDetails.LinkedInUrl">
+                                                <span class="tooltip">LinkedIn</span>
+                                                <a href="{{selected.AuthorDetails.LinkedInUrl}}" target="_blank">
+                                                    <i class="fa fa-linkedin"></i>
+                                                </a>
+                                            </li>
+                                            <li class="vimeo" ng-show="selected.AuthorDetails.VimeoUrl">
+                                                <span class="tooltip">Vimeo</span>
+                                                <a href="{{selected.AuthorDetails.VimeoUrl}}" target="_blank">
+                                                    <i class="fa fa-vimeo-square"></i>
+                                                </a>
+                                            </li>
+                                            <li class="youtube" ng-show="selected.AuthorDetails.YouTubeUrl">
+                                                <span class="tooltip">Youtube</span>
+                                                <a href="{{selected.AuthorDetails.YouTubeUrl}}" target="_blank">
+                                                    <i class="fa fa-youtube-play"></i>
+                                                </a>
+                                            </li>
+                                            <li class="flickr" ng-show="selected.AuthorDetails.FlickrUrl">
+                                                <span class="tooltip">Flickr</span>
+                                                <a href="{{selected.AuthorDetails.FlickrUrl}}" target="_blank">
+                                                    <i class="fa fa-flickr"></i>
+                                                </a>
+                                            </li>
+                                            <li class="envelope" ng-show="selected.AuthorDetails.Email">
+                                                <span class="tooltip">Email</span>
+                                                <a href="mailto:{{selected.AuthorDetails.Email}}">
+                                                    <i class="fa fa-envelope-o"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-lg-3 col-xs-12" ng-if="pageType == 'article'">
+                        <div class="form-group">
+                            <label for="ddlAuthor" class="control-label">
+                                מאת
+                            </label>
+                            <ui-select id="ddlAuthor"
+                                       ng-model="selected.AuthorName"
+                                       theme="bootstrap"
+                                       title="">
+                                <ui-select-match placeholder="">{{$select.selected}}</ui-select-match>
+                                <ui-select-choices repeat="author in getAuthors($select.search) | filter: $select.search">
+                                    <div ng-bind="author"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                        <div ng-show="pageType == 'event'">
+                            <label class="control-label" for="txtEventFacility">
+    מתקן
+                            </label>
+                            <input type="text" id="txtEventFacility" name="EventFacility" ng-model="pageData.FacilityName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="pull-left button button_grey button_type_icon_small" ng-click="clearRegion()" ng-show="selected.region">
+                                ניקוי שיוך
+                            </button>
+                            <label for="ddlRegion" class="control-label">שיוך למחוז</label>
+                            <ui-select id="ddlRegion"
+                                       ng-model="selected.region"
+                                       theme="bootstrap"
+                                       title="בחירת מחוז">
+                                <ui-select-match placeholder="בחרו מחוז...">{{$select.selected.Name}}</ui-select-match>
+                                <ui-select-choices repeat="region in generalData.Regions | filter: $select.search">
+                                    <div>{{region.Name}}</div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label class="control-label">תגיות<span class="required">*</span></label>
+                            <tags-input ng-model="pageData.Tags" class="content-tags-input" add-on-paste="true"
+                                        display-property="Name" keyProperty="Seq" min-length="1"
+                                        replace-spaces-with-dashes="false"
+                                        placeholder="הוספת תגית"
+                                        add-on-comma="false">
+                                <auto-complete source="loadTags($query)" min-length="0" debounce-delay="100"
+                                               max-results-to-show="20"></auto-complete>
+                            </tags-input>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" ng-show="pageType == 'event'">
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                        <label for="txtEventDuration" class="control-label">משך הפעילות</label>
+                        <input type="text" id="txtEventDuration" name="EventDuration" ng-model="pageData.ActivityDuration" />
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                        <label class="control-label">שעה</label>
+                        <input type="time" name="EventTime" id="txtEventTime" ng-model="pageData.Time" />
+                    </div>
+                </div>
+                <div class="row" ng-if="pageData.Seq && pageData.DefaultImageSeq">
+                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label class="control-label">תמונה ממוזערת - עמוד הבית</label>
+                            <div ng-class="{'centered': pageData.CroppedImages.Homepage}" style="width: 766px;">
+                                <img id="imgCroppedHomepage" ng-if="pageData.CroppedImages.Homepage" ng-src="{{pageData.CroppedImages.Homepage}}" style="border: 0; width: 766px; height: 200px;" />
+                                <button class="button button_orange" ng-click="OpenCropDialog(2)" style="margin-top: 10px;">
+                                    <span ng-show="pageData.CroppedImages.Homepage">
+                                        עריכת
+                                    </span>
+                                    <span ng-show="!pageData.CroppedImages.Homepage">
+                                        הגדרת
+                                    </span>
+                                     תמונה ממוזערת
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label class="control-label">תמונה ממוזערת - סליידר<span class="required">*</span></label>
+                            <div ng-class="{'centered': pageData.CroppedImages.Slider}" style="width: 214px;">
+                                <img id="imgCroppedSlider" ng-if="pageData.CroppedImages.Slider" ng-src="{{pageData.CroppedImages.Slider}}" style="border: 0; width: 214px; height: 234px;" />
+                                <button class="button button_orange" ng-click="OpenCropDialog(1)" style="margin-top: 10px;">
+                                    <span ng-show="pageData.CroppedImages.Slider">
+                                        עריכת
+                                    </span>
+                                    <span ng-show="!pageData.CroppedImages.Slider">
+                                        הגדרת
+                                    </span>
+                                     תמונה ממוזערת
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div ng-repeat="section in pageData.Sections | orderBy:'Index'" class="content-section" data-uniqueid="{{section.UniqueId}}">
+        <div class="section_3">
+            <h2 ng-show="pageData.Sections.length > 1">
+                מקטע מספר
+                {{(section.Index + 1)}} - {{section.HebrewType}}
+                <div class="pull-left">
+                    <span class="glyphicon glyphicon-arrow-down" style="{{(section.Index == 0) ? 'cursor: pointer; margin-left: 10px;': 'cursor: pointer;'}}"
+                          ng-click="MoveSectionDown(section)" ng-show="section.Index < (pageData.Sections.length - 1)"></span>
+                    <span class="glyphicon glyphicon-arrow-up" style="cursor: pointer; margin-left: 10px;"
+                          ng-click="MoveSectionUp(section)" ng-show="section.Index > 0"></span>
+                    <span class="glyphicon glyphicon-remove" style="cursor: pointer;"
+                          ng-click="DeleteSection(section)" ng-show="pageData.Sections.length > 1"></span>
+                </div>
+            </h2>
+            <h3 class="section_title" ng-if="section.Type == 1 && section.ImageRows && section.ImageRows.length > 0">
+                עריכת תמונות קיימות
+            </h3>
+            <div class="row" ng-repeat="imageRow in section.ImageRows" style="margin-top: 10px;" ng-if="section.Type == 1">
+                <div class="{{buildImageCellClass(imageCell)}}" ng-repeat="imageCell in imageRow.ImageCells | orderBy:'-Index'">
+                    <div class="image-cell-contents" style="text-align: center; width: 120px; position: relative;">
+                        <div class="pull-left" ng-click="MakeDefaultImage(section, imageCell);" title="הגדרה כברירת מחדל של ה{{pageTypeHebrew}}"
+                             style="{{(imageCell.IsDefault) ? 'color: #f2b01e; cursor: pointer;': 'cursor: pointer;'}}">
+                            <span class="glyphicon glyphicon-star"></span>
+                        </div>
+                        <div class="pull-right" ng-click="OpenLinkSelection(section, imageCell);" title="{{GetLinkTooltip(imageCell)}}"
+                             style="{{GetLinkStyle(imageCell)}}"
+                             ng-show="pageType == 'gallery'">
+                            <span class="glyphicon glyphicon-link"></span>
+                        </div>
+                        <div>{{imageCell.Index + 1}}</div>
+                        <a href="/content/Images/{{pageData.Seq}}/{{imageCell.FileName}}" target="_blank">
+                            <img ng-src="/content/Images/{{pageData.Seq}}/{{imageCell.FileName}}" align="middle"
+                                 title="{{imageCell.FileName + ' ' + (imageCell.DateUploaded | date : 'dd/MM/yyyy')}}"/>
+                        </a><br />
+                        <input type="text" ng-model="imageCell.Description" name="ImageDescription" class="form-control" placeholder="תיאור התמונה" />
+                        <button class="btn btn-xs pull-right" ng-disabled="imageCell.Index == 0" ng-click="changeIndex(section, imageCell, -1)">
+                            <span class="glyphicon glyphicon-arrow-right"></span>
+                        </button>
+                        <button class="btn btn-xs pull-left" ng-disabled="imageCell.Index == section.Attachments.length - 1" ng-click="changeIndex(section, imageCell, 1)">
+                            <span class="glyphicon glyphicon-arrow-left"></span>
+                        </button>
+                        <button class="btn btn-xs" ng-click="deleteAttachment(section, imageCell)">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <h3 class="section_title" ng-if="section.Type == 5 && section.Attachments && section.Attachments.length > 0">
+                עריכת קבצים קיימים
+            </h3>
+            <table class="table_type_1" ng-if="section.Type == 5 && section.Attachments && section.Attachments.length > 0">
+                <tr class="f_size_large">
+                    <th style="width: 5%;">&nbsp;</th>
+                    <th style="width: 5%;">#</th>
+                    <th>שם הקובץ</th>
+                    <th>תיאור</th>
+                    <th>גודל (בייטים)</th>
+                    <th>תאריך העלאה</th>
+                </tr>
+                <tr ng-repeat="attachment in section.Attachments">
+                    <td nowrap="nowrap">
+                        <span class="glyphicon glyphicon-remove" style="cursor: pointer; margin-left: 10px;"
+                              ng-click="deleteAttachment(section, attachment)"></span>
+                        <span class="glyphicon glyphicon-arrow-up" style="cursor: pointer; margin-left: 10px;"
+                              ng-click="changeIndex(section, attachment, -1)" ng-show="attachment.Index > 0"></span>
+                        <span class="glyphicon glyphicon-arrow-down" style="cursor: pointer;"
+                              ng-click="changeIndex(section, attachment, 1)" ng-show="attachment.Index < section.Attachments.length - 1"></span>
+                    </td>
+                    <td>{{attachment.Index + 1}}</td>
+                    <td><a href="/content/Files/{{pageData.Seq}}/{{attachment.FileName}}" target="_blank">{{attachment.FileName}}</a></td>
+                    <td>
+                        <input type="text" ng-model="attachment.Description" />
+                    </td>
+                    <td>{{attachment.FileSize}}</td>
+                    <td>{{attachment.DateUploaded | date : 'dd/MM/yyyy'}}</td>
+                </tr>
+            </table>
+            <h3 class="section_title">
+                {{section.Title}}
+            </h3>
+            <!-- Add Images Gallery -->
+            <div class="section_3" ng-if="section.Type == 1 || section.Type == 5">
+                <div class="alert alert-danger" role="alert" ng-show="section.attachmentUploadError">
+                    <strong>{{section.attachmentUploadError}}</strong>
+                </div>
+                <div ng-if="section.Type == 1" dropzone="dropzoneImagesConfig" class="dropzone page-dropzone" style="font-size: 120%; font-weight: bold;">
+
+                </div>
+                <div ng-if="section.Type == 5" dropzone="dropzoneFilesConfig" class="dropzone page-dropzone" style="font-size: 120%; font-weight: bold;">
+
+                </div>
+            </div>
+            <!-- End Images Gallery -->
+            <!-- Add text -->
+            <div class="section_3" ng-if="section.Type == 2">
+                <div class="control-group">
+                    <div class="controls">
+                        <textarea name="textinput" rows="5" ng-model="section.Data"></textarea>
+                    </div>
+                </div>
+            </div>
+            <!-- END ADD text -->
+            <!-- Add video -->
+            <div class="section_3" ng-if="section.Type == 3">
+                <div class="row">
+                    <div class="col-lg-8"></div>
+                    <div class="col-lg-4">
+                        <div>
+                            <label class="control-label">הדבק כתובת URL<span class="required">*</span></label>
+                            <input type="text" name="video_url" ng-model="section.Data" />
+                        </div>
+                        </br>
+                        <div class="iframe_video_container" ng-if="section.Video && section.Video.Url && section.Video.Url.toString().length > 0">
+                            <!-- iframe src="https://www.youtube.com/embed/ohl2cv_eqng" frameborder="0" allowfullscreen></iframe -->
+                            <iframe src="{{section.Video.Url}}" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                        </div></br>
+                    </div>
+                </div>
+            </div>
+            <!-- End Add video -->
+            <!-- Add contact -->
+            <div class="section_3" ng-if="section.Type == 6">
+                <div class="row" style="margin-bottom: 15px;">
+                    <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                        &nbsp;
+                    </div>
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">
+                        <button type="button" ng-show="section.selectedContact" class="button button_grey button_type_icon_small"
+                                ng-click="clearSelectedContact(section)">
+                            איפוס איש קשר
+                        </button>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-11 col-xs-11">
+                        <ui-select
+                                ng-model="section.selectedContact"
+                                on-select="applyExistingContact(section)"
+                                theme="bootstrap"
+                                title="">
+                            <ui-select-match placeholder="בחירת איש קשר קיים">{{$select.selected.DisplayName}}</ui-select-match>
+                            <ui-select-choices repeat="contact in generalData.Contacts | filter: $select.search">
+                                <div>{{contact.DisplayName}}</div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="row" style="margin-bottom: 15px;">
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <span class="fa fa-globe contact-social-icon"></span>
+                                <label class="control-label">
+                                    כתובת אתר בית
+                                </label>
+                                <input type="text" name="ContactHomePage"  ng-model="section.Data.HomePage" />
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <span class="fa fa-envelope contact-social-icon"></span>
+                                <label class="control-label">
+                                    דוא"ל
+                                </label>
+                                <input type="text" name="ContactEmail"  ng-model="section.Data.Email" />
+                            </div>
+                        </div>
+                        <div class="row" style="margin-bottom: 15px;">
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <span class="fa fa-instagram contact-social-icon"></span>
+                                <label class="control-label">
+                                    כתובת פרופיל Instagram
+                                </label>
+                                <input type="text" name="ContactInstagram"  ng-model="section.Data.InstagramUrl" />
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <span class="fa fa-facebook contact-social-icon"></span>
+                                <label class="control-label">
+                                    כתובת פרופיל Facebook
+                                </label>
+                                <input type="text" name="ContactFacebook"  ng-model="section.Data.FacebookUrl" />
+                            </div>
+                        </div>
+                        <div class="row" style="margin-bottom: 15px;">
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <span class="fa fa-twitter contact-social-icon"></span>
+                                <label class="control-label">
+                                    כתובת פרופיל Twitter
+                                </label>
+                                <input type="text" name="ContactTwitter"  ng-model="section.Data.TwitterUrl" />
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <span class="fa fa-youtube contact-social-icon"></span>
+                                <label class="control-label">
+                                    כתובת פרופיל YouTube
+                                </label>
+                                <input type="text" name="ContactYouTube"  ng-model="section.Data.YouTubeUrl" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <span class="fa fa-linkedin contact-social-icon"></span>
+                                <label class="control-label">
+                                    כתובת פרופיל LinkedIn
+                                </label>
+                                <input type="text" name="ContactLinkedIn"  ng-model="section.Data.LinkedInUrl" />
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                        <span class="glyphicon glyphicon-remove" style="cursor: pointer; margin-left: 10px;" ng-show="section.Data.Picture"
+                              ng-click="removeContactPicture(section)"></span>
+                        <label class="control-label">
+                            תמונת פרופיל
+                        </label>
+                        <div ng-if="section.Data.Picture" style="text-align: center;">
+                            <a href="/content/Contacts/{{section.Data.Picture.PageSeq}}/{{section.Data.Picture.FileName}}" target="_blank">
+                                <img class="contact-picture" ng-src="{{croppedContactPicturePath(section.Data.Picture)}}" align="middle" />
+                            </a>
+                            <br />
+                            <button class="button button_grey" ng-click="CropContactPicture(section.Data)" style="margin-top: 10px;">
+                                    <span ng-show="gotCroppedContactPicture(section.Data.Picture.Seq)">
+                                        עריכת
+                                    </span>
+                                    <span ng-show="!gotCroppedContactPicture(section.Data.Picture.Seq)">
+                                        הגדרת
+                                    </span>
+                                תמונה ממוזערת
+                            </button>
+                        </div>
+                        <div dropzone="dropzoneContactsConfig" ng-if="!section.Data.Picture" class="dropzone page-dropzone" style="font-size: 120%; font-weight: bold;">
+
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <div class="row" style="margin-bottom: 15px;">
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <label class="control-label">
+תפקיד
+                                </label>
+                                <input type="text" name="ContactRole"  ng-model="section.Data.Role" />
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <label class="control-label">
+                                    שם איש קשר
+                                    <span class="required">*</span></label>
+                                <input type="text" name="ContactName"  ng-model="section.Data.Name" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <label class="control-label">
+                                    אודות
+                                </label>
+                                <textarea name="ContactAboutMe"  rows="5" ng-model="section.Data.AboutMe"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Add contact -->
+        </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="row" ng-show="allowedSectionTypeCount() > 0"> <!-- allowAddingSections -->
+        <div class="section_3">
+            <a href="#" ng-repeat="sectionType in sectionTypes" class="button button_type_icon_medium button_orange" style="margin-right: 5px;"
+               ng-click="AddSection(sectionType.Id)" ng-show="sectionType.Allowed" onclick="return false;">
+                הוספת
+                {{sectionType.Hebrew}}
+                <i class="{{sectionType.Icon}}"></i></a>
+        </div>
+    </div>
+    <!-- END Buttons -->
+
+    <div class="alert alert-danger" role="alert" ng-show="validationErrors.length > 0">
+        <span class="close" ng-click="validationErrors = []">&times;</span>
+        <div ng-repeat="validationError in validationErrors">
+                {{validationError.Message}}
+        </div>
+    </div>
+
+    <div class="alert alert-danger" role="alert" ng-show="submitError">
+        <strong>{{submitError}}</strong>
+    </div>
+
+    <div class="alert alert-success" role="alert" ng-show="showSubmitSuccessMessage">
+        <strong>
+            נתונים עודכנו בהצלחה
+        </strong>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+        <button class="button button_grey" ng-click="Submit()" ng-disabled="submitting">
+            <span ng-show="submitting">
+                נא להמתין...
+            </span>
+            <span ng-show="!submitting">
+            שמירת נתונים
+            </span>
+
+        </button>
+    </div>
+</div>

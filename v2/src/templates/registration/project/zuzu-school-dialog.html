@@ -1,0 +1,183 @@
+<div class="dialog wide" style="overflow: hidden">
+    <div style="display: flex; justify-content: flex-end;">
+        <div class="float-left clickable" v-on:click="cancel">&#x2715;</div>
+    </div>
+    <div class="caption" v-if="state != states.edit">
+        הוספת בית ספר חדש
+    </div>
+    <div class="caption" v-if="state == states.edit">
+        עריכת פרטי בית ספר
+    </div>
+    <form id="dialog-form" style="overflow: hidden; max-height: -webkit-fill-available; overflow-y: auto;">
+        <input type="text" v-model="search"
+               v-if="state != states.edit && state != states.new"
+               placeholder="הכנס סמל בית ספר"
+               s               v-on:keydown.enter="searchButtonClicked($event)"
+               style="margin: 0; width: 50%;"/>
+        <button type="button" class="btn"
+                v-on:click="searchButtonClicked"
+                v-if="filteredSchools.length > 0 && state != states.edit && state != states.new"
+                style="margin-right: 15px;">
+            חפש
+        </button>
+        <button type="button" class="btn"
+                v-on:click="addButtonClicked"
+                v-if="filteredSchools.length == 0 && state != states.new && state != states.edit"
+                style="margin-right: 15px;">
+            הוסף
+        </button>
+        <div id="pnlAvailableSchools" style="height: 350px; overflow: auto;" v-if="state != states.edit && state != states.new">
+            <table class="table mt-md" style="width: 100%; margin-top: 5px !important;">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th style="text-align: center">סמל מוסד</th>
+                    <th style="text-align: center">שם בית ספר</th>
+                    <th style="text-align: center">עיר</th>
+                    <th style="text-align: center">כיתות</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(school, index) in filteredSchools">
+                    <td>
+                        <input type="checkbox" v-model="school.selected" v-on:change="handleSelectionChange()" style="position: relative;">
+                    </td>
+                    <td align="center">{{school.symbol}}</td>
+                    <td align="center">{{school.name}}</td>
+                    <td align="center">{{school.city.name}}</td>
+                    <td align="center">{{school.classes}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="p-md" v-if="state == states.edit || state == states.new">
+            <label class="label">פרטי בית ספר</label>
+            <table class="mb-sm" style="width: 100%">
+                <tr>
+                    <td style="width: 50%;"><div class="">סמל</div></td>
+                    <td style="width: 50%;"><div class="">שם</div></td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <input style="position: relative; width: 100%" type="text" v-model="symbol" required>
+                    </td>
+
+                    <td>
+                        <input style="position: relative; width: 100%" type="text" v-model="name" required>
+                    </td>
+
+                </tr>
+
+                <tr>
+                    <td style="width: 50%;"><div class="">פקס</div></td>
+                    <td style="width: 50%;"><div class="">מייל</div></td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <input style="position: relative; width: 100%" type="text" v-model="fax" required>
+                    </td>
+
+                    <td>
+                        <input style="position: relative; width: 100%" pattern="^\S+@\S+$" type="text" v-model="email" required>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td style="width: 50%;"><div class="">טלפון</div></td>
+                    <td style="width: 50%;"><div class="">הגדרת כיתות</div></td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <input style="position: relative; width: 100%" pattern="(0[0-9]{2}-[0-9]{7}|0[0-9]{1}-[0-9]{7}|0[0-9]{2}[0-9]{7}|0[0-9]{1}[0-9]{7})" type="text" v-model="phoneNumber" required>
+                    </td>
+
+                    <td>
+                        <input style="position: relative; width: 100%" type="text" v-model="classes" required>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td style="width: 50%;"><div class="">כתובת</div></td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <input style="position: relative; width: 100%" type="text" v-model="address" required>
+                    </td>
+
+                </tr>
+            </table>
+
+            <label class="label">פרטי הנהלה</label>
+            <table class="mb-sm" style="width: 100%">
+                <tr>
+                    <td style="width: 50%;"><div class="">שם מנהל\ת בית הספר</div></td>
+                    <td style="width: 50%;"><div class="">שם רכז\ת התוכנית בבית הספר</div></td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <input style="position: relative; width: 100%" type="text" v-model="principal.name" required>
+                    </td>
+
+                    <td>
+                        <input style="position: relative; width: 100%" type="text" v-model="coordinator.name" required>
+                    </td>
+
+                </tr>
+
+                <tr>
+                    <td style="width: 50%;"><div class="">טלפון</div></td>
+                    <td style="width: 50%;"><div class="">טלפון</div></td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <input style="position: relative; width: 100%" pattern="(0[0-9]{2}-[0-9]{7}|0[0-9]{1}-[0-9]{7}|0[0-9]{2}[0-9]{7}|0[0-9]{1}[0-9]{7})" type="text" v-model="principal.phoneNumber" required>
+                    </td>
+
+                    <td>
+                        <input style="position: relative; width: 100%" pattern="(0[0-9]{2}-[0-9]{7}|0[0-9]{1}-[0-9]{7}|0[0-9]{2}[0-9]{7}|0[0-9]{1}[0-9]{7})" type="text" v-model="coordinator.phoneNumber" required>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td style="width: 50%;"><div class="">מייל</div></td>
+                    <td style="width: 50%;"><div class="">מייל</div></td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <input style="position: relative; width: 100%" pattern="^\S+@\S+$" type="text" v-model="principal.email" required>
+                    </td>
+
+                    <td>
+                        <input style="position: relative; width: 100%" pattern="^\S+@\S+$" type="text" v-model="coordinator.email" required>
+
+                </tr>
+            </table>
+
+            <label class="label">
+                מסגרת הפעלת התכנית
+            </label>
+            <div>
+                <div class="mb-sm">
+                    <input name="scheme" type="radio" v-model="scheme" value="0" tabindex="13" required>
+                    שעה שלישית במערכת
+                </div>
+                <div class="mb-sm">
+                    <input name="scheme" type="radio" v-model="scheme" value="1" tabindex="14">
+                    פעילות דו שבועית
+                </div>
+                <div class="mb-sm">
+                    <input name="scheme" type="radio" v-model="scheme" value="2" tabindex="15">
+                    אחר
+                    <input v-if="scheme == 2" type="text" style="width: 30%;" v-model="schemeDescription" tabindex="16" required>
+                </div>
+            </div>
+        </div>
+        <div class="pb-md" style="text-align: center;">
+            <button type="button" v-bind:disabled="selectedSchools.length === 0" v-if="state != states.edit && state != states.new" class="btn wide" v-on:click="sendSelectedSchools()">הוספת בתי ספר נבחרים לתכנית</button>
+        </div>
+        <div class="pb-md" style="text-align: center;">
+            <button type="button" v-bind:disabled="!validateForm()" v-if="state == states.edit || state == states.new" class="btn wide" v-on:click="save()">שמור</button>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,41 @@
+/*----------- Back to top --------------*/
+
+.go-to-top{
+    background: rgba(255, 255, 255, .3);
+    bottom: 30px;
+    color: #212428;
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: bold;
+    width: 40px;
+    height: 40px;
+    left: auto;
+    display: none;
+    line-height: 35px !important;
+    position: fixed;
+    right: 30px;
+    text-align: center;
+    top: auto;
+    z-index: 100;
+
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+.go-to-top:before{
+    font-family: FontAwesome;
+    content: "\f106";
+}
+
+.go-to-top:hover {
+    background: #00ADEE;
+}
+
+.go-to-top:hover:before {
+    color: #fff;
+}
+
+.go-top-visible{
+    display: block;
+}
+

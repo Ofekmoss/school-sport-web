@@ -1,0 +1,161 @@
+﻿<style type="text/css">
+    /* Alef Hebrew','Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif */
+    body,body * {
+        font-family: Rubik, Roboto, Helvetica, sans-serif;
+		font-size: 18px;
+    }
+    table, .table {
+        margin: 0;
+    }
+    table td, table th {
+		font-size: 18px;
+    }
+    .table-bordered {
+        width: 95%;
+    }
+
+    .table-bordered, .table-bordered td, .table-bordered th {
+        /* border: 1px solid #ddd; */
+        /* opacity: 0.7; */
+        text-align: right;
+    }
+
+    .table-bordered th {
+        color: #666666;
+    }
+
+    .table-bordered td {
+        color: #7f7f7f;
+    }
+
+    .table-bordered tr:last-child td {
+        border-bottom: 1px solid #a0a0a0;
+    }
+
+    .text-size-2 {
+        font-size: 22px;
+    }
+
+    .text-size-3 {
+        font-size: 28px;
+    }
+</style>
+<table style="width: 100%; height: 100%; border-top: 1px solid #a0a0a0; border-left: 1px solid #a0a0a0; border-bottom: 1px solid #a0a0a0;" cellpadding="0" cellspacing="0"><tr>
+    <td style="vertical-align: top;">
+        <div dir="rtl" style="font-size: 18px; margin-right: 25px;">
+            <table style="width: 100%;" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        <div style="direction: ltr; text-align: right;">
+                            {{Date}}
+                        </div>
+                        <br />
+                        <span class="text-size-2">
+                            לכבוד:
+                        </span>
+                        <br /><br />
+                        <span class="text-size-2" style="font-weight: bold;">
+                            {{RecipientName}}
+                            <br />
+                            {{PayerName}}
+                        </span>
+                    </td>
+                    <td style="text-align: left;">
+                        <div style="float: left;">
+                            <img src="data:image/png;base64,{{logo}}" style="max-width: 300px;"/>
+                            <div style="text-align: center;">
+                                ע.ר. 58-024-222-0
+                                <br />
+                                המסגר 59, ת.ד. 20050 מיקוד 612001 תל אביב
+                                <br />
+                                טלפון : 03-5619080
+                                <br />
+                                פקס : 03-5622272
+                            </div>
+                        </div>
+                        <div style="clear: both;"></div>
+                    </td>
+                </tr>
+            </table>
+            <br /><br />
+            דרישת תשלום מס'
+            {{Order}}
+            -
+            שנה"ל
+            {{SeasonName}}
+            <br /><br />
+            <table id="tblTeamCharges" class="table table-striped table-bordered" style="direction: rtl; margin-top: 10px;" cellpadding="0" cellspacing="0">
+                <thead>
+                <tr>
+                    <th style="border-top: 1px solid rgba(23, 106, 230, 0.7); border-right: 1px solid rgba(23, 106, 230, 0.7); border-bottom: 1px solid rgba(23, 106, 230, 0.7); padding: 20px 30px 10px 10px;">
+                        ענף
+                    </th>
+                    <th style="border-top: 1px solid rgba(23, 106, 230, 0.7); border-bottom: 1px solid rgba(23, 106, 230, 0.7); padding: 20px 30px 10px 10px;">
+                        קטגוריה
+                    </th>
+                    <th style="border-top: 1px solid rgba(23, 106, 230, 0.7); border-bottom: 1px solid rgba(23, 106, 230, 0.7); padding: 20px 30px 10px 10px;">
+                        תשלום
+                    </th>
+                    <th style="width: 20%; border-top: 1px solid rgba(23, 106, 230, 0.7); border-left: 1px solid rgba(23, 106, 230, 0.7); border-bottom: 1px solid rgba(23, 106, 230, 0.7); padding: 20px 30px 10px 10px;">
+                        &nbsp;
+                    </th>
+                </tr>
+                {{#Teams}}
+                <tr class="table-row">
+                    <td style="border-right: 1px solid #a0a0a0; padding: 20px 30px 10px 10px;">
+                        {{SportName}}
+                    </td>
+                    <td style="padding: 20px 30px 10px 10px;">
+                        {{CategoryName}}
+                    </td>
+                    <td style="padding: 20px 30px 10px 10px;">
+                        ₪{{Price}}
+                    </td>
+                    <td style="border-left: 1px solid #a0a0a0; padding: 20px 30px 10px 10px;">
+                        &nbsp;
+                    </td>
+                </tr>
+                {{/Teams}}
+            </table>
+            <br />
+            <div style="background-color: #f5f5f5; padding-top: 30px; padding-bottom: 30px;">
+                <span class="text-size-2" style="color: #1453b1;">
+                    סה"כ חיוב עבור
+                     “{{PayerName}}”
+                </span>
+                <div style="float: left; margin-left: 25px;">
+                    <span>סה"כ לתשלום</span>
+                    <span class="text-size-2" style="color: #1453b1;">{{TotalAmount}} ₪</span>
+                </div>
+                <div style="clear: both;"></div>
+            </div>
+            <br />
+            <div class="text-size-2" style="color: #1453b1;">
+                דרכי העברת תשלום:
+            </div>
+            <br /><br />
+            <span style="font-weight: bold; color: #1453b1;">
+                המחאה
+            </span>
+            <br />
+            יש לרשום לפקודת "התאחדות הספורט לבתי הספר בישראל"
+            <br /><br />
+            <span style="font-weight: bold; color: #1453b1;">
+                העברה בנקאית
+            </span>
+            <br />
+            <span style="font-weight: bold; color: #1453b1;">
+                פרטי הבנק:
+            </span>
+            <br />
+            בנק דיסקונט 11
+            <br />
+            סניף הקריה 34 תל אביב
+            <br />
+            מספר חשבון 365300
+        </div>
+    </td>
+    <td style="width: 25px; background-color: #1453b1; vertical-align: top;">
+        &nbsp;
+    </td>
+</tr></table>

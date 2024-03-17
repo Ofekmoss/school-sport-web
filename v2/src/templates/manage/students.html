@@ -1,0 +1,31 @@
+<div>
+    <div class="tab-head horizontal-flex" style="justify-content: space-between">
+        <div class="horizontal-flex">
+            <button class="btn ml-sm mr-sm" v-on:click="onNewTeamClick()">הוסף שחקן</button>
+            <filters-students :initFilters="initFilters" v-on:change="refresh($event)"></filters-students>
+        </div>
+        <div>
+            <multi-select caption="עמודות פעילות" v-bind:options="columns"
+                          style="margin-left: 10px;"
+            ></multi-select>
+        </div>
+    </div>
+
+    <div style="display: flex">
+        <div class="drawer">
+            <button class="btn"
+                    v-on:click="saveRecord()"
+            >
+                שמור
+            </button>
+            <new-student :record="selectedRecord" :records="records"></new-student>
+        </div>
+
+        <div class="tab-content">
+            <data-table2 :records="records"
+                         :columns="columns"
+                         v-on:record-select="onRecordSelect($event)">
+            </data-table2>
+        </div>
+    </div>
+</div>

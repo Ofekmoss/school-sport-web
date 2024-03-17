@@ -1,0 +1,49 @@
+.flexslider .flex-direction-nav a {
+    text-decoration: none;
+}
+
+.flexslider.hide-nav .flex-direction-nav a {
+    display: none;
+}
+
+#slider.flexslider li h5{
+    color: #fff;
+}
+
+#slider.flexslider li > div{
+    margin-bottom: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+#slider.flexslider .jackbox_button{
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 16px;
+    padding: 5px 8px;
+}
+
+#carousel.flexslider {
+    background: #3e454c;
+    padding: 10px 5px;
+    margin-top: -1px;
+    overflow: hidden;
+}
+
+#carousel.flexslider li {
+    padding: 0px 5px;
+}
+
+/*
+#carousel li img{
+    opacity: 0.5;
+    height: 60px;
+}
+
+#carousel li.flex-active-slide img{
+    opacity: 1;
+}
+
+
+*/

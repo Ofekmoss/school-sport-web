@@ -1,0 +1,168 @@
+<div id="pnlLeagueDetails">
+    <form id="form">
+        <div class="panel">
+            <img src="img/calendar-image.png" srcset="img/calendar-image@2x.png 2x, img/calendar-image@3x.png 3x">
+            <div class="panel-header">
+                פרטי בית ספר
+            </div>
+            <div class="panel-body">
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 30%;"><div class="label required">שם בית ספר</div></td>
+                        <td style="width: 30%;"><div class="label required">טלפון</div></td>
+                        <td class="medium-up"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input autofocus required type="text" tabindex="1" style="width: 90%;" v-model="school.name"
+                                   v-on:input="checkInputsValid" v-bind:disabled="inactiveSeason">
+                        </td>
+                        <td>
+                            <input type="text" pattern="(0[0-9]{2}-[0-9]{7}|0[0-9]{1}-[0-9]{7}|0[0-9]{2}[0-9]{7}|0[0-9]{1}[0-9]{7})"
+                                   required tabindex="5" style="width: 90%;" v-model="school.phoneNumber"
+                                   v-on:input="checkInputsValid" v-bind:disabled="inactiveSeason">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%;"><div class="label required">סמל בית ספר</div></td>
+                        <td style="width: 30%;"><div class="label required">פקס</div></td>
+                        <td class="medium-up"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" required tabindex="-1" style="width: 90%;"
+                                   v-model="school.symbol" readonly v-bind:disabled="inactiveSeason">
+                        </td>
+                        <td>
+                            <input type="text" required tabindex="6" style="width: 90%;" v-model="school.fax"
+                                   v-on:input="checkInputsValid" v-bind:disabled="inactiveSeason">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%;"><div class="label required">הגדרת כיתות</div></td>
+                        <td style="width: 30%;"><div class="label required">מייל</div></td>
+                        <td class="medium-up"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select required tabindex="3" style="width: 90%;" v-model="school.type"
+                                    v-on:change="checkInputsValid" v-bind:disabled="inactiveSeason">
+                                <option value="0">א-ו</option>
+                                <option value="1">א-ח</option>
+                                <option value="2">ז-ט</option>
+                                <option value="3">ז-י&quot;ב</option>
+                                <option value="4">ט-י&quot;ב</option>
+                                <option value="5">י-י"ב</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input pattern="^\S+@\S+$"  type="text" required tabindex="7" style="width: 90%;" v-model="school.email"
+                                   v-on:input="checkInputsValid" v-bind:disabled="inactiveSeason">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%;"><div class="label required">כתובת</div></td>
+                        <td style="width: 30%;"><div class="label">שם רשות</div></td>
+                        <td class="medium-up"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" required tabindex="4" style="width: 90%;" v-model="school.address"
+                                   v-on:input="checkInputsValid" v-bind:disabled="inactiveSeason">
+                        </td>
+                        <td>
+                            <input type="text" readonly="readonly"  style="width: 90%;" v-model="school.cityName" v-bind:disabled="inactiveSeason">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-header">
+                פרטי הנהלה
+            </div>
+            <div class="panel-body">
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 30%;"><div class="label required">שם מנהל/ת בית הספר</div></td>
+                        <td style="width: 30%;">
+                            <div class="label required">
+                                שם נציג ברשות
+                                (מחזיק תיק הספורט ברשות בלבד)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" required tabindex="8" style="width: 90%;" v-model="principal.name"
+                                   v-on:input="checkInputsValid" v-bind:disabled="inactiveSeason">
+                        </td>
+                        <td>
+                            <input type="text" required tabindex="11" style="width: 90%;" v-model="representative.name"
+                                   v-on:input="checkInputsValid" v-bind:disabled="inactiveSeason">
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td style="width: 30%;"><div class="label required">טלפון נייד</div></td>
+                        <td style="width: 30%;"><div class="label required">טלפון נייד</div></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" pattern="(0[0-9]{2}-[0-9]{7}|0[0-9]{1}-[0-9]{7}|0[0-9]{2}[0-9]{7}|0[0-9]{1}[0-9]{7})"
+                                   required tabindex="9" style="width: 90%;" v-model="principal.phoneNumber"
+                                   v-on:input="checkInputsValid" v-bind:disabled="inactiveSeason">
+                        </td>
+                        <td>
+                            <input type="text" pattern="(0[0-9]{2}-[0-9]{7}|0[0-9]{1}-[0-9]{7}|0[0-9]{2}[0-9]{7}|0[0-9]{1}[0-9]{7})"
+                                   required tabindex="12" style="width: 90%;" v-model="representative.phoneNumber"
+                                   v-on:input="checkInputsValid" v-bind:disabled="inactiveSeason">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%;"><div class="label required">מייל</div></td>
+                        <td style="width: 30%;"><div class="label required">מייל</div></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input pattern="^\S+@\S+$"  type="text" required tabindex="10" style="width: 90%;" v-model="principal.email"
+                                   v-on:input="checkInputsValid" v-bind:disabled="inactiveSeason">
+                        </td>
+                        <td>
+                            <input pattern="^\S+@\S+$"  type="text" required tabindex="13" style="width: 90%;"
+                                   v-model="representative.email" v-on:input="checkInputsValid" v-bind:disabled="inactiveSeason">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        <span v-bind:style="{border: principal.gender ? 'none' : '1px solid red', padding: principal.gender ? '0px' : '5px 5px 5px 5px'}">
+                            <label for="rdPrincipalGender1">מר</label>
+                            <input type="radio" id="rdPrincipalGender1" v-model="principal.gender" value="1" v-bind:disabled="inactiveSeason">
+                            <label for="rdPrincipalGender2">גב'</label>
+                            <input type="radio" id="rdPrincipalGender2" v-model="principal.gender" value="2" v-bind:disabled="inactiveSeason">
+                            <input type="button" value="איפוס" v-if="principal.gender" v-on:click="resetGender(principal)"
+                                   style="margin-right: 10px;" v-bind:disabled="inactiveSeason" />
+                        </span>
+                        </td>
+                        <td>
+                        <span v-bind:style="{padding: representative.gender ? '0px' : '5px 5px 5px 5px'}">
+                            <label for="rdRepresentativeGender1">מר</label>
+                            <input type="radio" id="rdRepresentativeGender1" v-model="representative.gender" value="1" v-bind:disabled="inactiveSeason">
+                            <label for="rdRepresentativeGender2">גב'</label>
+                            <input type="radio" id="rdRepresentativeGender2" v-model="representative.gender" value="2" v-bind:disabled="inactiveSeason">
+                            <input type="button" value="איפוס" v-if="representative.gender" v-on:click="resetGender(representative)"
+                                   style="margin-right: 10px;" v-bind:disabled="inactiveSeason" />
+                        </span>
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+    </form>
+
+
+    <button class="btn green float-left" v-on:click="next()" type="submit" v-bind:disabled="inactiveSeason || !isValid">
+        אישור והמשך
+    </button>
+</div>

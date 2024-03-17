@@ -1,0 +1,237 @@
+<style type="text/css">
+    .FinalsTreeContainer {
+        position: relative;
+        /* width: 985px; */
+        height: 380px;
+    }
+
+    .phase-caption, .team-box {
+        position: absolute;
+        width: 180px;
+    }
+
+    .phase-caption {
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .team-box {
+        height: 60px;
+        padding: 5px 5px 5px 5px;
+        line-height: 25px;
+        text-align: center;
+        font-size: 15px;
+        border: 2px solid black;
+    }
+
+    .winner-team {
+        background-color: #c7f7c3;
+    }
+
+    .team-box .match-data {
+        position: absolute;
+        left: 0px;
+        top: 30px;
+    }
+
+    .match-data .label {
+        margin-left: 3px;
+        padding: 3px 3px 3px 3px;
+    }
+
+    .quarter-finals-left-side {
+        left: 5px;
+    }
+
+    .semi-finals-left-side {
+        left: 205px;
+    }
+
+    .finals {
+        left: 405px;
+    }
+
+    .semi-finals-right-side {
+        left: 605px;
+    }
+
+    .quarter-finals-right-side {
+        left: 805px;
+    }
+
+    .line0 {
+        top: 5px;
+    }
+
+    .line1 {
+        top: 35px;
+    }
+
+    .line2 {
+        top: 60px;
+    }
+
+    .line3 {
+        top: 100px;
+    }
+
+    .line4 {
+        top: 130px;
+    }
+
+    .line5 {
+        top: 200px;
+    }
+
+    .line6 {
+        top: 230px;
+    }
+
+    .line7 {
+        top: 260px;
+    }
+
+    .line8 {
+        top: 300px;
+    }
+</style>
+<div class="FinalsTreeContainer">
+    <h3 class="line0 quarter-finals-left-side phase-caption">
+        רבע גמר
+    </h3>
+    <h3 class="line0 semi-finals-left-side phase-caption">
+חצי גמר
+    </h3>
+    <h3 class="line0 finals phase-caption">
+        גמר
+    </h3>
+    <h3 class="line0 semi-finals-right-side phase-caption">
+        חצי גמר
+    </h3>
+    <h3 class="line0 quarter-finals-right-side phase-caption">
+        רבע גמר
+    </h3>
+    <!-- Quarter Finals - left side -->
+    <div class="team-box quarter-finals-left-side line1">
+        <span class="team-name">{{tree.QuarterFinals.Group1.TeamA.Name}}</span>
+        <div class="match-data" ng-if="tree.QuarterFinals.Group1.TeamA.Match">
+            <span class="team-score label label-info" ng-repeat="match in tree.QuarterFinals.Group1.TeamA.Matches" title="{{match.Date | date : 'dd/MM/yyyy'}} {{match.Facility}}">
+                {{match.Score}}
+            </span>
+        </div>
+    </div>
+    <div class="team-box quarter-finals-left-side line3">
+        <span class="team-name">{{tree.QuarterFinals.Group1.TeamB.Name}}</span>
+        <div class="match-data" ng-if="tree.QuarterFinals.Group1.TeamB.Match">
+            <span class="team-score label label-info" ng-repeat="match in tree.QuarterFinals.Group1.TeamB.Matches" title="{{match.Date | date : 'dd/MM/yyyy'}} {{match.Facility}}">
+                {{match.Score}}
+            </span>
+        </div>
+    </div>
+    <div class="team-box quarter-finals-left-side line6">
+        <span class="team-name">{{tree.QuarterFinals.Group2.TeamA.Name}}</span>
+        <div class="match-data" ng-if="tree.QuarterFinals.Group2.TeamA.Match">
+            <span class="team-score label label-info" ng-repeat="match in tree.QuarterFinals.Group2.TeamA.Matches" title="{{match.Date | date : 'dd/MM/yyyy'}} {{match.Facility}}">
+                {{match.Score}}
+            </span>
+        </div>
+    </div>
+    <div class="team-box quarter-finals-left-side line8">
+        <span class="team-name">{{tree.QuarterFinals.Group2.TeamB.Name}}</span>
+        <div class="match-data" ng-if="tree.QuarterFinals.Group2.TeamB.Match">
+            <span class="team-score label label-info" ng-repeat="match in tree.QuarterFinals.Group2.TeamB.Matches" title="{{match.Date | date : 'dd/MM/yyyy'}} {{match.Facility}}">
+                {{match.Score}}
+            </span>
+        </div>
+    </div>
+
+    <!-- Quarter Finals - right side -->
+    <div class="team-box quarter-finals-right-side line1">
+        <span class="team-name">{{tree.QuarterFinals.Group3.TeamA.Name}}</span>
+        <div class="match-data" ng-if="tree.QuarterFinals.Group3.TeamA.Match">
+            <span class="team-score label label-info" ng-repeat="match in tree.QuarterFinals.Group3.TeamA.Matches" title="{{match.Date | date : 'dd/MM/yyyy'}} {{match.Facility}}">
+                {{match.Score}}
+            </span>
+        </div>
+    </div>
+    <div class="team-box quarter-finals-right-side line3">
+        <span class="team-name">{{tree.QuarterFinals.Group3.TeamB.Name}}</span>
+        <div class="match-data" ng-if="tree.QuarterFinals.Group3.TeamB.Match">
+            <span class="team-score label label-info" ng-repeat="match in tree.QuarterFinals.Group3.TeamB.Matches" title="{{match.Date | date : 'dd/MM/yyyy'}} {{match.Facility}}">
+                {{match.Score}}
+            </span>
+        </div>
+    </div>
+    <div class="team-box quarter-finals-right-side line6">
+        <span class="team-name">{{tree.QuarterFinals.Group4.TeamA.Name}}</span>
+        <div class="match-data" ng-if="tree.QuarterFinals.Group4.TeamA.Match">
+            <span class="team-score label label-info" ng-repeat="match in tree.QuarterFinals.Group4.TeamA.Matches" title="{{match.Date | date : 'dd/MM/yyyy'}} {{match.Facility}}">
+                {{match.Score}}
+            </span>
+        </div>
+    </div>
+    <div class="team-box quarter-finals-right-side line8">
+        <span class="team-name">{{tree.QuarterFinals.Group4.TeamB.Name}}</span>
+        <div class="match-data" ng-if="tree.QuarterFinals.Group4.TeamB.Match">
+            <span class="team-score label label-info" ng-repeat="match in tree.QuarterFinals.Group4.TeamB.Matches" title="{{match.Date | date : 'dd/MM/yyyy'}} {{match.Facility}}">
+                {{match.Score}}
+            </span>
+        </div>
+    </div>
+
+    <!-- Semi Finals - left side -->
+    <div class="team-box semi-finals-left-side line2">
+        <span class="team-name">{{tree.SemiFinals.Group1.TeamA.Name}}</span>
+        <div class="match-data" ng-if="tree.SemiFinals.Group1.TeamA.Match">
+            <span class="team-score label label-info" ng-repeat="match in tree.SemiFinals.Group1.TeamA.Matches" title="{{match.Date | date : 'dd/MM/yyyy'}} {{match.Facility}}">
+                {{match.Score}}
+            </span>
+        </div>
+    </div>
+    <div class="team-box semi-finals-left-side line7">
+        <span class="team-name">{{tree.SemiFinals.Group1.TeamB.Name}}</span>
+        <div class="match-data" ng-if="tree.SemiFinals.Group1.TeamB.Match">
+            <span class="team-score label label-info" ng-repeat="match in tree.SemiFinals.Group1.TeamB.Matches" title="{{match.Date | date : 'dd/MM/yyyy'}} {{match.Facility}}">
+                {{match.Score}}
+            </span>
+        </div>
+    </div>
+
+    <!-- Semi Finals - right side -->
+    <div class="team-box semi-finals-right-side line2">
+        <span class="team-name">{{tree.SemiFinals.Group2.TeamA.Name}}</span>
+        <div class="match-data" ng-if="tree.SemiFinals.Group2.TeamA.Match">
+            <span class="team-score label label-info" ng-repeat="match in tree.SemiFinals.Group2.TeamA.Matches" title="{{match.Date | date : 'dd/MM/yyyy'}} {{match.Facility}}">
+                {{match.Score}}
+            </span>
+        </div>
+    </div>
+    <div class="team-box semi-finals-right-side line7">
+        <span class="team-name">{{tree.SemiFinals.Group2.TeamB.Name}}</span>
+        <div class="match-data" ng-if="tree.SemiFinals.Group2.TeamB.Match">
+            <span class="team-score label label-info" ng-repeat="match in tree.SemiFinals.Group2.TeamB.Matches" title="{{match.Date | date : 'dd/MM/yyyy'}} {{match.Facility}}">
+                {{match.Score}}
+            </span>
+        </div>
+    </div>
+
+    <!-- Finals -->
+    <div class="team-box finals line4">
+        <span class="team-name">{{tree.Finals.TeamA.Name}}</span>
+        <div class="match-data" ng-if="tree.Finals.TeamA.Match">
+            <span class="team-score label label-info" title="{{tree.Finals.TeamA.Match.Date | date : 'dd/MM/yyyy'}} {{tree.Finals.TeamA.Match.Facility}}">
+                {{tree.Finals.TeamA.Match.Score}}
+            </span>
+        </div>
+    </div>
+    <div class="team-box finals line5">
+        <span class="team-name">{{tree.Finals.TeamB.Name}}</span>
+        <div class="match-data" ng-if="tree.Finals.TeamB.Match">
+            <span class="team-score label label-info" title="{{tree.Finals.TeamB.Match.Date | date : 'dd/MM/yyyy'}} {{tree.Finals.TeamB.Match.Facility}}">
+                {{tree.Finals.TeamB.Match.Score}}
+            </span>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,169 @@
+<style type="text/css">
+    table {
+        border: 1px solid #1C6EA4;
+        width: 100%;
+        border-collapse: collapse;
+    }
+    table td, table th {
+        border: 1px solid #AAAAAA;
+        padding: 3px 2px;
+    }
+    table thead {
+    }
+    table thead th {
+        font-size: 15px;
+        font-weight: bold;
+        background-color: aliceblue;
+        border-left: 1px solid #1C6EA4;
+    }
+    table thead th:first-child {
+        border-left: none;
+    }
+
+    table tfoot {
+        font-weight: normal;
+    }
+    .mb-md {
+        margin-bottom: 15px;
+    }
+    .mb-lg {
+        margin-bottom: 35px;
+    }
+    .no-border {
+        border : none
+    }
+    .col3 {
+        width: 33%;
+    }
+</style>
+<div dir="rtl" style="font-family: 'Alef Hebrew','Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'; font-size: 18px;">
+    <div style="text-align: center; font-size: 24px; text-decoration: underline;" class="mb-md">
+        טופס רישום קבוצתי למשתתפים
+    </div>
+
+    <table class="no-border">
+        <tr>
+            <td class="no-border col3">ענף {{sport}}</td>
+            <td class="no-border col3">קטגוריה {{category}}</td>
+            <td class="no-border col3">שנה {{year}}</td>
+        </tr>
+    </table>
+    <table class="no-border">
+
+        <tr>
+            <td class="no-border">שם בית-הספר {{schoolName}}</td>
+            <td class="no-border">המחוז + סימול בית-הספר {{regionAndSymbol}}</td>
+        </tr>
+
+    </table>
+
+    <table class="no-border">
+
+        <tr>
+            <td class="no-border">כתובת בית-הספר + מיקוד {{schoolAddress}}</td>
+        </tr>
+
+    </table>
+
+    <table class="no-border">
+        <tr>
+            <td class="no-border col3">טלפון בית-הספר {{schoolPhone}}</td>
+            <td class="no-border col3">פקס בית-הספר {{schoolFax}}</td>
+            <td class="no-border col3"> דואר אלקט {{schoolEmail}}</td>
+        </tr>
+    </table>
+
+    <table class="no-border">
+        <tr>
+            <td class="no-border col3">שם המורה לחינוך גופני {{teacherName}}</td>
+            <td class="no-border col3">טלפון נייד {{teacherPhone}}</td>
+            <td class="no-border col3"> דואר אלקט {{teacherEmail}}</td>
+        </tr>
+    </table>
+
+    <table class="no-border">
+        <tr>
+            <td class="no-border col3"> שם המאמן/ת{{coachName}}</td>
+            <td class="no-border col3">טלפון נייד {{coachPhone}}</td>
+            <td class="no-border col3"> דואר אלקט {{coachEmail}}</td>
+        </tr>
+    </table>
+
+    <div style="text-align: center; font-size: 24px; text-decoration: underline;" class="mb-lg">
+        שמות המשתתפים
+    </div>
+
+    <table id="tblTeamCharges" style="direction: rtl; margin-top: 10px;">
+        <thead>
+        <tr>
+            <th>
+                מס' סידורי
+            </th>
+            <th>
+                מס' חולצה
+            </th>
+            <th>
+                שם פרטי
+            </th>
+            <th>
+                שם משפחה
+            </th>
+            <th>
+                תאריך לידה
+            </th>
+            <th>
+                מס' ת.ז.
+            </th>
+            <th>
+                כיתה
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#players}}
+        <tr>
+            <td>
+                {{index}}
+            </td>
+            <td>
+            </td>
+            <td>
+                {{firstName}}
+            </td>
+
+            <td>
+                {{lastName}}
+            </td>
+
+            <td>
+                {{birthDate}}
+            </td>
+
+            <td>
+                {{idNumber}}
+            </td>
+
+            <td>
+                {{grade}}
+            </td>
+
+        </tr>
+        {{/players}}
+        </tbody>
+    </table>
+    </br></br>
+    <div style="font-size: small">
+        א.	הריני מאשר/ת בזאת שהרשומים לעיל הם תלמידי/ות בית ספרנו העונים לדרישות התקנון לאירועי החינוך הגופני ולהוראות בחוזרי מנכ"ל.</br></br>
+        ב.	התלמידים/ות הרשומים/ות בטופס מבוטחים בביטוח תאונות אישיות (חוזר מנכ"ל עד' / 1).</br></br>
+        ג.	כל הפרטים המופיעים בטופס זה נבדקו על ידי והם נכונים.</br></br>
+        ד.  הריני מאשר/ת כי יש בידי אישורי ההורים/אפוטרופוס המאשרים לצלם את התלמידים דלעיל עבור שידורי טלוויזיה, אתרי אינטרנט, עיתונות ואמצעי המדיה השונים. </br></br>
+        ה.	השתתפות התלמידים/ות הרשומים/ות בטופס מותנת בהצהרת ההורים על בריאות ילדם שנמסרה למוסד החינוכי(ראו הוראת קבע מס' 0081 בחוזר עח/6). במקרה של הצהרת הורה על מחלה יש צורך באישור מרופא לביצוע פעילות ספורטיבית תחרותית , טופס זה תקף לשנה או עד עדכון על ידי ההורים. </br></br>
+        ו.	ידוע לי שנבחרת בית-הספר חייבת להופיע בתלבושת ייצוגית מלאה ואחידה (מכנסיים וחולצה).</br></br>
+        ז.	אני מאשר שמאמן/ת הנבחרת הוא מורה לחינוך גופני או מאמן שעבר השתלמות למאמנים שאינם מורים במערכת החינוך בהתאם  להנחיות חוזר מנכ"ל תשס"ט/10.</br></br>
+        ח. 	ידוע לי כי במסגרת אליפות עולם לבתי ספר (ISF)  מותרת השתתפותם/ן של תלמידים/ות אך ורק על פי גיל המשתתפים הנקבע ע"י ה-ISF ומפורסם בחוזר המנכ"ל.</br></br>
+    </div>
+    מנהל/ת בית-הספר:______________	חתימת המנהל/ת: ______________ </br></br>
+    חותמת בית-הספר: ______________	תאריך: ______________
+
+
+</div>

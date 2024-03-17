@@ -1,0 +1,24 @@
+<div class='selectex' v-bind:class='{open: open}' tabindex='0' v-on:keydown='onKeyDown'>
+    <div style='white-space: nowrap; display: flex; justify-content: space-between; align-items: center;' v-on:click='toggleOpen'>
+        <template v-if='value != null'>
+            <span style='overflow: hidden; text-overflow: ellipsis; width: 100%; display: block;' v-html='getValueHtml(value)'></span>
+            <!--<span v-on:click="clear">x</span>-->
+            <img v-on:click="clear" src="img/delete.svg">
+        </template>
+        <template v-else>
+            <span style="">{{placeholder}}&nbsp;</span>
+            <!--<span style="transform: rotate(270deg); color: #1453b1; font-weight: bold;"> > </span>-->
+            <img src="img/arrow-sort-active.svg">
+        </template>
+    </div>
+    <div v-if='open' class='drop-down'>
+        <div class='search'>
+            <div><input type='text' v-model='search'></div>
+        </div>
+        <div style='max-height: 300px; overflow-y: auto;'>
+            <div class='option' v-bind:class='{selected: option == value}' v-for='(option, index) in filteredOptions' v-on:click='selectOption(option)'>
+                <slot><span v-if='option != null' v-html='getValueHtml(option)'></span></slot>
+            </div>
+        </div>
+    </div>
+</div>

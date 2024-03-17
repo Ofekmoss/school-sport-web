@@ -1,0 +1,55 @@
+<style type="text/css">
+    .section {
+        margin-top: 10px !important;
+    }
+
+    .modal-dialog {
+        width: 1200px !important;
+    }
+
+    .thumbnail-pic {
+        width: 120px;
+        height: 90px;
+        margin-right: 10px;
+        cursor: pointer;
+    }
+</style>
+<div dir="rtl">
+    <div class="section_3" style="margin-top: 5px; margin-right: 10px;">
+        <h2>
+נא לבחור תמונה קיימת או  להעלות תמונה חדשה
+        </h2>
+    </div>
+    <div class="modal-body">
+        <div class="row" style="margin-bottom: 10px;">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="line-height: 100px;">
+                <img class="thumbnail-pic" ng-src="/content/Images/{{pageSeq}}/{{imageName}}" ng-repeat="imageName in imageFileNames" ng-click="selectImage(imageName)" />
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 10px;" ng-show="imageUploadError">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="alert alert-danger" role="alert">
+                    <strong>{{imageUploadError}}</strong>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 10px;">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div dropzone="dropzoneConfig" class="dropzone page-dropzone" style="font-size: 120%; font-weight: bold;">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="pull-left">
+                    <button class="btn btn-warning" ng-click="cancel()">
+                        ביטול
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

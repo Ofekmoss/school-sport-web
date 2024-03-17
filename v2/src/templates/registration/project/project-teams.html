@@ -1,0 +1,27 @@
+<div>
+    <div class="panel">
+        <div class="panel-header">
+            כיתות
+        </div>
+        <div class="panel-body">
+            <div class="container">
+                <data-table v-bind:data="teams" v-bind:columns="teamColumns"
+                            enableSort="false" enableSearch="false" enableColumnSelect="false"
+                            selection="single" v-on:selection-change="handleSelectionChange">
+                    <div class="flex-fill">
+
+                    </div>
+                    <div class="tool-bar pt-sm">
+                        <div class="float-left button-group pb-md">
+                            <button type="button" v-bind:disabled="items.length == 0" v-on:click="addTeam()"><span class="icon">&#x1F7A1;</span> הוספה</button>
+                            <button type="button" v-bind:disabled="!selectionCount == 1" v-on:click="editTeam()"><span class="icon">&#x1F589;</span> עריכה</button>
+                            <!--
+                            <button v-bind:disabled="!selectedTeam"><span class="icon">&#x2715;</span> מחיקה</button>
+                            -->
+                        </div>
+                    </div>
+                </data-table>
+            </div>
+        </div>
+    </div>
+</div>

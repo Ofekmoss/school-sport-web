@@ -1,0 +1,25 @@
+<div class="dialog" style="height: 9rem; display: flex; justify-content: space-between; flex-direction: column"
+     v-on:keydown="handleKeyDown">
+
+    <div>
+        <div class="caption" style="position: relative;">
+            <div style="position: absolute; right: 5px; top: -5px; cursor: pointer; font-size: 18px; font-weight: bold;"
+                 title="ביטול וסגירת חלונית"
+                 v-on:click="cancel()">
+                X
+            </div>
+            <div v-if="showDelete" style="position: absolute; left: 5px; top: -5px; cursor: pointer;"
+                v-bind:title="deleteCaption">
+                <span class="icon fa fa-trash" v-on:click="deleteItem()"></span>
+            </div>
+            {{title}}
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 5px;">
+            <div style="white-space: nowrap; margin-left: 5px;">{{caption}}</div>
+            <input v-model="name" id="txtName" style="width: 100%;" v-bind:placeholder="defaultName">
+        </div>
+    </div>
+    <div class="horizontal-flex" style="justify-content: center">
+        <button v-bind:disabled="name.length == 0 && defaultName == null" class="btn" style="width: 5rem" v-on:click="confirm()">אישור</button>
+    </div>
+</div>

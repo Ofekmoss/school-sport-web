@@ -1,0 +1,5 @@
+<div class="horizontal-flex" :key="upCount">
+    <selectex class="ml-sm" style="width: 180px" v-bind:options="regions" placeholder="מחוז..." v-model="result.region"></selectex>
+    <selectex class="ml-sm" style="width: 180px" v-bind:options="cities" placeholder="עיר..." v-model="result.city"></selectex>
+    <button class="btn medium" v-on:click="load">הצג</button>
+</div>

@@ -1,0 +1,69 @@
+<div>
+    <div v-for="(school, index) in schools" class="panel">
+        <div class="panel-header">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center;">
+                    <!--<div>קבוצה {{index+1}} - {{team.sport}}  {{ team.gender == 1 ? 'ספורטאים' : (team.gender == 2 ? 'ספורטאיות' : 'מעורב') }}</div>                    <div> </div>-->
+                    <div>{{school.name}} - {{school.teams.length}} כיתות</div>
+                    <div style="padding: 0 1rem; font-size: 30px; cursor: pointer;"
+                         v-bind:style="{transform: school.__panelOpen ? 'rotate(270deg)' : 'none'}"
+                         v-on:click="togglePanel(school)"> > </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-body" v-if="school.__panelOpen" style="overflow: unset">
+            <div class="tool-bar" style="display: flex; justify-content: space-between">
+                <div>
+                    <div>
+                        <input type="checkbox" v-model="school.selectAll" v-on:change="handleSelectAll(school)">
+                        <span>כל הכיתות</span>
+                    </div>
+                </div>
+
+                <div style="display: flex;">
+                    <div class="button-group">
+                        <button v-bind:disabled="school.selectionCount != 1" v-on:click="editClass(school)"><span class="icon">&#x1F589;</span> עריכה</button>
+                        <button v-bind:disabled="school.selectionCount == 0" v-on:click="deleteClass(school)"><span class="icon">&#x2715;</span> מחיקה</button>
+                    </div>
+                    <button class="btn"
+                            style="pointer-events: auto;"
+                            v-on:click="newClass(school)">הוספת כיתה</button>
+
+                </div>
+            </div>
+            <div>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <td style="width: 22px;"></td>
+                        <td class="pl-lg">שכבה</td>
+                        <td class="pl-lg">כיתה</td>
+                        <td class="pl-lg">סוג כיתה</td>
+                        <td class="pl-lg">מספר תלמידים</td>
+                        <td class="pl-lg">שליש א'</td>
+                        <td class="pl-lg">שליש ב'</td>
+                        <td class="pl-lg">שליש ג'</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr v-for="(team, index) in school.teams">
+                        <td class="pl-lg" style="position: relative;">
+                            <input type="checkbox" v-model="team.selected" v-on:change="handleSelectionChange(school)">
+                        </td>
+                        <td class="pl-lg">{{team.gradeIndex.name}}</td>
+                        <td class="pl-lg">{{team.gradeClass}}</td>
+                        <td class="pl-lg">{{team.gradeClassType}}</td>
+                        <td class="pl-lg">{{team.studentCount}}</td>
+                        <td class="pl-lg">{{team.part1.sportName}}</td>
+                        <td class="pl-lg">{{team.part2.sportName}}</td>
+                        <td class="pl-lg">{{team.part3.sportName}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>

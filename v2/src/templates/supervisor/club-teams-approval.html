@@ -1,0 +1,73 @@
+<div class="vertical-flex" style="position: absolute; left: 0px; right: 0px;">
+    <div class="ph-lg pt-lg">
+        <div class="float-right">
+            <strong>
+                אישור מפקח
+            </strong>
+        </div>
+        <div class="float-left" v-bind:style="{border: user.delegatedUser != null ? '1px dashed black' : '',
+            padding: user.delegatedUser != null ? '5px 5px 5px 5px' : 'inherit'}">
+            <strong v-if="user.delegatedUser">
+                {{user.delegatedUser.name}}
+                &larr;
+                מחובר בתור
+                &larr;
+            </strong>
+            <strong>
+                {{user.name}}
+            </strong>
+            <strong style="color: blue; cursor: pointer" v-on:click="logout()">
+                התנתק
+            </strong>
+        </div>
+    </div>
+
+    <div class="flex-fill ph-lg pv-sm">
+        <div class="panel p-sm" style="width: auto; position: absolute; left: 39px; right: 39px; top: 13px; bottom: 0px;">
+            <data-table v-bind:enableExport="true" v-bind:columns="columns" v-bind:data="teams" v-on:selection-change="handleSelectionChange()">
+                <div>
+                    <label>סטטוס</label>
+                    <!--
+                    <select  style="width: 100%;" v-model="selectedStatus" v-on:change="changeStatus()">
+                        <option v-for="(status, index) in statuses" v-bind:value="status.id">{{status.name}}</option>
+                    </select>
+                    -->
+                    <div class="btn-group">
+                        <button class="btn-link small" v-bind:disabled="selectedTeams.length == 0" v-bind:class="{active: selectedStatus == 0}" v-on:click="changeStatus(0)">ממתין לאישור</button>
+                        <button class="btn-link small" v-bind:disabled="selectedTeams.length == 0" v-bind:class="{active: selectedStatus == 1}" v-on:click="changeStatus(1)">אושר</button>
+                        <button class="btn-link small" v-bind:disabled="selectedTeams.length == 0" v-bind:class="{active: selectedStatus == -1}" v-on:click="changeStatus(-1)">לא אושר</button>
+                    </div>
+                </div>
+                <div v-if="loggedUser && loggedUser.region === 0">
+                    <label>מחוז</label>
+                    <select  style="width: 100%;" v-model="selectedRegion">
+                        <option value="-1">כל המחוזות</option>
+                        <option v-for="region in regions" v-bind:value="region.id">{{region.name}}</option>
+                    </select>
+                </div>
+                <div>
+                    <label>ענף</label>
+                    <select  style="width: 100%;" v-model="selectedSportField">
+                        <option value="0">כל הענפים</option>
+                        <option v-for="sportField in sportFields" v-bind:value="sportField.id">{{sportField.name}}</option>
+                    </select>
+                </div>
+                <div>
+                    <label>אליפות</label>
+                    <select  style="width: 100%;" v-model="selectedChampionship">
+                        <option value="0">כל האליפויות</option>
+                        <option v-for="championship in championships" v-bind:value="championship.id">{{championship.name}}</option>
+                    </select>
+                </div>
+                <div>
+                    <label>קטגוריה</label>
+                    <select  style="width: 100%;" v-model="selectedCategory">
+                        <option value="">כל הקטגוריות</option>
+                        <option v-for="category in categories" v-bind:value="category.name">{{category.name}}</option>
+                    </select>
+                </div>
+            </data-table>
+        </div>
+    </div>
+
+</div>

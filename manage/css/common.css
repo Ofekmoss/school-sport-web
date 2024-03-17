@@ -1,0 +1,364 @@
+body, button, div, span, td, th, p, input, select {
+    font-family: 'Rubik', sans-serif;
+    font-size: 16.5px;
+}
+
+input[type="text"] {
+    height: 38px;
+    opacity: 0.7;
+    border-radius: 4px;
+    border: solid 1px #b4b4b4;
+    /* background-color: #ffffff; */
+    padding-right: 5px;
+}
+
+
+select {
+    height: 38px;
+}
+
+input[type="text"]:active, input[type="text"]:focus {
+    height: 38px;
+    opacity: 1;
+    object-fit: contain;
+    border-radius: 4px;
+    border: solid 1px #1453b1;
+    /* background-color: #ffffff; */
+}
+
+#pnlCommonDialog {
+    display: none;
+    position: absolute;
+    width: 600px;
+    top: 50px;
+    background-color: white;
+    opacity: 1;
+    text-align: right;
+}
+
+#pnlCommonDialog .mir-dialog-title-container {
+    position: relative;
+    text-align: center;
+    height: 50px;
+    line-height: 50px;
+    vertical-align: middle;
+    padding: 5px 25px 5px 5px;
+}
+
+#pnlCommonDialog .mir-dialog-title-contents {
+    object-fit: contain;
+    font-family: Rubik;
+    font-size: 21.5px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    color: #1453b1;
+}
+
+#pnlCommonDialog .mir-dialog-body {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 15px;
+    padding-right: 35px;
+}
+
+#pnlCommonDialog .mir-dialog-close-button {
+    position: absolute;
+    left: 30px;
+    top: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.mir-dialog-body select, .mir-dialog-body input[type='text'] {
+    width: 300px;
+    margin-right: 30px;
+}
+
+.mir-toggle-selection-container {
+    position: relative;
+    width: 360px;
+    height: 35px;
+    border: 1px solid lightgray;
+    border-radius: 3px;
+}
+
+.mir-toggle-selection-container div {
+    position: absolute;
+    width: 180px;
+    text-align: center;
+    line-height: 35px;
+    vertical-align: middle;
+    color: #353535;
+    background-color: white;
+    cursor: pointer;
+}
+
+.mir-toggle-selection-container div.mir-toggle-selection-left {
+    left: 0px;
+    border-right: 1px solid lightgray;
+}
+
+.mir-toggle-selection-container div.mir-toggle-selection-right {
+    right: 0px;
+    border-left: 1px solid lightgray;
+}
+
+.mir-toggle-selection-container .mir-selected-toggle-item {
+    background-color: lightgray;
+}
+
+.mir-dialog-error {
+    color: red;
+    font-weight: bold;
+    display: none;
+}
+
+.mir-gray-background {
+    opacity: 0.8;
+    background-color: #4A4A4A; /* #00000055; */
+}
+
+button.mir-dialog-open, input.mir-dialog-open, select.mir-dialog-open, table.mir-dialog-open {
+    opacity: 0.1;
+}
+
+table.mir-dialog-open th, table.mir-dialog-open td {
+
+}
+
+.sortIcon, .filterIcon, .clear-filter {
+    position: absolute;
+}
+
+.sortIcon, .clear-filter {
+    left: 5px;
+    top: 25px;
+    font-size: 14px;
+}
+
+.filterIcon {
+    right: 5px;
+    top: 25px;
+    font-size: 12px;
+}
+
+.mir-common-container {
+    width: 100%;
+    text-align: center;
+    padding: 5px 5px 5px 5px;
+}
+
+.mir-common-error {
+    color: red;
+    font-weight: bold;
+}
+
+input, button {
+    margin-top: 5px;
+}
+
+.mir-control-panel {
+    width: 100%;
+    max-width: 800px;
+    min-height: 100px;
+    text-align: center;
+    background-color: #e0e0e0;
+    border: 1px solid black;
+    display: table;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mir-control-panel span {
+    vertical-align:middle;
+    display: table-cell;
+    font-size: 24px;
+}
+
+.mir-btn-large {
+    background-color: gray;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border: 2px;
+    border-radius: 5px;
+}
+
+.mir-disabled-link {
+    background-color: buttonface !important;
+    color: graytext !important;
+    cursor: default;
+}
+
+/*----------- Pagination --------------*/
+
+.mir-pagination-block{
+    text-align: center;
+    padding-top: 5px;
+}
+
+.mir-pagination-block.var2{
+    margin-top: 0;
+    border-top: none;
+    padding-top: 0;
+}
+
+.mir-pagination-block span{
+    color: #b0b1b4;
+    display: inline-block;
+}
+
+.mir-pagination-block ul{
+    list-style: none;
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.mir-pagination-block ul li{
+    float: left;
+}
+
+.mir-pagination-block ul li a{
+    padding: 5px 11px;
+    color: #212428;
+    display: block;
+    margin-left: 2px;
+
+    -webkit-transition: all .3s ease;
+    -o-transition: all .3s ease;
+    transition: all .3s ease;
+}
+
+.mir-pagination-block ul li a.mir-active-page{
+    background: #00ADEE;
+    color: #fff;
+}
+
+.mir-pagination-block ul li a:hover{
+    background: #00ADEE;
+    color: #fff;
+}
+
+#pnlAvailableColumns {
+    position: absolute;
+    z-index: 1;
+    background-color: white;
+    padding: 5px 5px 5px 5px;
+    text-align: left;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+.mir-form-item-title {
+    display: inline-block;
+}
+
+#pnlAddTeamContainer .team-index-title {
+    font-weight: bold;
+    color: #353535;
+}
+
+.teams-container > div:not(:first-child) {
+    display: none;
+}
+
+.mir-arrow {
+    width: 14px;
+    height: 9px;
+    object-fit: contain;
+    /* background-color: #1453b1; */
+}
+
+.mir-blue-button {
+    width: 155px;
+    height: 32px;
+    object-fit: contain;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 0.43);
+    background-color: #176ae6;
+    color: white;
+    font-size: 15px;
+}
+
+#pnlCommonDialog .mir-blue-button {
+    width: 91px;
+    height: 32px;
+    background-color: #1453b1;
+}
+
+.mir-table {
+    border-collapse: collapse;
+}
+
+.mir-table tr {
+    /* border: 1px solid black; */
+    object-fit: contain;
+    opacity: 0.7;
+    border-radius: 4px;
+    border-left: solid 1px #b4b4b4b3;
+    border-right: solid 1px #b4b4b4b3;
+    border-top: solid 1px #b4b4b4b3;
+    /* background-color: #ffffff; */
+    height: 60px;
+}
+
+.mir-table tr.mir-table-header-row {
+    opacity: 0.7;
+    border-radius: 4px;
+    border: solid 1px #176ae6b3;
+}
+
+.mir-table tr:last-child {
+    opacity: 0.7;
+    border-radius: 4px;
+    border-bottom: solid 1px #b4b4b4b3;
+}
+
+.mir-table tr:first-child {
+    opacity: 1;
+    border: none;
+}
+
+/*
+.mir-table tr:first-child th:first-child{
+    border-top-left-radius: 10px;
+}
+.mir-table tr:first-child th:last-child {
+    border-top-right-radius: 10px;
+}
+
+.mir-table tr:last-child th:first-child {
+    border-bottom-left-radius: 10px;
+}
+
+.mir-table tr:last-child th:last-child {
+    border-bottom-right-radius: 10px;
+}
+*/
+
+.mir-table td, .mir-table th {
+    padding: 10px 10px 10px 10px;
+}
+
+.mir-table th {
+    cursor: pointer; /* since it can be sorted */
+}
+
+.mir-table:not(.mir-dialog-open) tr:not(:first-child):not(.mir-table-header-row):hover {
+    background-color: #d9d9d9;
+}
+
+.mir-table tr.selected {
+    border: solid 1px #176ae6;
+}

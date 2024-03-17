@@ -1,0 +1,199 @@
+@import "colors";
+
+body {
+  background-color: @background-color;
+  color: @text-color;
+  margin: 0px;
+  font-family: "Rubik", sans-serif;
+}
+
+.dashboard-container .vdp-datepicker__calendar {
+  width: 100% !important;
+}
+
+.dashboard-container .vdp-datepicker__calendar .cell {
+  height: 28px;
+  line-height: 28px;
+}
+
+.dashboard-container .vdp-datepicker__calendar .cell.highlighted {
+  background: #ffff0057 !important;
+  font-weight: bold;
+  border: 1px solid #e0e0e0;
+}
+
+.dashboard-container .vdp-datepicker__calendar .cell.selected.highlighted {
+  background: #04ff0057 !important;
+  border: 1px solid #e0e0e0;
+}
+
+.dashboard-container .vdp-datepicker__calendar .cell.today {
+  border: 1px dashed #a0a0a0;
+}
+
+.dashboard-top-graphs .chart-container {
+  margin-left: 12px;
+  margin-right: 12px;
+}
+
+.multipleTeamsRow {
+  background-color: #ff00006e;
+}
+
+.permanent-placeholder {
+  position: absolute;
+  font-size: 10px;
+  font-weight: bold;
+  top: -15px;
+  right: 15px;
+}
+
+.tight-container .panel {
+  margin-bottom: 3px !important;
+}
+
+.data-table-scroll {
+  left: 0px;
+  top: 80px;
+  right: 0px;
+  bottom: 0px;
+  overflow-y: auto;
+}
+
+.admin-bar {
+  padding: 8px;
+
+  .title {
+    margin: 0px 24px;
+    font-weight: bold;
+    color: @color-text;
+    height: 1rem;
+
+    select {
+      font-weight: bold;
+      color: @color-text;
+      padding: 4px 0px 4px 0px;
+      margin-right: -5px;
+      margin-top: -8px;
+      font-size: 16px;
+      font-family: "Rubik", sans-serif;
+    }
+  }
+
+  .close-button {
+    display: none;
+    position: absolute;
+    left: 4px;
+    top: 2px;
+    font-size: 8px;
+    font-weight: bold;
+
+    &:hover {
+      color: @color-light-gray;
+    }
+
+    &:hover {
+      color: @color-dark-gray;
+    }
+  }
+
+  .tabs {
+    flex-grow: 1;
+    justify-content: center;
+
+    .tab {
+      position: relative;
+
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      cursor: pointer;
+
+      border: 1px solid @color-light-gray;
+      background-color: @color-light-gray;
+      color: @color-gray;
+
+      &.active {
+        background-color: @color-panel;
+        color: @color-text;
+      }
+
+      &:not(.active):hover {
+        background-color: @color-dark-gray;
+        border: 1px solid @color-dark-gray;
+        color: @color-panel;
+      }
+
+      .tab-caption {
+        padding: 6px 12px;
+      }
+
+      .tab-caption:hover .close-button {
+        display: block;
+      }
+
+      &:first-child {
+        border-top-right-radius: 4px;
+        -webkit-border-top-right-radius: 4px;
+        -webkit-border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+        -webkit-border-bottom-right-radius: 4px;
+        -webkit-border-bottom-right-radius: 4px;
+      }
+
+      &:last-child {
+        border-top-left-radius: 4px;
+        -webkit-border-top-left-radius: 4px;
+        -webkit-border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+        -webkit-border-bottom-left-radius: 4px;
+        -webkit-border-bottom-left-radius: 4px;
+      }
+
+      .view-list {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 0px;
+        padding: 8px 0px;
+        border: 1px solid @color-border;
+        background-color: @color-panel;
+      }
+
+      &:hover .view-list {
+        display: block;
+        z-index: 1000;
+      }
+
+      .view-item {
+        position: relative;
+        white-space: nowrap;
+        color: @color-text;
+        padding: 8px;
+
+        &.active {
+          color: @color-active-text;
+          background-color: @color-active;
+        }
+
+        &:hover {
+          background-color: @color-light-gray;
+
+          .close-button {
+            display: block;
+          }
+
+          &.active {
+            background-color: @color-active-border;
+          }
+        }
+
+        &:active {
+          background-color: @color-dark-gray;
+          color: @color-panel;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,421 @@
+<style type="text/css">
+    .tags {
+        text-align: right;
+    }
+    .tag-item {
+        /* float: right; */
+        display: inline-block;
+        background: #60666b;
+        border: none;
+        margin-left: 5px;
+        font-size: 13px;
+        line-height: 18px;
+        color: #fff;
+        padding: 3px 10px;
+        text-shadow: none;
+        border: 1px solid #ffffff;
+        border-radius: 4px;
+    }
+    .content-section {
+        margin-bottom: 25px;
+    }
+
+    .scale_image {
+        width: 280px;
+        height: 140px;
+    }
+</style>
+
+<div class="wide-container">
+    <div class="breadcrumb">
+        <div>
+            <span><a ui-sref="home">בית </a></span>
+            <span ng-hide="pageData.IsHidden">
+                /
+                <a ui-sref="galleries" ng-if="pageData.Type == 1">{{pluralCaption}}</a>
+                <a ui-sref="articles" ng-if="pageData.Type == 2">{{pluralCaption}}</a>
+                <a ui-sref="videos" ng-if="pageData.Type == 3">{{pluralCaption}}</a>
+                <span ng-if="pageData.Type == 5">{{pluralCaption}}</span>
+            </span>
+            /
+            {{pageData.Description}}
+        </div>
+    </div>
+
+    <div class="content">
+        <div> <!-- class="container" -->
+            <div class="row">
+                <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                    <!--Featured video-->
+                    <div class="section">
+                        <h3 class="section_title">אולי יעניין אותך</h3>
+                        <div class="section_post_left" ng-repeat="page in recentPages" style="margin-bottom: 50px;">
+                            <div class="scale_image_container"> <!--  with_buttons -->
+                                <a ui-sref="article({page: page.Seq})"><img ng-src="{{page.CroppedImage_Slider}}" alt="" class="scale_image"></a>
+                                <div class="post_image_buttons">
+                                    <div class="buttons_container">
+                                        <a ui-sref="article({page: page.Seq})" class="button banner_button travel">{{page.HebrewType}}</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix">
+                                <div class="f_left">
+                                    <div class="event_date" style="font-size: 15px;">{{page.Date | date : 'dd/MM/yyyy'}}</div>
+                                </div>
+                            </div>
+                            <div class="post_text">
+                                <h4 class="post_title"><a ui-sref="article({page: page.Seq})">{{page.Description}}</a></h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section" ng-show="false">
+                        <h3 class="section_title">תגיות</h3>
+                        <div class="t_align_c">
+                            <div class="tags">
+                                <span class="tag-item" ng-repeat="tag in pageData.Tags">
+                                    {{tag.Name}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 25px;" ng-show="false">
+                        <img src="images/ad_banner_336x280.jpg" />
+                    </div>
+                </div>
+                <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12" ng-if="pageType == 'gallery'" id="galleryContainer">
+                    <div class="section read_post_list gallery_list">
+                        <h2 class="section_title section_title_big" style="font-size: 45px;">
+                            {{pageData.Description}}
+                            <a ui-sref="page.edit({page: pageData.Seq})" class="button button_type_icon_small icon button_grey_light" ng-show="canEditContent()" title="עריכה">
+                                <i class="fa fa-pencil"></i>
+                            </a>
+                        </h2>
+                        <ul class="row" ng-repeat="imageRow in pageData.GalleryImageRows">
+                            <!--Post-->
+                            <li class="col-lg-3 col-md-3 col-sm-3 col-xs-12 col-lg-offset-{{imageCell.ColOffset}} col-md-offset-{{imageCell.ColOffset}} col-sm-offset-{{imageCell.ColOffset}}"
+                                ng-repeat="imageCell in imageRow.ImageCells | orderBy:'-Index'">
+                                <div class="section_post_left">
+                                    <div class="scale_image_container with_buttons" style="height: 150px;">
+                                        <a href="#">
+                                            <img ng-src="/content/Images/{{pageData.Seq}}/{{imageCell.FileName}}" alt="" class="scale_image" style="height: 100%; width: 100%;"
+                                                 title="{{imageCell.FileName + ' ' + (imageCell.DateUploaded | date : 'dd/MM/yyyy')}}">
+                                        </a>
+                                        <div class="open_buttons clearfix">
+                                            <div class="f_left">
+                                                <a ng-href="/content/Images/{{pageData.Seq}}/{{imageCell.FileName}}"
+                                                   ng-if="imageCell.CustomLink == null || (imageCell.CustomLink != null && imageCell.CustomLink.Type == 0)"
+                                                   role="button" class="jackbox jackbox_button button button_grey_light"
+                                                   data-group="gallery_1"
+                                                   data-thumbnail="/content/Images/{{pageData.Seq}}/{{imageCell.FileName}}">
+                                                    <i class="fa fa-search-plus"></i>
+                                                </a>
+                                                <a ng-href="{{imageCell.CustomLink.ExternalUrl}}" target="_blank"
+                                                   ng-if="imageCell.CustomLink != null && imageCell.CustomLink.Type == 1"
+                                                   role="button" class="button button_grey_light">
+                                                    <i class="fa fa-link"></i>
+                                                </a>
+                                                <a ng-href="/content/ImageAttachments/{{imageCell.Seq}}/{{imageCell.CustomLink.FileName}}"  target="_blank"
+                                                   ng-if="imageCell.CustomLink != null && imageCell.CustomLink.Type == 2"
+                                                   role="button" class="button button_grey_light">
+                                                    <i class="fa fa-download"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="text-align: center;" class="image-description">
+                                    {{imageCell.Description}}
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12" ng-if="pageType != 'gallery'">
+                    <h2 class="section_title section_title_big" style="font-size: 45px;">
+                        {{pageData.Description}}
+                        <a ui-sref="page.edit({page: pageData.Seq})" class="button button_type_icon_small icon button_grey_light" ng-show="canEditContent()" title="עריכה">
+                            <i class="fa fa-pencil"></i>
+                        </a>
+                    </h2>
+                    <div class="content-section" ng-repeat="section in pageData.Sections | orderBy:'Index'">
+                        <div ng-if="section.Type == 2" style="font-size: 30px;">
+                            <div ng-bind-html="section.EncodedData" style="line-height: 30px;"></div>
+                        </div>
+                        <div class="row" ng-if="section.Type == 1">
+                            <div class="row">
+                                <div class="col-lg-2 col-md-2">&nbsp;</div>
+                                <div class="col-lg-10 col-md-10 col-sm-12">
+                                    <flex-slider>
+                                        <flex-item>
+                                            <div>
+                                                <img ng-src="/content/Images/{{pageData.Seq}}/{{section.Attachments[0].FileName}}" alt="">
+                                                <div class="caption_type_1">
+                                                    <div class="caption_inner">
+                                                        <h2>
+                                                            {{section.Attachments[0].Description}}
+                                                        </h2>
+                                                    </div>
+                                                </div>
+                                                <a ng-href="/content/Images/{{pageData.Seq}}/{{section.Attachments[0].FileName}}" role="button" class="jackbox jackbox_button button button_grey_light"
+                                                   data-group="image_gallery"
+                                                   data-thumbnail="/content/Images/{{pageData.Seq}}/{{section.Attachments[0].FileName}}">
+                                                    <i class="fa fa-expand"></i>
+                                                </a>
+                                            </div>
+                                        </flex-item>
+                                    </flex-slider>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row" ng-if="section.Type == 3">
+                            <div class="col-lg-12 col-md-12 col-sm-12">
+                                <iframe style="width: 100%; height: 800px;" ng-src="{{section.VideoUrl}}" frameborder="0" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                        <div class="row" ng-if="section.Type == 5">
+                            <div class="col-lg-12 col-md-12 col-sm-12">
+                                <table class="table_type_1">
+                                    <tr class="f_size_large">
+                                        <th style="width: 5%;">#</th>
+                                        <th>תיאור</th>
+                                        <th>סוג קובץ</th>
+                                        <th>תאריך העלאה</th>
+                                        <th>&nbsp;</th>
+                                    </tr>
+                                    <tr ng-repeat="attachment in section.Attachments" ng-show="attachment.Description && attachment.Description.length > 0">
+                                        <td>{{attachment.Index + 1}}</td>
+                                        <td>{{attachment.Description}}</td>
+                                        <td>{{attachment.FileType}}</td>
+                                        <td>{{attachment.DateUploaded | date : 'dd/MM/yyyy'}}</td>
+                                        <td>
+                                            <a class="button button_grey button_type_icon_small" style="width: 80px; text-align: center; font-weight: bold;"
+                                               href="/content/Files/{{pageData.Seq}}/{{attachment.FileName}}" target="_blank">
+                                                הורדה
+                                                <i class="fa fa-download"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row" ng-if="section.Type == 6 && section.ContactRows && section.ContactRows.length > 0">
+                            <div class="col-lg-12 col-md-12 col-sm-12">
+                                <div class="row" ng-repeat="contactRow in section.ContactRows">
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" ng-repeat="contactData in contactRow | reverse">
+                                        <div ng-if="contactData.Name.length == 0">
+                                            &nbsp;
+                                        </div>
+                                        <div class="section" style="border: 1px solid #00ada7; padding-top: 5px; padding-left: 15px; padding-right: 15px; padding-bottom: 15px; overflow: hidden;" ng-if="contactData.Name.length > 0">
+                                            <h2 class="section_title" style="color: #3b5998; border-top: none; margin-bottom: 15px;">
+                                                <span style="font-size: 30px;">
+                                                    {{contactData.Name}}
+                                                </span>
+                                                <span ng-show="contactData.Role" style="font-size: 20px;">
+                                                   , {{contactData.Role}}
+                                                </span>
+                                            </h2>
+                                            <div class="row">
+                                                <div class="col-lg-9 col-md-8 col-sm-6 col-xs-6" style="padding-right: 0px; height: 166px;">
+                                                    <div style="min-width: 180px; margin-right: 30px;">
+                                                        <p ng-bind-html="contactData.AboutMe" style="min-height: 90px;"></p>
+                                                        <div class="widget widget_social_icons type_2 type_border clearfix" ng-if="contactData.Email">
+                                                            <ul>
+                                                                <li class="envelope">
+                                                                    <span class="tooltip">Email</span>
+                                                                    <a href="mailto:{{contactData.Email}}">
+                                                                        <i class="fa fa-envelope-o"></i>
+                                                                    </a>
+                                                                </li>
+                                                                <li style="margin-top: 5px;">
+                                                                    {{contactData.Email}}
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="widget widget_social_icons type_2 type_border clearfix">
+                                                            <ul>
+                                                                <li class="website" ng-show="contactData.HomePage">
+                                                                    <span class="tooltip">Website</span>
+                                                                    <a href="{{contactData.HomePage}}" target="_blank">
+                                                                        <i class="fa fa-home"></i>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="facebook" ng-show="contactData.FacebookUrl">
+                                                                    <span class="tooltip">Facebook</span>
+                                                                    <a href="{{contactData.FacebookUrl}}" target="_blank">
+                                                                        <i class="fa fa-facebook"></i>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="twitter" ng-show="contactData.TwitterUrl">
+                                                                    <span class="tooltip">Twitter</span>
+                                                                    <a href="{{contactData.TwitterUrl}}" target="_blank">
+                                                                        <i class="fa fa-twitter"></i>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="google_plus" ng-show="contactData.GooglePlusUrl">
+                                                                    <span class="tooltip">Google+</span>
+                                                                    <a href="{{contactData.GooglePlusUrl}}" target="_blank">
+                                                                        <i class="fa fa-google-plus"></i>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="rss" ng-show="contactData.RssFeedUrl">
+                                                                    <span class="tooltip">Rss</span>
+                                                                    <a href="{{contactData.RssFeedUrl}}" target="_blank">
+                                                                        <i class="fa fa-rss"></i>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="pinterest" ng-show="contactData.PinterestUrl">
+                                                                    <span class="tooltip">Pinterest</span>
+                                                                    <a href="{{contactData.PinterestUrl}}" target="_blank">
+                                                                        <i class="fa fa-pinterest"></i>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="instagram" ng-show="contactData.InstagramUrl">
+                                                                    <span class="tooltip">Instagram</span>
+                                                                    <a href="{{contactData.InstagramUrl}}" target="_blank">
+                                                                        <i class="fa fa-instagram"></i>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="linkedin" ng-show="contactData.LinkedInUrl">
+                                                                    <span class="tooltip">LinkedIn</span>
+                                                                    <a href="{{contactData.LinkedInUrl}}" target="_blank">
+                                                                        <i class="fa fa-linkedin"></i>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="vimeo" ng-show="contactData.VimeoUrl">
+                                                                    <span class="tooltip">Vimeo</span>
+                                                                    <a href="{{contactData.VimeoUrl}}" target="_blank">
+                                                                        <i class="fa fa-vimeo-square"></i>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="youtube" ng-show="contactData.YouTubeUrl">
+                                                                    <span class="tooltip">Youtube</span>
+                                                                    <a href="{{contactData.YouTubeUrl}}" target="_blank">
+                                                                        <i class="fa fa-youtube-play"></i>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="flickr" ng-show="contactData.FlickrUrl">
+                                                                    <span class="tooltip">Flickr</span>
+                                                                    <a href="{{contactData.FlickrUrl}}" target="_blank">
+                                                                        <i class="fa fa-flickr"></i>
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                                                    <div class="article_author_picture" ng-if="contactData.Picture" style="width: 120px; height: 120px;">
+                                                        <img ng-src="{{croppedContactPicturePath(contactData.Picture)}}" style="width: 120px; height: 120px;" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section" ng-if="pageType == 'article'" ng-show="pageData.Author && pageData.ShowAuthorDetails && pageData.Author.AboutMe">
+                        <h3 class="section_title">
+                            אודות
+                            {{pageData.Author.Name}}
+                        </h3>
+                        <div class="author_details clearfix">
+                            <div class="f_left">
+                                <div class="article_author_picture" ng-if="pageData.Author.PictureName">
+                                    <img ng-src="/content/Authors/{{pageData.Author.Seq}}/{{pageData.Author.PictureName}}" alt="" />
+                                </div>
+                            </div>
+                            <div>
+                                <p ng-bind-html="pageData.Author.AboutMe"></p>
+                                <div class="widget widget_social_icons type_2 type_border clearfix">
+                                    <ul>
+                                        <li class="website" ng-show="pageData.Author.HomePage">
+                                            <span class="tooltip">Website</span>
+                                            <a href="{{pageData.Author.HomePage}}" target="_blank">
+                                                <i class="fa fa-home"></i>
+                                            </a>
+                                        </li>
+                                        <li class="facebook" ng-show="pageData.Author.FacebookUrl">
+                                            <span class="tooltip">Facebook</span>
+                                            <a href="{{pageData.Author.FacebookUrl}}" target="_blank">
+                                                <i class="fa fa-facebook"></i>
+                                            </a>
+                                        </li>
+                                        <li class="twitter" ng-show="pageData.Author.TwitterUrl">
+                                            <span class="tooltip">Twitter</span>
+                                            <a href="{{pageData.Author.TwitterUrl}}" target="_blank">
+                                                <i class="fa fa-twitter"></i>
+                                            </a>
+                                        </li>
+                                        <li class="google_plus" ng-show="pageData.Author.GooglePlusUrl">
+                                            <span class="tooltip">Google+</span>
+                                            <a href="{{pageData.Author.GooglePlusUrl}}" target="_blank">
+                                                <i class="fa fa-google-plus"></i>
+                                            </a>
+                                        </li>
+                                        <li class="rss" ng-show="pageData.Author.RssFeedUrl">
+                                            <span class="tooltip">Rss</span>
+                                            <a href="{{pageData.Author.RssFeedUrl}}" target="_blank">
+                                                <i class="fa fa-rss"></i>
+                                            </a>
+                                        </li>
+                                        <li class="pinterest" ng-show="pageData.Author.PinterestUrl">
+                                            <span class="tooltip">Pinterest</span>
+                                            <a href="{{pageData.Author.PinterestUrl}}" target="_blank">
+                                                <i class="fa fa-pinterest"></i>
+                                            </a>
+                                        </li>
+                                        <li class="instagram" ng-show="pageData.Author.InstagramUrl">
+                                            <span class="tooltip">Instagram</span>
+                                            <a href="{{pageData.Author.InstagramUrl}}" target="_blank">
+                                                <i class="fa fa-instagram"></i>
+                                            </a>
+                                        </li>
+                                        <li class="linkedin" ng-show="pageData.Author.LinkedInUrl">
+                                            <span class="tooltip">LinkedIn</span>
+                                            <a href="{{pageData.Author.LinkedInUrl}}" target="_blank">
+                                                <i class="fa fa-linkedin"></i>
+                                            </a>
+                                        </li>
+                                        <li class="vimeo" ng-show="pageData.Author.VimeoUrl">
+                                            <span class="tooltip">Vimeo</span>
+                                            <a href="{{pageData.Author.VimeoUrl}}" target="_blank">
+                                                <i class="fa fa-vimeo-square"></i>
+                                            </a>
+                                        </li>
+                                        <li class="youtube" ng-show="pageData.Author.YouTubeUrl">
+                                            <span class="tooltip">Youtube</span>
+                                            <a href="{{pageData.Author.YouTubeUrl}}" target="_blank">
+                                                <i class="fa fa-youtube-play"></i>
+                                            </a>
+                                        </li>
+                                        <li class="flickr" ng-show="pageData.Author.FlickrUrl">
+                                            <span class="tooltip">Flickr</span>
+                                            <a href="{{pageData.Author.FlickrUrl}}" target="_blank">
+                                                <i class="fa fa-flickr"></i>
+                                            </a>
+                                        </li>
+                                        <li class="envelope" ng-show="pageData.Author.Email">
+                                            <span class="tooltip">Email</span>
+                                            <a href="mailto:{{pageData.Author.Email}}">
+                                                <i class="fa fa-envelope-o"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-lg-9 col-md-9 col-lg-offset-3 col-md-offset-3 col-sm-12">
+                    <div class="fb-comments" data-href="http://www.schoolsport.co.il/sport/#/page/{{pageData.Seq}}" data-width="100%" data-numposts="5"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

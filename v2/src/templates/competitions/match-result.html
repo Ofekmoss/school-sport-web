@@ -1,0 +1,68 @@
+<div class="dialog vertical-flex" style="min-height: 10rem; max-height: inherit; width: 500px;">
+    <div>
+        <div class="caption" style="position: relative;">
+            <div style="position: absolute; right: 5px; top: -5px; cursor: pointer; font-size: 18px; font-weight: bold;"
+                 title="ביטול וסגירת חלונית"
+                 v-on:click="cancel()">
+                X
+            </div>
+            תוצאת משחק
+            <div style="position: absolute; left: 5px; top: 8px; cursor: pointer; font-size: 14px; -webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;"
+                v-if="outcome != null || (scoreA != null && scoreB != null)" v-on:click="clearResult()">
+                ניקוי תוצאה
+            </div>
+        </div>
+        <table class="match-result-table">
+            <tr>
+                <td style="width: 50%;">{{teamA}}</td>
+                <td style="width: 50%;">{{teamB}}</td>
+            </tr>
+            <tr v-if="outcome == 3">
+                <td class="clickable" v-on:click="setOutcome(null)">טכני א</td>
+                <td class="muted text-small clickable" v-on:click="setOutcome(4)">טכני ב</td>
+            </tr>
+            <tr v-else-if="outcome == 4">
+                <td class="muted text-small clickable" v-on:click="setOutcome(3)">טכני א</td>
+                <td class="clickable" v-on:click="setOutcome(null)">טכני ב</td>
+            </tr>
+            <tr v-else>
+                <td style="position: relative;">
+                    <input class="score-input" type="number" v-model="scoreA" v-on:focus="focusInput" v-on:input="updateSets(false)">
+                    <div style="position: absolute; top: 2px; right: 6px;" class="text-small muted clickable" v-on:click="setOutcome(3)">טכני א</div>
+                </td>
+                <td style="position: relative;">
+                    <input class="score-input" type="number" v-model="scoreB" v-on:focus="focusInput" v-on:input="updateSets(false)">
+                    <div style="position: absolute; top: 2px; left: 6px;" class="text-small muted clickable" v-on:click="setOutcome(4)">טכני ב</div>
+                </td>
+            </tr>
+            <template v-if="games">
+                <tr>
+                </tr>
+            </template>
+            <template v-else-if="outcome != 3 && outcome != 4 && setList && setList.length > 0">
+                <tr>
+                    <td colspan="2" class="text-large text-center">
+                        מערכות
+                    </td>
+                </tr>
+                <tr v-for="(set, si) in setList">
+                    <td>
+                        <input class="score-input" type="number" v-model="set.a" v-on:focus="focusInput" v-on:input="updateSets(true)" v-bind:disabled="si > setsSet">
+                    </td>
+                    <td>
+                        <input class="score-input" type="number" v-model="set.b" v-on:focus="focusInput" v-on:input="updateSets(true)" v-bind:disabled="si > setsSet">
+                    </td>
+                </tr>
+            </template>
+        </table>
+    </div>
+    <div class="alert text-center">
+        <span v-if="setsPartial">תוצאות מערכות לא מלאות</span>
+        <span v-else-if="scoreMismatch">תוצאות מערכות תואמות לתוצאה</span>
+    </div>
+
+    <div class="text-center mt-md">
+        <button class="btn gray ml-sm" style="width: 5rem" v-on:click="cancel()">ביטול</button>
+        <button class="btn" v-bind:disabled="setsPartial || scoreMismatch" style="width: 5rem" v-on:click="confirm()">אישור</button>
+    </div>
+</div>

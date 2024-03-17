@@ -1,0 +1,14 @@
+<div class="dialog">
+    <div class="clickable" style="display: flex; justify-content: flex-end;" v-on:click="cancel">&#x2715;</div>
+    <div class="caption">
+        עדכון תשלום    </div>
+    <div>
+        (ניתן לשלוח 0 כדי להסיר את התשלום)
+    </div>
+    <div style="display: flex; flex-direction: column;">
+        <div class="m-md">
+            <input required id="input" type="text" style="width: 100%;" name="payment" v-model="payment" pattern="^[\+\-]?\d*\.?\d+(?:[Ee][\+\-]?\d+)?$"/>
+        </div>
+        <button type="button" class="btn wide" v-on:click="confirm()" v-bind:disabled="!isValid()">אישור</button>
+    </div>
+</div>

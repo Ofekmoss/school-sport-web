@@ -1,0 +1,275 @@
+<style type="text/css">
+    .table_type_1 tr th {
+        width: auto;
+    }
+
+    .event_sport_field_row {
+        /* padding: 40px 0px 40px 0px; */
+        height: 46px;
+    }
+
+    #events_table th {
+        cursor: pointer;
+    }
+
+    #events_table th, #events_table td {
+        vertical-align: middle;
+    }
+
+    .date-filter-remove-icon {
+        cursor: pointer;
+        font-size: 12px;
+        margin-top: 5px;
+        color: white;
+        margin-right: -25px;
+    }
+
+    .date-filter-remove-icon:hover  {
+        color: red;
+    }
+
+    .sport_field_rectangle, .championship_rectangle, .category_rectangle {
+        float: right;
+        margin-right: 10px;
+        margin-bottom: 5px;
+        overflow: hidden;
+    }
+
+    .sport_field_rectangle {
+        width: 120px;
+        line-height: 46px;
+        vertical-align: middle;
+    }
+
+    .championship_rectangle {
+        width: 130px;
+    }
+
+    .category_rectangle {
+        width: 170px;
+        line-height: 46px;
+        vertical-align: middle;
+    }
+</style>
+<div class="wide-container" ng-if="error">
+    <div class="alert alert-danger" role="alert">
+        {{error}}
+    </div>
+</div>
+
+<div class="wide-container" ng-if="!error">
+    <div class="breadcrumb">
+        <div>
+            <span><a ui-sref="home">בית </a></span> /
+            כל האירועים
+        </div>
+    </div>
+
+    <div class="content">
+        <div>
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <h2 class="section_title section_title_big" style="margin-bottom: 0px;">
+                        רשימת כל האירועים
+                    </h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <div class="section">
+                        <h3 class="section_title">
+פילטרים
+                        </h3>
+                        <div class="sorting_block var2 clearfix" style="margin-bottom: 10px;">
+                            <div style="float: right;">
+                                <span>
+                                בחירת עונה
+                                </span>
+                                <div class="custom_select" id="ddlSeason" ng-show="seasons.length > 0">
+                                    <div class="select_title">
+                                        {{currentSeason.Name}}
+                                    </div>
+                                    <ul id="menu_type" class="select_list"></ul>
+                                    <select>
+                                        <option ng-repeat="season in seasons" value="season.Season">
+                                            {{season.Name}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <calendar source="eventFilters.Calendar"></calendar>
+                    </div>
+                </div>
+
+                <div class="col-lg-8 col-md-8 col-sm-12">
+                    <div class="section_3">
+                        <div class="section" ng-show="!noEventsInRange">
+                            <h3 class="section_title">
+                                בחירת ענפי ספורט:
+                                <div class="pull-left" ng-show="eventFilters.SportFields.length > 0">
+                                    <button type="button" class="button button_grey" style="font-size: 14px; padding: 5px 10px;" ng-click="clearSportFieldFilter()">
+                                        ניקוי בחירה
+                                    </button>
+                                </div>
+                            </h3>
+                        </div>
+                        <div class="section" ng-show="noEventsInRange">
+                            <h3 class="section_title">
+                                אין אירועים בתאריך נבחר
+                            </h3>
+                        </div>
+                        <div class="row" id="pnlSportFieldSelection">
+                            <div class="col-lg-12 col-md-12 col-sm-12" style="padding-right: 0px;">
+                                <div ng-repeat="sportField in sportFieldsInUse"
+                                     class="{{getRoundedRectangleClass(sportField, 'sport_field_rectangle')}}" ng-click="toggleSportFieldFilter(sportField)"
+                                     change-background colorcode="{{getSportFieldColor(sportField.Id)}}" selected="{{sportField.Selected}}"
+                                     style="{{getSportFieldFilterStyle(sportField)}}" ng-if="sportField.Id">
+                                    {{sportField.Name}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="section" ng-show="championshipsInUse.Rows.length > 0 && !noEventsInRange">
+                            <h3 class="section_title">
+                                <span ng-show="sportFlowersChampFilterCount() == 0">
+בחירת אליפויות:
+                                </span>
+                                <span ng-show="sportFlowersChampFilterCount() == totalChampionshipsInUse()">
+                                בחירת אירועי פרחי ספורט:
+                                </span>
+                                <span ng-show="sportFlowersChampFilterCount() > 0 && sportFlowersChampFilterCount() < totalChampionshipsInUse()">
+                                בחירת אליפויות ואירועי פרחי ספורט:
+                                </span>
+                                <div class="pull-left" ng-show="eventFilters.Championships.length > 0">
+                                    <button type="button" class="button button_grey" style="font-size: 14px; padding: 5px 10px;" ng-click="clearChampionshipFilter()">
+                                        ניקוי בחירה
+                                    </button>
+                                </div>
+                            </h3>
+                            <div class="row" style="margin-bottom: 10px;">
+                                <div class="col-lg-12 col-md-12 col-sm-12" style="padding-right: 0px;">
+                                    <div ng-repeat="championship in championshipsInUse.Matching"
+                                         class="{{getRoundedRectangleClass(championship, 'championship_rectangle')}}" ng-click="toggleChampionshipFilter(championship)"
+                                         change-background colorcode="{{getSportFieldColor(championship.SportField)}}" selected="{{championship.Selected}}"
+                                         style="{{getSportFieldFilterStyle(championship)}}" ng-if="championship.SportField">
+                                        {{championship.Name}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="section" ng-show="categoriesInUse.Rows.length > 0 && !noEventsInRange">
+                            <h3 class="section_title">
+                                בחירת קטגוריות אליפות:
+                                <div class="pull-left" ng-show="eventFilters.Categories.length > 0">
+                                    <button type="button" class="button button_grey" style="font-size: 14px; padding: 5px 10px;" ng-click="clearCategoriesFilter()">
+                                        ניקוי בחירה
+                                    </button>
+                                </div>
+                            </h3>
+                            <div class="row" style="margin-bottom: 10px;">
+                                <div class="col-lg-12 col-md-12 col-sm-12" style="padding-right: 0px;">
+                                    <div ng-repeat="category in categoriesInUse.Matching"
+                                         class="{{getRoundedRectangleClass(category, 'category_rectangle')}}" ng-click="toggleCategoryFilter(category)"
+                                         change-background colorcode="{{getSportFieldColor(category.SportField)}}" selected="{{category.Selected}}"
+                                         style="{{getSportFieldFilterStyle(category)}}" ng-if="category.SportField">
+                                        {{category.Name}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section" ng-repeat="event in events">
+                            <div class="alternating-colors col-lg-12 col-md-12 col-sm-12 col-xs-12" data-colors="#e0e0e0,#c0c0c0">
+                                <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">
+                                    &nbsp; <!-- live -->
+                                </div>
+                                <div class="col-lg-5 col-md-5 col-sm-10 col-xs-10">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-if="event.ChampionshipType == 2">
+                                        {{event.SPORT_FIELD_TYPE_NAME}}
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-5 col-xs-5" ng-if="event.ChampionshipType == 1">
+                                        {{event.TeamB}}
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-5 col-xs-5" ng-if="event.ChampionshipType == 1">
+                                        {{event.TeamA}}
+                                    </div>
+                                </div>
+                                <div class="col-lg-5 col-md-5 col-sm-10 col-xs-10" style="padding-right: 45px;">
+                                    <h3>
+                                        <a ui-sref="championships.region.championship({clubs: 0, region: 0, category: event.SPORT_ID == sportFlowersSeq ? ('sf-' + event.Seq) : event.CHAMPIONSHIP_CATEGORY_ID})"
+                                           ng-show="event.CHAMPIONSHIP_CATEGORY_ID || event.SPORT_ID == sportFlowersSeq">
+                                            {{event.Description}}
+                                        </a>
+                                        <span ng-show="!event.CHAMPIONSHIP_CATEGORY_ID && event.SPORT_ID != sportFlowersSeq">
+                                            {{event.Description}}
+                                        </span>
+                                    </h3>
+                                    <br />
+                                    {{event.GameDetails}}
+                                    <br />
+                                    <span ng-if="event.EventType != 3 && event.EventType != 5">
+                                        {{event.Date | formatDateTime : 'dd/MM/yyyy HH:mm'}}
+                                    </span>
+                                   <span ng-if="event.EventType == 5">
+                                        {{event.Date | formatDateTime : 'dd/MM/yyyy'}}
+                                    </span>
+                                    <span ng-if="event.EventType == 3">
+                                        {{event.DATE_START | date : 'dd/MM/yyyy'}}
+                                        עד
+                                        {{event.DATE_FINISH | date : 'dd/MM/yyyy'}}
+                                    </span>
+                                    <br />
+                                    <span ng-if="event.EventType != 3 && event.EventType != 5">
+                                        מתקן:
+                                        {{event.FACILITY_NAME}}
+                                    </span>
+                                    <span ng-if="event.EventType == 3">
+                                        {{event.REMARKS || '&nbsp;'}}
+                                    </span>
+                                    <span ng-if="event.EventType == 5">
+                                        {{event.SubCaption || '&nbsp;'}}
+                                    </span>
+                                </div>
+                                <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
+                                    <div ng-class="{'common_rounded_rectangle event_sport_field_row single_word_sport': event.SportWordCount == 1, 'common_rounded_rectangle event_sport_field_row': event.SportWordCount > 1}" style="{{getSportFieldStyle(event.SPORT_ID)}}">
+                                        <span style="color: white;">
+                                            {{event.ShortSportName}}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pagination_block var2" ng-if="pagingService.pagingData && pagingService.pagingData.gotPaging" style="margin-top: 15px; float: right;">
+                        <span>
+                            עמוד
+                            {{pagingService.pagingData.selectedPage}}
+                            מתוך
+                            {{pagingService.pagingData.pageCount}}
+                        </span>
+                        <ul class="pagination clearfix" style="margin-top: 0px;">
+                            <li><a href="#" ng-click="pagingService.previousPage()" class="{{(pagingService.pagingData.isFirstPage) ? 'disabled-link' : ''}}" onclick="return false;"><i class="fa fa-angle-right"></i></a></li>
+                            <li ng-repeat="page in pagingService.pagingData.pages"><a href="#" class="{{(page == pagingService.pagingData.selectedPage) ? 'active' : ''}}" ng-click="pagingService.changePage(page)" onclick="return false;">{{page}}</a></li>
+                            <li><a href="#" ng-click="pagingService.nextPage()" class="{{(pagingService.pagingData.isLastPage) ? 'disabled-link' : ''}}" onclick="return false;"><i class="fa fa-angle-left"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    window.setInterval(function() {
+        $(".event_sport_field_row").each(function() {
+            var oCell = $(this);
+            var cellHeight = oCell.height();
+            var oParentRow = oCell.parents(".alternating-colors").first();
+            var parentHeight = oParentRow.height()
+            if (parentHeight > 0) {
+                var marginTop = Math.floor((parentHeight - cellHeight) / 2);
+                if (marginTop > 0)
+                    oCell.css("margin-top", marginTop + "px");
+            }
+        });
+    }, 500);
+</script>

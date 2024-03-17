@@ -1,0 +1,340 @@
+<style type="text/css">
+    .section {
+        margin-top: 5px !important;
+    }
+
+    .section_title {
+        margin-bottom: 10px !important;
+    }
+
+    .match-score-input {
+        width: 120px !important;
+        height: 120px !important;
+        font-size: 45px !important;
+        font-weight: bold !important;
+        border: 1px solid black !important;
+        border-radius: 10px !important;
+        text-align: center !important;
+    }
+
+    .match-score-input-mobile {
+        width: 80px !important;
+        height: 80px !important;
+        font-size: 40px !important;
+        font-weight: bold !important;
+        border: 1px solid black !important;
+        border-radius: 10px !important;
+        text-align: center !important;
+    }
+
+    .dialog-part-score-mobile {
+        width: 60px !important;
+        height: 60px !important;
+        font-size: 25px !important;
+        font-weight: bold !important;
+        border: 1px solid black !important;
+        border-radius: 10px !important;
+        text-align: center !important;
+    }
+
+    .dialog-part-score {
+        position: absolute;
+        top: 75px;
+        width: 20px;
+        height: 120px;
+        font-size: 14px;
+        line-height: 15px;
+    }
+
+    .dialog-part-score-b {
+        right: 55px;
+    }
+
+    .dialog-part-score-a {
+        left: 60px;
+    }
+
+    .dialog-part-score input {
+        height: 15px;
+        width: 20px;
+        padding: 0;
+    }
+
+    .common_rounded_rectangle:hover {
+        background-color: #00ada7;
+    }
+
+    .common_rounded_rectangle {
+        border-color: #00ada7;
+        width: 120px;
+        height: 120px;
+        padding-top: 7px !important;
+        padding-bottom: 7px !important;
+    }
+</style>
+<div dir="rtl">
+    <div class="section_3" style="margin-top: 5px; margin-right: 10px;">
+        <h3>
+            הזנת תוצאות
+            {{match.CHAMPIONSHIP_NAME}} {{match.CATEGORY_NAME}}
+        </h3>
+    </div>
+    <div class="modal-body" style="padding-top: 0px;">
+        <!-- mobile view -->
+        <!-- game score -->
+        <div class="row" style="margin-bottom: 5px;">
+            <!-- team B -->
+            <div class="hidden-lg hidden-md col-sm-5 col-xs-5" style="text-align: center; position: relative; float: left !important; width: 45% !important;">
+                <h3 style="height: 50px;">{{match | teamName : 'B'}}</h3>
+                <h4>אורחת</h4>
+                <input type="number" min="0" max="999" id="edTeamB_Score_mobile" class="match-score-input-mobile" tabindex="2"
+                       ng-model="match.NewScore_B" ng-disabled="match.RESULT >= 3" />
+            </div>
+
+            <!-- middle -->
+            <div class="hidden-lg hidden-md col-sm-2 col-xs-2" style="text-align: center; position: relative; float: left !important; width: 10% !important;">
+
+            </div>
+
+            <!-- team A -->
+            <div class="hidden-lg hidden-md col-sm-5 col-xs-5" style="text-align: center; position: relative; float: left !important; width: 45% !important;">
+                <h3 style="height: 50px;">{{match | teamName : 'A'}}</h3>
+                <h4>מארחת</h4>
+                <input type="number" min="0" max="999" id="edTeamA_Score_mobile" class="match-score-input-mobile" tabindex="1"
+                       ng-model="match.NewScore_A" ng-disabled="match.RESULT >= 3" />
+            </div>
+        </div>
+
+        <!-- technical win -->
+        <div class="row" style="margin-bottom: 5px;">
+            <!-- team B -->
+            <div class="hidden-lg hidden-md col-sm-5 col-xs-5" style="text-align: center; position: relative; float: left !important; width: 40% !important;">
+                <div class="control-group form-elements" style="margin-top: 10px;">
+                    <input type="checkbox" id="chkTechnicalWin_B_mobile" ng-model="match.TechnicalWin_B" ng-change="TechnicalWinChanged('B')" />
+                    <label for="chkTechnicalWin_B_mobile" class="control-label">
+
+                    </label>
+                </div>
+            </div>
+
+            <!-- middle -->
+            <div class="hidden-lg hidden-md col-sm-2 col-xs-2" style="text-align: center; position: relative; float: left !important; width: 20% !important;">
+                <label class="control-label">
+                    ניצחון טכני
+                </label>
+            </div>
+
+            <!-- team A -->
+            <div class="hidden-lg hidden-md col-sm-5 col-xs-5" style="text-align: center; position: relative; float: left !important; width: 40% !important;">
+                <div class="control-group form-elements" style="margin-top: 10px;">
+                    <input type="checkbox" id="chkTechnicalWin_A_mobile" ng-model="match.TechnicalWin_A" ng-change="TechnicalWinChanged('A')" />
+                    <label for="chkTechnicalWin_A_mobile" class="control-label">
+
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- show part score? -->
+        <div class="row" ng-show="match.OverridenPartScore" style="margin-bottom: 5px;">
+            <div class="hidden-lg hidden-md col-sm-12 col-xs-12" style="text-align: center;">
+                <div class="control-group form-elements" style="margin-top: 10px;">
+                    <input type="checkbox" id="chkShowPartScoreRows_mobile" ng-model="match.ShowPartScore" />
+                    <label for="chkShowPartScoreRows_mobile" class="control-label">
+הזנת ניקוד מערכות
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- part score -->
+        <div class="row" ng-repeat="partScore in match.OverridenPartScore" ng-if="match.OverridenPartScore" ng-show="match.ShowPartScore" style="margin-bottom: 5px;">
+            <!-- team B -->
+            <div class="hidden-lg hidden-md col-sm-5 col-xs-5" style="text-align: center; position: relative; float: left !important; width: 40% !important;">
+                <input type="number" min="0" max="999" class="dialog-part-score-mobile" ng-model="partScore.ScoreB" />
+            </div>
+
+            <!-- middle -->
+            <div class="hidden-lg hidden-md col-sm-2 col-xs-2" style="text-align: center; position: relative; float: left !important; width: 20% !important;">
+                <span class="control-label">
+                    {{$index + 1}}
+                </span>
+            </div>
+
+            <!-- team A -->
+            <div class="hidden-lg hidden-md col-sm-5 col-xs-5" style="text-align: center; position: relative; float: left !important; width: 40% !important;">
+                <input type="number" min="0" max="999" class="dialog-part-score-mobile" ng-model="partScore.ScoreA" />
+            </div>
+        </div>
+
+        <!-- end of mobile view -->
+
+        <!-- full view -->
+
+        <!-- game score -->
+        <div class="row" style="margin-bottom: 5px;">
+            <!-- team B -->
+            <div class="col-lg-5 col-md-5 hidden-sm hidden-xs" style="text-align: center; position: relative; float: left !important; width: 45% !important;">
+                <h3 style="height: 50px;">{{match | teamName : 'B'}}</h3>
+                <h4>אורחת</h4>
+                <input type="number" min="0" max="999" id="edTeamB_Score" class="match-score-input" tabindex="2"
+                       ng-model="match.NewScore_B" ng-disabled="match.RESULT >= 3" />
+            </div>
+
+            <!-- middle -->
+            <div class="col-lg-2 col-md-2 hidden-sm hidden-xs" style="text-align: center; position: relative; float: left !important; width: 10% !important;">
+
+            </div>
+
+            <!-- team A -->
+            <div class="col-lg-5 col-md-5 hidden-sm hidden-xs" style="text-align: center; position: relative; float: left !important; width: 45% !important;">
+                <h3 style="height: 50px;">{{match | teamName : 'A'}}</h3>
+                <h4>מארחת</h4>
+                <input type="number" min="0" max="999" id="edTeamA_Score" class="match-score-input" tabindex="1"
+                       ng-model="match.NewScore_A" ng-disabled="match.RESULT >= 3" />
+            </div>
+        </div>
+
+        <!-- technical win -->
+        <div class="row" style="margin-bottom: 5px;">
+            <!-- team B -->
+            <div class="col-lg-5 col-md-5 hidden-sm hidden-xs" style="text-align: center; position: relative; float: left !important; width: 40% !important;">
+                <div class="control-group form-elements" style="margin-top: 10px;">
+                    <input type="checkbox" id="chkTechnicalWin_B" ng-model="match.TechnicalWin_B" ng-change="TechnicalWinChanged('B')" />
+                    <label for="chkTechnicalWin_B" class="control-label">
+
+                    </label>
+                </div>
+            </div>
+
+            <!-- middle -->
+            <div class="col-lg-2 col-md-2 hidden-sm hidden-xs" style="text-align: center; position: relative; float: left !important; width: 20% !important;">
+                <label class="control-label">
+                    ניצחון טכני
+                </label>
+            </div>
+
+            <!-- team A -->
+            <div class="col-lg-5 col-md-5 hidden-sm hidden-xs" style="text-align: center; position: relative; float: left !important; width: 40% !important;">
+                <div class="control-group form-elements" style="margin-top: 10px;">
+                    <input type="checkbox" id="chkTechnicalWin_A" ng-model="match.TechnicalWin_A" ng-change="TechnicalWinChanged('A')" />
+                    <label for="chkTechnicalWin_A" class="control-label">
+
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- show part score? -->
+        <div class="row" ng-show="match.OverridenPartScore && match.NewScore_B != null && match.NewScore_A != null" style="margin-bottom: 5px;">
+            <div class="col-lg-12 col-md-12 hidden-sm hidden-xs" style="text-align: center;">
+                <button type="button" ng-show="match.ShowPartScore" class="button button_grey button_type_icon_small pull-left"
+                        ng-click="clearPartsData()" style="padding-left: 5px; padding-right: 5px; margin-top: 5px; position: absolute; left: 30px;">
+                    איפוס ניקוד מערכות
+                </button>
+                <div class="control-group form-elements" style="margin-top: 10px;">
+                    <input type="checkbox" id="chkShowPartScoreRows" ng-model="match.ShowPartScore" />
+                    <label for="chkShowPartScoreRows" class="control-label">
+                        הזנת ניקוד מערכות
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- part score -->
+        <div class="row" ng-repeat="partScore in match.OverridenPartScore" ng-if="match.OverridenPartScore" ng-show="match.ShowPartScore" style="margin-bottom: 5px;">
+            <!-- team B -->
+            <div class="col-lg-5 col-md-5 hidden-sm hidden-xs" style="text-align: center; position: relative; float: left !important; width: 40% !important;">
+                <input type="number" min="0" max="999" class="dialog-part-score-mobile" ng-model="partScore.ScoreB" />
+            </div>
+
+            <!-- middle -->
+            <div class="col-lg-2 col-md-2 hidden-sm hidden-xs" style="text-align: center; position: relative; float: left !important; width: 20% !important;">
+                <span class="control-label">
+                    {{$index + 1}}
+                </span>
+            </div>
+
+            <!-- team A -->
+            <div class="col-lg-5 col-md-5 hidden-sm hidden-xs" style="text-align: center; position: relative; float: left !important; width: 40% !important;">
+                <input type="number" min="0" max="999" class="dialog-part-score-mobile" ng-model="partScore.ScoreA" />
+            </div>
+        </div>
+
+        <!-- end of full view -->
+
+        <div class="row" style="margin-bottom: 5px;">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-show="match.UploadedFileUrl">
+                <a href="#" ng-click="deleteMatchForm()" class="button button_type_icon_medium button_orange pull-left" onclick="return false;" style="margin-bottom: 10px;">
+                    מחיקת טופס
+                    <i class="fa fa-trash-o"></i>
+                </a>
+            </div>
+
+            <!-- full view -->
+            <div class="col-lg-12 col-md-12 hidden-sm hidden-xs">
+                <div class="alert alert-danger" role="alert" ng-show="fileUploadError">
+                    {{fileUploadError}}
+                </div>
+                <div dropzone="dropzoneConfig" class="dropzone page-dropzone" style="font-size: 120%; font-weight: bold;">
+
+                </div>
+            </div>
+
+            <!-- mobile view -->
+            <div class="hidden-lg hidden-md col-sm-12 col-xs-12">
+                <div class="alert alert-danger" role="alert" ng-show="fileUploadError">
+                    {{fileUploadError}}
+                </div>
+                <div dropzone="dropzoneConfig" class="dropzone page-dropzone" style="font-size: 120%; font-weight: bold; width: 120px; height: 100px; overflow: hidden; z-index: 999; position: relative; opacity: 0; margin-right: 30%;">
+
+                </div>
+                <div class="common_rounded_rectangle transparent_rounded_rectangle" style="margin-top: -150px; z-index: 1; position: relative; margin-right: 30%;">
+                    <span ng-class="{'fa fa-check': fileUploaded, 'fa fa-camera': !fileUploaded}" style="{{getFileUploadIconStyle()}}"></span>
+                    <span class="upload-error" style="display: none;"></span>
+                    <img class="picture-preview" src="about:blank" style="display: none;" />
+                    <br />
+                    <span ng-show="fileUploaded">
+                        טופס הועלה בהצלחה
+                    </span>
+                    <span ng-show="!fileUploaded">
+                        העלאת טופס
+                        <span ng-show="match.UploadedFileUrl">
+                            חדש
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-bottom: 5px; margin-top: 10px;">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <h5>
+                    {{match.PHASE_NAME}}, {{match.ROUND_NAME}}, {{match.CYCLE_NAME}}, {{match.GROUP_NAME}}
+                </h5>
+                <h5>
+                תאריך משחק:
+                {{match.TIME | date : 'dd/MM/yyyy HH:mm'}}
+                </h5>
+                <h5 ng-if="match.FACILITY_NAME">
+                    מתקן:
+                    {{match.FACILITY_NAME}}
+                </h5>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="pull-left">
+                    <button class="button button_grey_light" ng-click="cancel()">
+                        ביטול
+                    </button>
+                    <button class="button button_grey" ng-click="confirm()" ng-disabled="isConfirmDisabled()">
+אישור שינוי ניקוד
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,275 @@
+<div class="dialog wide" style="height: 500px; display: flex; justify-content: space-between">
+    <div>
+        <div class="horizontal-flex" style="justify-content: space-between; flex-direction: column; max-height: 430px;">
+            <div class="panel-header" style="display: flex; justify-content: center">
+                קבלה חדשה -
+                {{account.name}},
+                {{region.name}}
+            </div>
+            <div style="display: flex; justify-content: space-between; flex-direction: column;
+        position: relative; overflow-y: auto; padding: 5px;">
+                <div class="tight-container" style="width: 100%; box-sizing: border-box; padding-top: 15px;">
+                    <form id="validated-form">
+                        <div id="ReceiptCreationDate" style="display: none;"></div>
+                        <div>
+                            <div style="float: right; width: 60%;">
+                                <div class="label">תאריך הוצאת קבלה</div>
+                                <datepicker :value="getReceiptDate()" :language="Hebrew" v-on:selected="setCreationDate($event)"></datepicker>
+                            </div>
+                            <div style="float: left; width: 30%; margin-left: 10px;">
+                                <div class="label">הערות</div>
+                                <textarea v-model="receipt.remark" style="width: 100%;" rows="2"></textarea>
+                            </div>
+                        </div>
+                        <div style="clear: both;"></div>
+                        <div class="label">
+                            <span>
+                                תשלומים
+                                (סה"כ: {{sumAllPayments()}})
+                            </span>
+                            <span style="padding: 0 1rem; font-size: 30px; cursor: pointer; display: inline-block;"
+                                  v-bind:style="{transform: isExpanded('payments') ? 'rotate(270deg)' : 'none'}"
+                                  v-on:click="toggleExpanded('payments')"> > </span>
+                        </div>
+                        <template v-if="isExpanded('payments')">
+                            <div class="panel">
+                                <div class="panel-body"  style="overflow: visible; padding-top: 5px;">
+                                    <select v-model="receipt.newPayment.type" v-on:change="dataChanged(-1)" title="אמצעי תשלום">
+                                        <option v-for="(paymentMethod, index) in paymentMethods" v-bind:value="paymentMethod.id">{{paymentMethod.name}}</option>
+                                    </select>
+                                    <input type="number" placeholder="סכום" v-model="receipt.newPayment.sum" style="width: 90px;"
+                                           v-on:change="dataChanged(-1)" title="סכום" />
+                                    <template v-if="receipt.newPayment.type == '0' || receipt.newPayment.type == '1'">
+                                        <select v-model="receipt.newPayment.bank" v-on:change="dataChanged(-1)" title="בנק">
+                                            <option v-for="(bank, index) in banks" v-bind:value="bank.id">{{bank.name}}</option>
+                                        </select>
+                                        <input type="number" placeholder="סניף" v-model="receipt.newPayment.bankBranch" style="width: 90px;"
+                                               v-on:change="dataChanged(-1)" title="סניף" />
+                                        <input type="text" placeholder="חשבון" v-model="receipt.newPayment.bankAccount" style="width: 120px;"
+                                               v-on:change="dataChanged(-1)" title="חשבון" />
+                                        <input type="text" placeholder="אסמכתא" v-model="receipt.newPayment.bankReference" style="width: 120px;"
+                                               v-on:change="dataChanged(-1)" maxlength="15" title="אסמכתא" />
+                                        <span style="display: inline-block; position: relative;">
+                                            <input type="text" placeholder="תאריך פרעון" v-model="receipt.newPayment.dueDate" style="width: 120px;"
+                                                   v-on:focus="dueDateFocused()" v-on:blur="dueDateBlurred()"
+                                                   v-on:change="dataChanged(-1)" title="תאריך פרעון" />
+                                            <button type="button" v-if="isInFocus(-1)"
+                                                    v-on:click="setDefaultDueDate(-1)"
+                                                    style="position: absolute; font-size: 10px; bottom: -15px; left: 40%;">
+                                                היום
+                                            </button>
+                                        </span>
+
+                                    </template>
+                                    <template v-if="receipt.newPayment.type == '3'">
+                                        <select v-model="receipt.newPayment.creditCardType" v-on:change="dataChanged(-1)" title="סוג כרטיס">
+                                            <option v-for="(creditCardType, index) in creditCardTypes" v-bind:value="creditCardType.id">{{creditCardType.name}}</option>
+                                        </select>
+                                        <input type="text" placeholder="4 ספרות אחרונות" v-model="receipt.newPayment.fourLastDigits" style="width: 110px;"
+                                               v-on:change="dataChanged(-1)" maxlength="4" title="ארבע ספרות אחרונות" />
+                                        <select v-model="receipt.newPayment.creditCardExpireDate" v-on:change="dataChanged(-1)">
+                                            <option v-for="(creditCardExpireDate, index) in creditCardExpireDates" v-bind:value="creditCardExpireDate.id">
+                                                {{creditCardExpireDate.name}}
+                                            </option>
+                                        </select>
+                                        <input type="number" placeholder="מס' תשלומים" v-model="receipt.newPayment.installments" style="width: 100px;"
+                                               v-on:change="dataChanged(-1)" min="0" max="60" title="מספר תשלומים" />
+                                    </template>
+                                    <span v-if="paymentInvalidReason(-1) != null" style="font-size: 10px; color: red; font-weight: bold; vertical-align: middle;">
+                                        {{paymentInvalidReason(-1)}}
+                                    </span>
+                                    <button type="button" class="btn small green" v-if="paymentInvalidReason(-1) == null" v-on:click="addPayment()">הוספת תשלום</button>
+                                </div>
+                            </div>
+                            <div class="panel" v-for="(payment, index) in receipt.payments">
+                                <div class="label" style="display: flex; align-items: center; font-size: 14px; margin-bottom: 0px;">
+                                    <span>תשלום מס' {{(index + 1)}}</span>
+                                    <span style="padding: 0px 8px; font-size: 18px; cursor: pointer;"
+                                          v-bind:style="{transform: payment.expanded ? 'rotate(270deg)' : 'none'}"
+                                          v-on:click="toggleExpanded(payment)"> > </span>
+                                </div>
+                                <div class="panel-body" style="overflow: visible; padding-top: 5px;" v-if="payment.expanded">
+                                    <select v-model="payment.type" v-on:change="dataChanged(index)" title="אמצעי תשלום">
+                                        <option v-for="(paymentMethod, index) in paymentMethods" v-bind:value="paymentMethod.id">{{paymentMethod.name}}</option>
+                                    </select>
+                                    <input type="number" placeholder="סכום" v-model="payment.sum" style="width: 90px;"
+                                           v-on:change="dataChanged(index)" title="סכום" />
+                                    <template v-if="payment.type == '0' || payment.type == '1'">
+                                        <select v-model="payment.bank" v-on:change="dataChanged(index)" title="בנק">
+                                            <option v-for="(bank, index) in banks" v-bind:value="bank.id">{{bank.name}}</option>
+                                        </select>
+                                        <input type="number" placeholder="סניף" v-model="payment.bankBranch" style="width: 90px;"
+                                               v-on:change="dataChanged(index)" title="סניף" />
+                                        <input type="text" placeholder="חשבון" v-model="payment.bankAccount" style="width: 120px;"
+                                               v-on:change="dataChanged(index)" title="חשבון" />
+                                        <input type="text" placeholder="אסמכתא" v-model="payment.bankReference" style="width: 120px;"
+                                               v-on:change="dataChanged(index)" title="אסמכתא" />
+                                        <input type="text" placeholder="תאריך פרעון" v-model="payment.dueDate" style="width: 120px;"
+                                               v-on:change="dataChanged(index)" title="תאריך פרעון" />
+                                    </template>
+                                    <template v-if="payment.type == '3'">
+                                        <select v-model="payment.creditCardType" v-on:change="dataChanged(index)" title="סוג כרטיס">
+                                            <option v-for="(creditCardType, index) in creditCardTypes" v-bind:value="creditCardType.id">{{creditCardType.name}}</option>
+                                        </select>
+                                        <input type="text" placeholder="4 ספרות אחרונות" v-model="payment.fourLastDigits" style="width: 110px;"
+                                               v-on:change="dataChanged(index)" maxlength="4" title="ארבע ספרות אחרונות" />
+                                        <select v-model="payment.creditCardExpireDate" v-on:change="dataChanged(index)">
+                                            <option v-for="(creditCardExpireDate, index) in creditCardExpireDates" v-bind:value="creditCardExpireDate.id">
+                                                {{creditCardExpireDate.name}}
+                                            </option>
+                                        </select>
+                                        <input type="number" placeholder="מס' תשלומים" v-model="payment.installments" style="width: 100px;"
+                                               v-on:change="dataChanged(index)" min="0" max="60" title="מספר תשלומים" />
+                                    </template>
+                                    <span v-if="paymentInvalidReason(index) != null" style="font-size: 10px; color: red; font-weight: bold; vertical-align: middle;">
+                                        {{paymentInvalidReason(index)}}
+                                    </span>
+                                    <button type="button" v-if="!payment.removing" class="btn small red" v-on:click="removePayment(index)">הסרת תשלום</button>
+                                    <span v-if="payment.removing" style="display: inline-block; font-size: smaller;">
+                                    האם להסיר תשלום זה?
+                                    <br />
+                                    <button class="btn red" v-on:click="reallyRemovePayment(index)">כן</button>
+                                    &nbsp;&nbsp;&nbsp;
+                                    <button class="btn green" v-on:click="abortPaymentRemoval(index)">לא</button>
+                                </span>
+                                </div>
+                            </div>
+                        </template>
+                        <div class="label">
+                            <span>
+                                זיכוי חשבונות
+                            </span>
+                            <span style="padding: 0 1rem; font-size: 30px; cursor: pointer; display: inline-block;"
+                                  v-bind:style="{transform: isExpanded('creditedAccounts') ? 'rotate(270deg)' : 'none'}"
+                                  v-on:click="toggleExpanded('creditedAccounts')"> > </span>
+                        </div>
+                        <template v-if="isExpanded('creditedAccounts')">
+                            <div class="panel">
+                                <div class="panel-body"  style="overflow: visible; padding-top: 5px;">
+                                    <template v-if="!creditedAccountsEditMode">
+                                        <span>
+                                            {{account.name}}
+                                        </span>
+                                            <span style="margin-right: 10px; margin-left: 10px;">
+                                            {{sumAllPayments()}}
+                                        </span>
+                                        <button class="btn small" v-if="sumAllPayments() > 0" v-on:click="editCreditedAccounts()">שינוי או הוספת חשבון לזיכוי</button>
+                                    </template>
+                                    <template v-if="creditedAccountsEditMode">
+                                        <select v-model="creditedAccountRegion" v-on:change="creditedAccountRegionChanged()" title="מחוז">
+                                            <option v-for="(region, index) in regions" v-bind:value="region.id">{{region.name}}</option>
+                                        </select>
+                                        <selectex class="ml-sm" style="width: 250px; margin-right: 10px; font-size: 14px; margin-left: 2px !important;"
+                                                  v-bind:options="accounts"
+                                                  v-bind:label="'label'"
+                                                  v-bind:init="-1"
+                                                  placeholder="חשבון..."
+                                                  v-model="creditedAccount"
+                                                  v-on:input="setCreditedAccount($event)"></selectex>
+                                        <input type="number" placeholder="סכום" v-if="!creditedAccountAlreadyExists && creditedAccount && creditedAccount.id > 0"
+                                               v-model="creditedAccountSum" style="width: 70px; margin-right: 10px;"
+                                               v-on:change="creditedAccountSumChanged(-1)" min="0" v-bind:max="sumAllPayments()" title="סכום" />
+                                        <span v-if="creditedAccountInvalidReason() != null" style="color: red; font-weight: bold; font-size: 12px;">
+                                            {{creditedAccountInvalidReason()}}
+                                        </span>
+                                        <button type="button" class="btn small green"  style="margin-right: 6px;"
+                                                v-if="creditedAccountInvalidReason() == null"
+                                                v-on:click="addCreditedAccount()">הוספת חשבון לזיכוי</button>
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="panel" v-for="(creditedAccount, index) in creditedAccounts">
+                                <div class="label" style="display: flex; align-items: center; font-size: 14px; margin-bottom: 0px;">
+                                    <span>חשבון לזיכוי מס' {{(index + 1)}}</span>
+                                    <span style="padding: 0px 8px; font-size: 18px; cursor: pointer;"
+                                          v-bind:style="{transform: creditedAccount.expanded ? 'rotate(270deg)' : 'none'}"
+                                          v-on:click="toggleExpanded(creditedAccount)"> > </span>
+                                </div>
+                                <div class="panel-body" style="overflow: visible; padding-top: 5px;" v-if="creditedAccount.expanded">
+                                <span>
+                                    {{creditedAccount.name}}
+                                </span>
+                                    <span style="margin-right: 10px; margin-left: 10px;">
+                                    <input type="number" placeholder="סכום"
+                                           v-model="creditedAccount.sum" style="width: 100px;"
+                                           v-on:change="creditedAccountSumChanged(index)" min="0" v-bind:max="sumAllPayments()" title="סכום" />
+                                </span>
+                                    <button type="button" v-if="!creditedAccount.removing" class="btn small red" v-on:click="removeCreditedAccount(index)">הסרת חשבון לזיכוי</button>
+                                    <span v-if="creditedAccount.removing" style="display: inline-block; font-size: smaller;">
+                                    האם להסיר חשבון לזיכוי זה?
+                                    <br />
+                                    <button class="btn red" v-on:click="reallyRemoveCreditedAccount(index)">כן</button>
+                                    &nbsp;&nbsp;&nbsp;
+                                    <button class="btn green" v-on:click="abortCreditedAccountRemoval(index)">לא</button>
+                                </span>
+                                </div>
+                            </div>
+                        </template>
+                        <div class="label" style="margin-top: 15px;">
+                            <span>
+                                שיוך קבלה לתעודות חיוב
+                            </span>
+                            <span style="padding: 0 1rem; font-size: 30px; cursor: pointer; display: inline-block;"
+                                  v-bind:style="{transform: isExpanded('paymentRequests') ? 'rotate(270deg)' : 'none'}"
+                                  v-on:click="toggleExpanded('paymentRequests')"> > </span>
+                        </div>
+                        <template v-if="isExpanded('paymentRequests')">
+                            <div class="panel" v-for="(paymentRequest, index) in paymentRequests">
+                                <div class="label" style="display: flex; align-items: center;">
+                                    <span>{{paymentRequest.parsedOrder}}</span>
+                                    <span style="padding: 0 1rem; font-size: 30px; cursor: pointer;"
+                                          v-bind:style="{transform: paymentRequest.expanded ? 'rotate(270deg)' : 'none'}"
+                                          v-on:click="toggleExpanded(paymentRequest)"> > </span>
+                                </div>
+                                <div class="panel-body" v-if="paymentRequest.expanded" style="overflow: visible;">
+                                    <data-table v-bind:columns="paymentRequestDetailsColumns" v-bind:data="paymentRequest.details"
+                                       v-bind:enableExport="false" v-bind:disableSort="true" v-bind:slimTable="true"
+                                       v-bind:disableAbsolutePosition="true" v-bind:hideToolbar="true"
+                                       v-bind:disableSelection="true"
+                                       v-on:records-change="paymentRequestDetailsChanged(index)">
+                                    </data-table>
+                                </div>
+                            </div>
+                            <div style="color: #1453b1; font-weight: bold; font-size: 12px;" v-if="fullyPaidPaymentRequests != null">
+                                {{fullyPaidPaymentRequests}}
+                            </div>
+                        </template>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="display: flex; justify-content: space-evenly;">
+        <div v-if="receiptInvalidReason() != null" style="width: 150px; font-size: 14px; font-weight: bold; color: red; max-height: 40px; overflow: auto;">
+            {{receiptInvalidReason()}}
+        </div>
+        <img v-if="receiptProgress.creating" src="img/progress.gif" style="height: 30px;" />
+        <span v-if="receiptProgress.created" style="color: blue;">
+            קבלה נוצרה בהצלחה
+        </span>
+        <span v-if="receiptProgress.failed" style="color: red;">
+            יצירת קבלה נכשלה, נא לנסות מאוחר יותר
+        </span>
+        <button class="btn"
+                v-if="receiptInvalidReason() == null && anyTrue(receiptProgress) === false"
+                style="width: 100px;"
+                v-on:click="saveReceipt()"
+                v-bind:disabled="!isValid || !changed"
+        >
+            אישור ויצירת קבלה חדשה
+        </button>
+        <span v-if="confirmClosure">
+            כל הנתונים אשר הוזנו ייאבדו! האם לבטל בכל זאת?
+            <br />
+            <button class="btn red" v-on:click="reallyCancel()">כן</button>
+            &nbsp;&nbsp;&nbsp;
+            <button class="btn green" v-on:click="abortCancel()">לא</button>
+        </span>
+        <button v-if="!confirmClosure" class="btn"
+                style="background-color: rgba(217, 1, 17, 0.82); white-space: nowrap"
+                v-on:click="cancel()"
+        >
+            ביטול ויציאה ללא יצירת קבלה
+        </button>
+    </div>
+</div>

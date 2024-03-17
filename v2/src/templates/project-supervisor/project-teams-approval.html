@@ -1,0 +1,56 @@
+<div class="vertical-flex" style="position: absolute; left: 0px; right: 0px;">
+    <div class="ph-lg pt-lg">
+        <div class="float-right">
+            <strong>
+                אישור מפקח
+            </strong>
+        </div>
+
+        <div class="float-left" v-bind:style="{border: user.delegatedUser != null ? '1px dashed black' : '',
+            padding: user.delegatedUser != null ? '5px 5px 5px 5px' : 'inherit'}">
+            <strong v-if="user.delegatedUser">
+                {{user.delegatedUser.name}}
+                &larr;
+                מחובר בתור
+                &larr;
+            </strong>
+            <strong>
+                {{user.name}}
+                <span v-if="loggedUser && loggedUser.region > 0">
+                    (מחוז
+                    {{loggedUser.regionName}})
+                </span>
+            </strong>
+            <strong style="color: blue; cursor: pointer" v-on:click="logout()">
+                התנתק
+            </strong>
+        </div>
+    </div>
+
+    <div class="flex-fill ph-lg pv-sm">
+        <div class="panel p-sm" style="width: auto; position: absolute; left: 39px; right: 39px; top: 13px; bottom: 0px;">
+            <data-table ref="table" v-bind:enableExport="true" v-bind:columns="columns" v-bind:data="teams" v-on:selection-change="handleSelectionChange()">
+                <div>
+                    <label>עונה</label>
+                    <select  style="width: 100%;" v-model="season">
+                        <option v-for="season in seasons" v-bind:value="season.Id">{{season.Name}}</option>
+                    </select>
+                </div>
+                <div style="display: flex; flex-direction: row; align-items: center;">
+                    <label style="color: white">&nbsp</label>
+                    <button class="btn small ml-md" v-on:click="approveTeams()" v-if="selectedStatus != 1" v-bind:disabled="selectedStatus != 0">אישור קבוצות</button>
+                    <button class="btn small ml-md" v-on:click="clearTeamsApprove()" v-if="selectedStatus == 1">ביטול אישור</button>
+                    <button class="btn small ml-md" v-on:click="openTeamDetails()" v-bind:disabled="selectedTeamsCount !== 1">פרטים נוספים</button>
+                    <!--<div style="display: flex">-->
+                    <div style="white-space: nowrap; padding-left: 10px"> סה"כ קבוצות <strong>{{totalTeams}}</strong></div>
+                    <div style="white-space: nowrap; padding-left: 10px"> עומד בקריטריון <strong>{{totalOkTeams}} </strong></div>
+                    <div style="white-space: nowrap; padding-left: 10px"> לא עומד בקריטריון <strong>{{totalNotOkTeams}} </strong></div>
+                    <div style="white-space: nowrap; padding-left: 10px"> סה"כ קבוצות מאושרות <strong>{{totalApprovedTeams}} </strong></div>
+                </div>
+                <!--</div>-->
+                <!--</div>-->
+            </data-table>
+        </div>
+    </div>
+
+</div>

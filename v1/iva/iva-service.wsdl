@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:tns="http://www.schoolsport.co.il/IvaService"
+    xmlns:s="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    targetNamespace="http://www.schoolsport.co.il/IvaService"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  
+    <wsdl:types>
+        <s:schema elementFormDefault="qualified" targetNamespace="http://www.schoolsport.co.il/IvaService">
+            <s:complexType name="FileData">
+                <s:sequence>
+                    <s:element minOccurs="0" name="Extension" type="s:string"/>
+                    <s:element minOccurs="0" name="RawData" type="s:base64Binary"/>
+                    <!-- s:element minOccurs="0" maxOccurs="unbounded" name="RawData" type="s:unsignedShort"/ -->
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="PlayerInfo">
+                <s:sequence>
+                    <s:element minOccurs="0" name="Id" type="s:string"/>
+                    <s:element minOccurs="0" name="RegisterDate" type="s:string"/>
+                    <s:element minOccurs="0" name="FirstName" type="s:string"/>
+                    <s:element minOccurs="0" name="LastName" nillable="true" type="s:string"/>
+                    <s:element minOccurs="0" name="Grade" nillable="true" type="s:string"/>
+                    <s:element minOccurs="0" name="Gender" nillable="true" type="s:string"/>
+                    <s:element minOccurs="0" name="TeamNumber"  type="s:int"/>
+                    <s:element minOccurs="0" name="TeamName" nillable="true" type="s:string"/>
+                    <s:element minOccurs="0" name="SchoolSymbol" nillable="true" type="s:string"/>
+                    <s:element minOccurs="0" name="Championship" nillable="true" type="s:string"/>
+                    <s:element minOccurs="0" name="RegionName" nillable="true" type="s:string"/>
+                    <s:element minOccurs="0" name="BirthDate" nillable="true" type="s:string"/>
+                    <s:element minOccurs="0" name="PicName" nillable="true" type="s:string"/>
+                    <s:element minOccurs="0" name="MedicalExam" nillable="true" type="s:string"/>
+                    <s:element minOccurs="0" name="IdVoucher" nillable="true" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="PlayerInfo" nillable="true" type="tns:PlayerInfo"/>
+            <s:complexType name="ArrayOfPlayerInfo">
+                <s:sequence>
+                    <s:element minOccurs="0" maxOccurs="unbounded" name="PlayerInfo" nillable="true" type="tns:PlayerInfo"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="ArrayOfPlayerInfo" nillable="true" type="tns:ArrayOfPlayerInfo"/>
+            <s:element name="GetPlayersRequest">
+                <s:complexType>
+                    <s:all>
+                        <s:element name="changedAfter" type="s:string" />
+                        <s:element name="token" type="s:string" />
+                    </s:all>
+                </s:complexType>
+            </s:element>
+            <s:element name="GetPlayersResponse">
+                <s:complexType>
+                    <s:all>
+                        <s:element name="result" type="tns:ArrayOfPlayerInfo" />
+                    </s:all>
+                </s:complexType>
+            </s:element>
+            <s:element name="GetPlayerFileRequest">
+                <s:complexType>
+                    <s:all>
+                        <s:element name="id" type="s:int" />
+                        <s:element name="file_type" type="s:int" />
+                        <s:element name="token" type="s:string" />
+                    </s:all>
+                </s:complexType>
+            </s:element>
+            <s:element name="GetPlayerFileResponse">
+                <s:complexType>
+                    <s:all>
+                        <s:element name="result" type="tns:FileData" />
+                    </s:all>
+                </s:complexType>
+            </s:element>
+        </s:schema>
+    </wsdl:types>
+
+    <wsdl:message name="GetPlayersInput">
+        <wsdl:part name="parameters" element="tns:GetPlayersRequest" />
+    </wsdl:message>
+    <wsdl:message name="GetPlayersOutput">
+        <wsdl:part name="parameters" element="tns:GetPlayersResponse" />
+    </wsdl:message>
+    <wsdl:message name="GetPlayerFileInput">
+        <wsdl:part name="parameters" element="tns:GetPlayerFileRequest" />
+    </wsdl:message>
+    <wsdl:message name="GetPlayerFileOutput">
+        <wsdl:part name="parameters" element="tns:GetPlayerFileResponse" />
+    </wsdl:message>
+
+    <wsdl:portType name="IvaPortType">
+        <wsdl:operation name="GetPlayers">
+            <wsdl:input message="tns:GetPlayersInput" />
+            <wsdl:output message="tns:GetPlayersOutput" />
+        </wsdl:operation>
+        <wsdl:operation name="GetPlayerFile">
+            <wsdl:input message="tns:GetPlayerFileInput" />
+            <wsdl:output message="tns:GetPlayerFileOutput" />
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:binding name="IvaSoapBinding" type="tns:IvaPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="GetPlayers">
+            <soap:operation soapAction="http://www.schoolsport.co.il/IvaService/GetPlayers" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetPlayerFile">
+            <soap:operation soapAction="http://www.schoolsport.co.il/IvaService/GetPlayerFile" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <wsdl:service name="IvaService">
+        <wsdl:port name="IvaPort" binding="tns:IvaSoapBinding">
+            <soap:address location="http://www.schoolsport.co.il/sport/iva" />
+        </wsdl:port>
+    </wsdl:service>
+
+</wsdl:definitions>

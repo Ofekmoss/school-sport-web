@@ -1,0 +1,74 @@
+<div class="dialog wide" style="height: 500px; display: flex; justify-content: space-between">
+    <div>
+        <div style="justify-content: space-between; display: flex; flex-direction: column; max-height: 430px;">
+            <div class="panel-header" style="display: flex; justify-content: center">
+                קישור לתחרות לוגליג
+                <br />
+                {{categoryName}}
+            </div>
+            <div>
+                <div class="label">עונה</div>
+                <select v-model="season" title="עונה">
+                    <option v-for="s in seasons" v-bind:value="s.Id">{{s.Name}}</option>
+                </select>
+            </div>
+            <div>
+                <div class="label">תחרות</div>
+                <select v-model="event" title="תחרות" v-bind:disabled="changed">
+                    <option v-for="e in events" v-bind:value="e">{{e.DisciplineName}}</option>
+                </select>
+                <span v-if="event && event.LogligId != null">
+                    &nbsp;זיהוי לוגליג: {{event.LogligId}}
+                    &nbsp;
+                    <button class="btn" v-on:click="clear">
+                        הסרת קישור
+                    </button>
+                </span>
+            </div>
+            <div v-if="event != null && !competitionSelected && !loading" style="overflow-y: auto; flex-grow: 1;">
+                <table class="table">
+                    <tbody>
+                        <tr v-for="c in competitions" style="cursor: pointer;" v-bind:class="{selected: c == competition}"
+                            v-on:click="toggleCompetition(c)">
+                            <td>{{c.Id}}</td>
+                            <td>{{c.Title}}</td>
+                            <td>{{c.Address}}</td>
+                            <td>{{c.date | date}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div v-else-if="event != null && competition != null && competitionSelected && !loading" style="overflow-y: auto; flex-grow: 1;">
+                <table class="table">
+                    <tbody>
+                    <tr v-for="d in disciplines" style="cursor: pointer;" v-bind:class="{selected: d.Id == discipline}"
+                        v-on:click="toggleDiscipline(d.Id)">
+                        <td>{{d.Id}}</td>
+                        <td>{{d.DisciplineName}}</td>
+                        <td>{{d.CategoryName}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div v-else-if="event != null && loading" style="text-align: center;">
+                טעון רשימת תחרויות מלוגליג...
+            </div>
+        </div>
+    </div>
+    <div style="display: flex; justify-content: space-evenly;">
+        <button class="btn" v-on:click="cancel()">
+            <span v-if="!competitionSelected">
+                סגירה
+            </span>
+            <span v-else>
+                חזרה
+            </span>
+        </button>
+        <button v-if="!competitionSelected" class="btn" v-on:click="next" v-bind:disabled="competition == null">
+            המשך
+        </button>
+        <button v-else-if="competitionSelected && competition != null" class="btn" v-on:click="save">
+            אישור
+        </button>
+    </div>
+</div>

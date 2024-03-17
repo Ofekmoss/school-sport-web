@@ -1,0 +1,14 @@
+<div class="panel p-sm" style="width: auto; position: absolute; left: 39px; right: 39px; top: 13px; bottom: 0px;">
+    <data-table v-bind:enableExport="true" v-bind:title="'בקשות העברה'" v-bind:columns="columns" v-bind:data="players" v-on:selection-change="handleSelectionChange()">
+        <div>
+            <label>עונה</label>
+            <select  style="width: 100%;" v-model="season">
+                <option v-for="season in seasons" v-bind:value="season.Id">{{season.Name}}</option>
+            </select>
+        </div>
+        <div>
+            <label style="color: white">&nbsp</label>
+            <button class="btn" v-bind:disabled="selectedPlayers.length == 0" v-on:click="approveTransfer()">אישור העברה</button>
+        </div>
+    </data-table>
+</div>

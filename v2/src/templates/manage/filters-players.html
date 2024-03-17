@@ -1,0 +1,12 @@
+<div class="horizontal-flex" :key="upCount">
+    <selectex class="ml-sm" style="width: 180px" v-bind:options="seasons" placeholder="עונה..." v-model="result.season"></selectex>
+    <selectex class="ml-sm" style="width: 180px" v-bind:options="regions" placeholder="כל המחוזות" v-model="result.region"></selectex>
+    <selectex class="ml-sm" style="width: 180px" v-bind:options="sports" placeholder="כל הענפים" v-model="result.sport"></selectex>
+    <selectex class="ml-sm" style="width: 180px" v-bind:options="championships" placeholder="כל האליפויות" v-model="result.championship"></selectex>
+    <selectex class="ml-sm" :disabled="!result.championship || result.championship.id == -1" style="width: 180px" v-bind:options="categories" placeholder="קטגוריה..." v-model="result.category"></selectex>
+    <selectex class="ml-sm" :disabled="!result.category || result.category.id == -1" style="width: 180px" v-bind:options="teams" placeholder="קבוצה..." v-model="result.team"></selectex>
+    <!--  :disabled="!result.team || result.team.id == -1" -->
+    <button class="btn medium" v-on:click="load('click')" style="position: relative;">
+        <div v-if="changed && loaded" style="background-color: yellow; width: 5px; height: 5px; border-radius: 2px; margin-right: 5px; position: absolute; right: 0"></div>הצגת שחקנים</button>
+</div>
+

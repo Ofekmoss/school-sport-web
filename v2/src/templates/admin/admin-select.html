@@ -1,0 +1,26 @@
+<div class="vertical-flex" style="position: absolute; left: 0px; right: 0px;">
+    <div class="ph-lg pt-lg">
+        <div class="float-right">
+            <strong>
+                אישור מפקח
+            </strong>
+        </div>
+        <div class="float-left">
+            <strong>
+                מפקח            </strong>
+            <strong style="color: blue; cursor: pointer" v-on:click="logout()">
+                התנתק
+            </strong>
+        </div>
+    </div>
+
+    <select v-model="selection" class="mt-md mr-md" style="width: 200px" v-on:change ="loadView($event)">
+        <template v-for="(option, index) in options">
+            <option :value="index">{{option.name}}</option>
+        </template>
+    </select>
+
+    <div>
+        <!--<view-slot></view-slot>-->
+    </div>
+</div>

@@ -1,0 +1,163 @@
+<div>
+    <div v-if="loading" style="width: 100%; height: 100%; text-align: center;">
+        <img align="center" src="img/progress.gif" />
+    </div>
+    <div v-if="!loading && !hideToolbar" class="data-table-tools">
+        <div class="flex-fill">
+            <div class="horizontal-flex user-tools">
+                <slot></slot>
+            </div>
+        </div>
+        <div>
+            <label>חיפוש</label>
+            <input type="text" v-model="searchText">
+        </div>
+        <div v-if="enableExport">
+            <label style="color: white">&nbsp</label>
+            <button class="btn small" v-on:click="exportExcel()">ייצוא לאקסל</button>
+        </div>
+        <div>
+            <label>&nbsp;</label>
+            <multi-select caption="עמודות פעילות" v-bind:options="columns" v-on:change="handleColumnChange"></multi-select>
+        </div>
+        <div v-if="newEntityCaption">
+            <label style="color: white">&nbsp</label>
+            <button class="btn green" v-on:click="newEntityClicked()" style="font-weight: bold;">{{newEntityCaption}}</button>
+        </div>
+    </div>
+    <div v-if="!loading" class="data-table-scroll"
+        v-bind:style="{position: disableAbsolutePosition ? 'inherit' : 'absolute'}">
+        <table class="table headerTable">
+            <thead>
+            <tr>
+                <th style="width: 22px;" v-if="!disableSelection" v-bind:style="{padding: slimTable ? '3px 3px 3px 3px' : ''}">
+                    <input type="checkbox" v-if="selectionType == 2" v-model="isSelectAll" v-on:change="selectAll()">
+                </th>
+                <th v-for="column in columns" v-if="column.active && !column.disabled"
+                    v-bind:style="{width: (column.width/totalWidth*100) + '%', padding: slimTable ? '3px 3px 3px 3px' : ''}">
+                    <div>{{column.name}}</div>
+                    <span class="clickable"
+                          v-if="!disableSort && column.type !== 'button' || column.getter"
+                          style="padding-right: 10px;"
+                          v-bind:style="{color: column.sort == null ? '#ddd' : '#666'}"
+                          v-on:click="sort(column)">
+                        <span v-if="column.sort != 'd'">&#x2BC6;</span>
+                        <span v-if="column.sort == 'd'">&#x2BC5;</span>
+                    </span>
+                </th>
+                <th v-if="showMoreInfo">
+                    <div style="white-space: nowrap; align-items: center; display: flex; justify-content: center;">
+                        מידע נוסף
+                    </div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(record, index) in records" v-if="record.__show"
+                    v-bind:class="{selected: record.selected && !record.green, highlighted: record.highlighted, green: record.green, red: record.red}"
+                    v-bind:style="{cursor: clickToTick ? 'pointer' : 'default',
+                        display: record.hidden ? 'none' : '',
+                        backgroundColor: record.aboveMaxAge == true && record.isfOverage == true && !record.selected ? '#0d9ef257' :
+                            record.aboveMaxAge == true && !record.selected ? '#ffff0057' :
+                            record.isfOverage == true && !record.selected ? '#F899FF' : ''}"
+                    v-on:click="rowClicked(record)">
+                    <td style="width: 22px;" v-if="!disableSelection" v-bind:style="{padding: slimTable ? '3px 3px 3px 3px' : ''}">
+                        <input type="checkbox" v-model="record.selected" v-on:change="handleSelectionChange(record)">
+                    </td>
+                    <td v-for="column in columns" v-if="column.active && !column.disabled"
+                        v-bind:style="{width: (column.width/totalWidth*100) + '%', padding: slimTable ? '3px 3px 3px 3px' : ''}">
+                        <span class="tooltip" v-if="(record.highlighted || record.aboveMaxAge) && column.maxAge" style="color: red;">&#9888;
+                             <div class="tooltip-content">
+                                    <p>התלמיד מעבר לטווח הגילאים שמוגדר לקטגוריה</p>
+                                    <i></i>
+                                </div></span>
+                        <span class="tooltip" v-if="record.isfOverage && column.maxAge" style="color: red;">&#9888;
+                             <div class="tooltip-content">
+                                    <p>
+                                        חריג גיל ISF
+                                    </p>
+                                    <i></i>
+                                </div></span>
+                        <span class="tooltip" v-if="record.tooltip && column.tooltip" style="color: red;">&#9888;
+                             <div class="tooltip-content">
+                                    <p>{{record.tooltip}}</p>
+                                    <i></i>
+                                </div></span>
+                        <button class="btn" v-if="column.type == 'openFile'" v-on:click="viewDocument(record, column)">צפייה במסמך</button>
+                        <button class="btn" v-else-if="column.type == 'button'" v-on:click="column.onclick(record, index)"
+                                v-on:click.stop v-bind:disabled="column.checkDisabled && column.checkDisabled(record, index) == true">
+                            {{column.getText ? column.getText(record, index) : column.name}}
+                        </button>
+                        <a v-else-if="column.type == 'imageLink' && getValue(record, column) != null" class="btn" v-bind:href="'/api/v2/document/' + getValue(record, column)" target="_blank"><span class="icon">&#x1F441;</span></a>
+                        <span v-else-if="column.type == 'documentNumber'">{{getValue(record, column) | documentNumber}} <button v-if="getValue(record, column) != null" class="btn" v-on:click="downloadDocument(record, column)">הורדה</button></span>
+                        <span v-else-if="column.type == 'date'">{{getValue(record, column) | date}}</span>
+                        <span v-else-if="column.type == 'link' && getValue(record, column)"><a v-bind:href="getValue(record, column)" target="_blank">[{{column.name}}]</a></span>
+                        <span v-else-if="column.click" class="link-to-tab" v-on:click="column.click(record)">{{getValue(record, column)}}</span>
+                        <input v-else-if="column.editable && column.type == 'numeric'" type="number" v-model="record[column.key]" v-bind:placeholder="column.placeholder" v-bind:style="{width: column.inputWidth ? column.inputWidth + 'px' : ''}" />
+                        <input v-else-if="column.editable && column.type != 'numeric'" type="text" v-model="record[column.key]" v-bind:placeholder="column.placeholder" v-bind:style="{width: column.inputWidth ? column.inputWidth + 'px' : ''}" />
+                        <span v-else-if="typeof column.link === 'function' && column.link(record) != null">
+                            <a v-bind:href="column.link(record)">{{getValue(record, column)}}</a>
+                        </span>
+                        <span v-else-if="column.type == 'password'">
+                            <template v-if="isPasswordVisible(record, column)">
+                                <span style="padding: 5px 5px 5px 5px; font-size: 10px; font-weight: bold;">
+                                    {{getPasswordExpireTime(record, column)}}
+                                </span>
+                                <br />
+                                {{getPassword(record, column)}}
+                            </template>
+                            <img src="img/iconmonstr-eye-9.svg" style="cursor:pointer;"
+                                 v-on:click="showPassword(record, column)"
+                                 v-if="(getValue(record, column) || '').length > 0 && !isPasswordVisible(record, column)" />
+                        </span>
+                        <span v-else-if="column.type == 'login'">
+                            <img src="img/login.png" style="cursor:pointer; width: 32px;"
+                                v-on:click="loginClicked(record)"
+                                v-if="record.user != null" />
+                        </span>
+                        <span v-else-if="column.type == 'digitalSignature'">
+                            <template v-if="record.schoolSummaryLink != null && record.schoolSummaryLink != '' &&
+                                    record.sendStatus == null && record.principal.email != null &&
+                                    record.representative.email != null">
+                                <img src="img/digital-signature-small.png" style="cursor:pointer; width: 32px;"
+                                     v-if="record.digitalSignatureStatus != 'completed' && record.digitalSignatureStatus != 'pending'"
+                                     v-on:click="digitalSignatureClicked(record)" />
+                                <img src="img/digital-signature-pending-small.png" style="cursor:pointer; width: 32px;"
+                                     v-if="record.digitalSignatureStatus == 'pending'"
+                                     v-on:click="digitalSignatureClicked(record)" />
+                                <template v-if="record.digitalSignatureStatus == 'completed'">
+                                    <nobr>
+                                        <img src="img/digital-signature-completed-small.png" style="cursor:pointer; width: 32px;"
+                                             v-on:click="digitalSignatureClicked(record)" />
+                                        <a v-bind:href="record.schoolSummaryLink + '?download=1'" target="_blank">
+                                            <img src="img/download-small.png" style="cursor:pointer; width: 26px;" />
+                                        </a>
+                                    </nobr>
+                                </template>
+                            </template>
+                            <template v-if="record.sendStatus == 'pending'">
+                                נא להמתין...
+                            </template>
+                            <template v-if="record.sendStatus != null && record.sendStatus != 'pending'">
+                                <span v-if="record.sendStatus.indexOf('ERROR: ') === 0" style="color: red;">
+                                    {{record.sendStatus.replace('ERROR: ', '')}}
+                                </span>
+                                <span v-if="record.sendStatus.indexOf('ERROR: ') < 0">
+                                    {{record.sendStatus}}
+                                </span>
+                            </template>
+                        </span>
+                        <span v-else v-html="getValue(record, column)"></span>
+                    </td>
+                    <td v-if="showMoreInfo" style="height: 100%;" v-on:click="moreInfo($event, record)">
+                        <div style="display: flex; justify-content: center; cursor: pointer; ">
+                            <img src="img/blue-dot.png" style="max-width: 5px; margin: 2px;">
+                            <img src="img/blue-dot.png" style="max-width: 5px; margin: 2px;">
+                            <img src="img/blue-dot.png" style="max-width: 5px; margin: 2px;">
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

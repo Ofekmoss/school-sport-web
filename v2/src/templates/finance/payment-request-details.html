@@ -1,0 +1,36 @@
+<div class="vertical-flex" style="position: absolute; left: 0px; right: 0px;">
+    <div class="flex-fill ph-lg pv-sm">
+        <div class="panel p-sm"  style="width: auto; position: absolute; left: 39px; right: 39px; top: 13px; bottom: 0px;">
+            <data-table v-bind:columns="columns" v-bind:data="paymentRequestDetails" v-bind:enableExport="true"
+                v-bind:disableSelection="true">
+                <div>
+                    <label>מספר תעודת חיוב</label>
+                    {{paymentRequestId | documentNumber}}
+                </div>
+                <div>
+                    <label></label>
+                    <button class="btn"  v-on:click="viewPaymentRequest()">צפייה במסמך</button>
+                </div>
+                <div style="margin-right: 10px;">
+                    <label style="font-weight: bold;">סה"כ חיובים</label>
+                    <div style="font-weight: bold; color: blue;">
+                        {{sumAll('totalAmount')}}
+                    </div>
+                </div>
+                <div>
+                    <label style="font-weight: bold;">סה"כ שולם</label>
+                    <div style="font-weight: bold; color: blue;">
+                        {{sumAll('paidAmount')}}
+                    </div>
+                </div>
+                <div>
+                    <label style="font-weight: bold;">סה"כ נותר לתשלום</label>
+                    <div style="font-weight: bold; color: blue;">
+                        {{sumAll('remainingAmount')}}
+                    </div>
+                </div>
+            </data-table>
+        </div>
+    </div>
+
+</div>

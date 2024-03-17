@@ -1,0 +1,32 @@
+<div class="vertical-flex" style="position: absolute; left: 0px; right: 0px;">
+    <div class="ph-lg pt-lg">
+        <div class="float-right">
+            <strong>
+                תכנית זוזו
+            </strong>
+        </div>
+        <div class="float-left">
+            <strong>
+                {{user.name}}
+            </strong>
+            <strong style="color: blue; cursor: pointer" v-on:click="logout()">
+                התנתק
+            </strong>
+        </div>
+    </div>
+    <div class="step-progress">
+        <div class="step-bar"></div>
+        <div class="step-mark p1-3" v-bind:class="{active: currentPage == 0, enabled: true}" v-on:click="goToPage(0)">
+            <span>פרטי הרשות</span>
+        </div>
+        <div class="step-mark p2-3" v-bind:class="{active: currentPage == 1, enabled: stage >= 1}" v-on:click="goToPage(1)">
+            <span>רישום בתי ספר</span>
+        </div>
+        <div class="step-mark p3-3" v-bind:class="{active: currentPage == 2, enabled: stage >= 2}" v-on:click="goToPage(2)">
+            <span>רישום כיתות</span>
+        </div>
+    </div>
+    <div class="flex-fill ph-lg pv-sm" style="overflow-x: hidden; overflow-y: auto;">
+        <component v-bind:is="page" v-on:next="handlePage"></component>
+    </div>
+</div>

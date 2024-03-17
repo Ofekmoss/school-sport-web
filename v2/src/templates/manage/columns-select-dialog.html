@@ -1,0 +1,36 @@
+<div class="dialog wide">
+    <div class="caption" style="position: relative;">
+        <div v-if="selectionChanged" style="position: absolute; left: 5px; top: 2px; width: 100px; font-size: 14px;">
+            <button class="btn" style="font-weight: bold;" v-on:click="resetCache()">איפוס</button>
+        </div>
+        בחירת עמודות להצגה
+    </div>
+    <div v-if="max" style="padding-right: 1rem; font-size: 1rem;">
+        <span style="color: red;">
+            *ניתן להציג עד {{max}} עמודות
+        </span>
+        <span v-if="totalActive > 0" v-bind:style="{'color': totalActive >= max ? 'red' : 'inherit'}">
+            ({{totalActive}}/{{max}})
+        </span>
+    </div>
+    <div class="pb-md" style="display: flex; flex-wrap: wrap; max-height: 360px; overflow-y: auto;">
+        <div v-for="c of columns" class="horizontal-flex" style="width: 10rem; padding: 5px 1rem">
+            <input v-bind:disabled="reachedMax && !c.active" v-on:change="onColumnChange(c.name)" type="checkbox" v-model="c.active">
+            <div>
+                {{c.name}}
+            </div>
+        </div>
+    </div>
+
+    <div style="display: flex; justify-content: center">
+        <div>
+            <button class="btn" v-on:click="select">שמירת נתונים</button>
+        </div>
+        <div style="margin-right: 25px;">
+            <button class="btn" style="background-color: rgba(217, 1, 17, 0.82); white-space: nowrap"
+                    v-on:click="cancel()">
+                ביטול
+            </button>
+        </div>
+    </div>
+</div>

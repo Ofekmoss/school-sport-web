@@ -1,0 +1,86 @@
+<div class="vertical-flex" style="position: absolute; left: 0px; right: 0px;">
+    <div class="ph-lg pt-lg">
+        <div class="float-right">
+            <strong>
+                הרשמה
+                <template>
+                    - {{currentSeasonName}}
+                    &nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn" v-if="currentSeasonName && !seasonPanelVisible"
+                            v-on:click="toggleSeasonPanel()">שינוי עונה</button>
+                    <span v-if="inactiveSeason">
+                        &nbsp;&nbsp;&nbsp;
+                        <button type="button" class="btn btn-sm"
+                                style="background-color: rgba(217, 1, 17, 0.82); white-space: nowrap; font-size: 12px; font-weight: bold;"
+                                v-on:click="resetSeason()">איפוס עונה</button>
+                    </span>
+                </template>
+            </strong>
+        </div>
+        <div class="float-left" v-bind:style="{border: user.delegatedUser != null ? '1px dashed black' : '',
+            padding: user.delegatedUser != null ? '5px 5px 5px 5px' : 'inherit'}">
+            <strong v-if="user.delegatedUser">
+                {{user.delegatedUser.name}}
+                &larr;
+                מחובר בתור
+                &larr;
+            </strong>
+            <strong>
+                {{user.name}}
+            </strong>
+            <strong style="color: blue; cursor: pointer" v-on:click="logout()">
+                התנתק
+            </strong>
+        </div>
+    </div>
+
+    <div class="p-lg">
+        <template v-if="seasonPanelVisible">
+            <div class="panel-header" style="position: relative; width: 120px;">
+                <div v-on:click="toggleSeasonPanel()" style="position: absolute; left: 5px; top: 15px; font-size: 80%; color: red; cursor: pointer;">X</div>
+                בחירת עונה
+            </div>
+            <div class="panel-body">
+                <select v-bind:options="seasons" v-model="season" style="font-size: 18px;">
+                    <option v-for="curSeason in seasons" v-bind:value="curSeason.SeasonId">{{curSeason.SeasonName}}</option>
+                </select>
+            </div>
+        </template>
+
+        <div class="panel" v-if="active.length > 0">
+            <div class="panel-header">
+                הרשמות בתהליך
+            </div>
+            <div class="panel-body">
+                <div v-for="link in active" class="inline ml-sm">
+                    <button class="btn-link green" v-on:click="goTo(link)">{{link.name}}</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel" style="min-height: 300px;">
+            <img src="img/registration-types-image.png" style="margin-left: 10px; height: 90%; bottom: 0px;">
+
+            <div style="display: flex; align-items: center">
+                <div v-if="prevGroups" style="font-size: xx-large; padding-right: 15px; cursor: pointer;"
+                <div class="panel-header">
+                    כל סוגי ההרשמות
+                </div>
+            </div>
+            <div class="panel-body">
+                <div v-for="group in groups" class="mb-sm">
+                    <div v-for="link in group.links" class="inline ml-sm">
+                        <div style="position: relative">
+                            <button class="btn-link tooltip" v-bind:disabled="!link.enabled" v-on:click="goTo(link)">{{link.name}}
+                                <div v-if="link.tooltip" class="tooltip-content">
+                                    <p>{{link.tooltip}}</p>
+                                    <i></i>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

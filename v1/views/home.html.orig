@@ -1,0 +1,907 @@
+<!--==============================content================================-->
+<style type="text/css">
+    .crop-thumbnail {
+        position: relative;
+        width: 290px;
+        height: 195px;
+        overflow: hidden;
+    }
+    .crop-thumbnail img {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        height: 100%;
+        width: auto;
+        -webkit-transform: translate(-50%,-50%);
+        -ms-transform: translate(-50%,-50%);
+        transform: translate(-50%,-50%);
+    }
+    .crop-thumbnail img.portrait {
+        width: 100%;
+        height: auto;
+    }
+</style>
+<div class="alert alert-error" ng-show="error">
+    שגיאה בעת  טעינת נתונים
+</div>
+<div class="tp-banner-container" ng-show="!error">
+    <div class="tp-banner">
+        <ul>
+            <!-- SLIDE  -->
+            <li data-transition="fade" data-slotamount="10" ng-repeat="page in featuredPages">
+                <!-- MAIN IMAGE -->
+                <img ng-src="{{page.DefaultImagePath || 'images/logo_main_white.png'}}" alt="" data-bgfit="cover" data-bgposition="center center">
+                <!-- LAYERS -->
+                <div class="tp-caption skewfromrightshort fadeout"
+                     data-speed="500"
+                     data-start="1200"
+                     data-x="right"
+                     data-y="center"
+                     data-easing="Power4.easeOut">
+                    <div class="rev_caption">
+                        <div class="clearfix">
+                            <a ui-sref="gallery({page: page.Seq})" ng-if="page.Type == 1"><h2>{{page.Description}}</h2></a>
+                            <a ui-sref="article({page: page.Seq})" ng-if="page.Type == 2"><h2>{{page.Description}}</h2></a>
+                            <a ui-sref="video({page: page.Seq})" ng-if="page.Type == 3"><h2>{{page.Description}}</h2></a>
+                            <br />
+                            <a ui-sref="gallery({page: page.Seq})" class="button banner_button business" ng-show="page.Type == 1">
+                                גלריית תמונות
+                            </a>
+                            <a ui-sref="article({page: page.Seq})" class="button banner_button sport" ng-show="page.Type == 2">
+                                כתבה
+                            </a>
+                            <a ui-sref="video({page: page.Seq})" class="button banner_button travel" ng-show="page.Type == 3">
+                                סרטון
+                            </a>
+                            <div class="event_date">
+                                {{page.Date | date : 'dd/MM/yyyy'}}
+                            </div>
+                        </div>
+                    </div>
+                    <!--
+                    <div class="caption_type_1">
+                        <div class="caption_inner">
+                            <div class="container">
+                                <div class="rev_caption">
+                                    <div class="clearfix">
+                                        <a ui-sref="gallery({page: page.Seq})" ng-if="page.Type == 1"><h2>{{page.Description}}</h2></a>
+                                        <a ui-sref="article({page: page.Seq})" ng-if="page.Type == 2"><h2>{{page.Description}}</h2></a>
+                                        <a ui-sref="video({page: page.Seq})" ng-if="page.Type == 3"><h2>{{page.Description}}</h2></a>
+                                        <br />
+                                        <a ui-sref="gallery({page: page.Seq})" class="button banner_button business" ng-show="page.Type == 1">
+                                            גלריית תמונות
+                                        </a>
+                                        <a ui-sref="article({page: page.Seq})" class="button banner_button sport" ng-show="page.Type == 2">
+                                            כתבה
+                                        </a>
+                                        <a ui-sref="video({page: page.Seq})" class="button banner_button travel" ng-show="page.Type == 3">
+                                            סרטון
+                                        </a>
+                                        <div class="event_date">
+                                            {{page.Date | date : 'dd/MM/yyyy'}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>-->
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<!--==============================news carousel=================================-->
+<div class="section">
+    <div class="wide-container">
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-6">
+                <div class="section">
+                    <div class="tabs variation_2">
+                        <!--tabs navigation-->
+                        <div class="clearfix">
+                            <h2 class="section_title">
+                                אירועים קרובים
+                            </h2>
+                            <div class="clearfix tabs_conrainer">
+                                <ul class="tabs_nav clearfix">
+                                    <li class="">
+                                        <a href="#tab-1">
+                                            כל האירועים
+                                        </a>
+                                    </li>
+                                    <li class="">
+                                        <a href="#tab-2">
+                                            פרחי ספורט
+                                        </a>
+                                    </li>
+                                    <li class="">
+                                        <a href="#tab-3">
+                                            בתי ספר
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-9 col-sm-12">
+                <!-- כתבות -->
+                <div class="section photo_gallery gallery_color3">
+                    <h2 class="section_title">כתבות אחרונות</h2>
+                    <a ui-sref="articles" class="button button_grey view_button">לכל הכתבות</a>
+                    <div class="row">
+                        <owl-carousel loop="recentArticles.length > 3">
+                            <owl-item ng-repeat="page in recentArticles">
+<<<<<<< HEAD
+                                <div class="section_post_left">
+                                    <div class="crop-thumbnail"> <!-- class="scale_image_container" -->
+                                        <a ui-sref="article({page: page.Seq})"><img ng-src="{{page.DefaultImagePath}}" alt="" class="scale_image"></a>
+                                        <div class="post_image_buttons">
+                                            <a ui-sref="article({page: page.Seq})" class="button banner_button" style="background-color: {{getSportFieldColor(page.SportFieldSeq)}}">{{page.SportFieldName}}</a>
+                                            <a ui-sref="article({page: page.Seq})" class="icon_box">
+                                                <i class="fa fa-file-text"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="clearfix">
+                                        <div class="f_left">
+                                            <div class="event_date">{{page.Date | date : 'dd/MM/yyyy'}}</div>
+                                        </div>
+                                        <div class="f_right event_info">
+                                            <a href="#">
+                                                <i class="fa fa-comments-o d_inline_m m_right_3"></i>
+                                                <span>5</span>
+                                            </a>
+                                            <a href="#">
+                                                <i class="fa fa fa-heart-o d_inline_m m_right_3"></i>
+                                                <span>73</span>
+                                            </a>
+                                            <a href="#">
+                                                <i class="fa fa-eye d_inline_m m_right_3"></i>
+                                                <span>192</span>
+                                            </a>
+=======
+                                <div class="scale_image_container article_thumbnail">
+                                    <a ui-sref="article({page: page.Seq})"><img ng-src="{{page.DefaultImagePath}}" alt="" class="scale_image"></a>
+                                    <!--caption-->
+                                    <div class="caption_type_1">
+                                        <div class="caption_inner">
+                                            <div class="clearfix">
+                                                <a href="#" class="button banner_button entertainment">{{page.SportFieldName}}</a>
+                                                <div class="event_date">{{page.Date | date : 'dd/MM/yyyy'}}</div>
+                                            </div>
+                                            <a href="#"><h3>{{page.Description}}</h3></a>
+                                            <p ng-bind-html="page.ShortSubCaption"></p>
+>>>>>>> ad5bd283f45d4e22652f966a5151ceb680f685cb
+                                        </div>
+                                    </div>
+                                </div>
+                            </owl-item>
+                                <!-- div class="crop-thumbnail">
+                                    <a ui-sref="article({page: page.Seq})">
+                                        <img ng-src="{{page.DefaultImagePath}}" alt="" class="scale_image">
+                                    </a>
+                                    <div class="post_image_buttons">
+                                        <a ui-sref="article({page: page.Seq})" class="icon_box">
+                                            <i class="fa fa-file-text"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                        <div class="event_date">
+                                            ghjgjjg
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                        <div class="event_date" style="margin-top: 10px;">{{page.Date | date : 'dd/MM/yyyy'}}</div>
+                                    </div>
+                                </div>
+
+                                <a ui-sref="article({page: page.Seq})"><h4 style="width: 290px;">{{page.Description}}</h4></a>
+                                <div class="event_date">
+                                    {{page.CreatorDisplayName}}
+                                </div -->
+                            </owl-item>
+                        </owl-carousel>
+                    </div>
+                </div>
+
+            </div>
+
+            <!--div class="col-lg-3 col-md-3 col-sm-3" -->
+            <!--polls-->
+            <!-- div class="section section_text appear-animation fadeInDown appear-animation-visible" data-appear-animation="fadeInDown" data-appear-animation-delay="500" style="-webkit-animation: 500ms;">
+                <h2 class="section_title">סקר</h2>
+                <div class="vote_widget">
+                    <h4>מי לדעתך תזכה השנה בליגת העל בכדורסל לתיכונים</h4>
+                    <form>
+                        <ul>
+                            <li>
+                                <input type="radio" checked id="radio_1" name="radio" class="hide">
+                                <label for="radio_1">בליך רמת גן</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="radio_2" name="radio" class="hide">
+                                <label for="radio_2">מטרווסט רעננה</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="radio_3" name="radio" class="hide">
+                                <label for="radio_3">כצנלסון כפר סבא</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="radio_4" name="radio" class="hide">
+                                <label for="radio_4">עמי אסף בית ברל</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="radio_5" name="radio" class="hide">
+                                <label for="radio_5">אף אחת ממי שמופיעה כאן</label>
+                            </li>
+                        </ul>
+                    </form>
+                    <div class="vote_buttons">
+                        <a href="#" class="button button_grey">הצבע</a>
+                        <a href="#" class="button button_grey">צפה בתוצאות</a>
+                    </div>
+                </div>
+            </div>
+        </div-->
+        </div>
+    </div>
+</div>
+
+
+<div class="wide-container">
+    <div class="row">
+
+        <!--==============================main content=================================-->
+        <div style="display: none;"> <!-- id="main" class="col-lg-4 col-md-4 col-sm-12" -->
+            <!-- Section Events -->
+            <div class="section">
+                <div class="tabs variation_2 variation_4" data-appear-animation="fadeInDown" data-appear-animation-delay="500">
+                    <!--tabs navigation-->
+                    <div class="clearfix">
+                        <h2 class="section_title">אירועים</h2>
+                        <br/><br/>
+                        <div class="clearfix tabs_conrainer">
+                            <ul class="tabs_nav clearfix">
+                                <li class=""><a href="#tab-1">כדורסל</a></li>
+                                <li class=""><a href="#tab-2">כדוריד</a></li>
+                                <li class=""><a href="#tab-3">כדורעף</a></li>
+                                <li class=""><a href="#tab-4">אתלטיקה</a></li>
+                                <li class=""><a href="#tab-5">פרחי ספורט</a></li>
+                                <li class=""><a href="#tab-6">שאר הענפים</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!--tabs content-->
+                    <div class="tabs_content post_var_inline">
+                        <!-- event type -->
+                        <div id="tab-1">
+                            <div>אוגוסט 2016</div>
+                            </br>
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>גמר ליגת העל תיכונים</h3></a>
+                                                <div class="event_date">18/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>18</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>אירוע ארצי פרחי ספורט כדורסל</h3></a>
+                                                <div class="event_date">22/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>22</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>גמר אליפות מחוזית בנות ט'-י'</h3></a>
+                                                <div class="event_date">25/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>25</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>אירוע ארצי פרחי ספורט כדורסל</h3></a>
+                                                <div class="event_date">25/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>25</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                        </div>
+                        <!-- end event type -->
+                        <!-- event type -->
+                        <div id="tab-2">
+                            <div>אוגוסט 2016</div>
+                            </br>
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>גמר ליגת העל תיכונים</h3></a>
+                                                <div class="event_date">18/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>18</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>אירוע ארצי פרחי ספורט כדורסל</h3></a>
+                                                <div class="event_date">22/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>22</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>גמר אליפות מחוזית בנות ט'-י'</h3></a>
+                                                <div class="event_date">25/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>25</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>אירוע ארצי פרחי ספורט כדורסל</h3></a>
+                                                <div class="event_date">25/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>25</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                        </div>
+                        <!-- end event type -->
+                        <!-- event type -->
+                        <div id="tab-3">
+                            <div>אוגוסט 2016</div>
+                            </br>
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>גמר ליגת העל תיכונים</h3></a>
+                                                <div class="event_date">18/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>18</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>אירוע ארצי פרחי ספורט כדורסל</h3></a>
+                                                <div class="event_date">22/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>22</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>גמר אליפות מחוזית בנות ט'-י'</h3></a>
+                                                <div class="event_date">25/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>25</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>אירוע ארצי פרחי ספורט כדורסל</h3></a>
+                                                <div class="event_date">25/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>25</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                        </div>
+                        <!-- end event type -->
+                        <!-- event type -->
+                        <div id="tab-4">
+                            <div>אוגוסט 2016</div>
+                            </br>
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>גמר ליגת העל תיכונים</h3></a>
+                                                <div class="event_date">18/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>18</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>אירוע ארצי פרחי ספורט כדורסל</h3></a>
+                                                <div class="event_date">22/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>22</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>גמר אליפות מחוזית בנות ט'-י'</h3></a>
+                                                <div class="event_date">25/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>25</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>אירוע ארצי פרחי ספורט כדורסל</h3></a>
+                                                <div class="event_date">25/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>25</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                        </div>
+                        <!-- end event type -->
+                        <!-- event type -->
+                        <div id="tab-5">
+                            <div>אוגוסט 2016</div>
+                            </br>
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>גמר ליגת העל תיכונים</h3></a>
+                                                <div class="event_date">18/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>18</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>אירוע ארצי פרחי ספורט כדורסל</h3></a>
+                                                <div class="event_date">22/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>22</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>גמר אליפות מחוזית בנות ט'-י'</h3></a>
+                                                <div class="event_date">25/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>25</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>אירוע ארצי פרחי ספורט כדורסל</h3></a>
+                                                <div class="event_date">25/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>25</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                        </div>
+                        <!-- end event type -->
+                        <!-- event type -->
+                        <div id="tab-6">
+                            <div>אוגוסט 2016</div>
+                            </br>
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>גמר ליגת העל תיכונים</h3></a>
+                                                <div class="event_date">18/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>18</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>אירוע ארצי פרחי ספורט כדורסל</h3></a>
+                                                <div class="event_date">22/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>22</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>גמר אליפות מחוזית בנות ט'-י'</h3></a>
+                                                <div class="event_date">25/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>25</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                            <!-- event -->
+                            <div class="row">
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                    <ul>
+                                        <li class="clearfix">
+                                            <div class="post_text">
+                                                <a href="#"><h3>אירוע ארצי פרחי ספורט כדורסל</h3></a>
+                                                <div class="event_date">25/8/2016 10:30</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                    <ul>
+                                        <h1>25</h1>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end event -->
+                        </div>
+                        <!-- end event type -->
+                        </br>
+                        <ul class="tabs_nav clearfix" style="float:left;">
+                            <a href="#" class="button button_grey">לכל האירועים</a>
+                        </ul>
+                        </br>
+                    </div>
+                </div>
+            </div>
+            </br>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <!--Gallery-->
+                <div class="section photo_gallery gallery_color1" data-appear-animation="fadeInDown" data-appear-animation-delay="400">
+                    <h2 class="section_title">גלריות תמונות</h2>
+                    <a ui-sref="galleries" class="button button_grey view_button">לכל הגלריות</a>
+                    <div class="row">
+                        <owl-carousel loop="recentGalleries.length > 3">
+                            <owl-item ng-repeat="page in recentGalleries">
+                                <div class="crop-thumbnail"> <!-- scale_image_container  -->
+                                    <a ui-sref="gallery({page: page.Seq})">
+                                        <img ng-src="{{page.DefaultImagePath || 'images/logo_main_white.png'}}" alt="" class="scale_image" style="">
+                                    </a>
+                                    <div class="post_image_buttons">
+                                        <a ui-sref="gallery({page: page.Seq})" class="icon_box">
+                                            <i class="fa fa-picture-o"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <a ui-sref="gallery({page: page.Seq})"><h4 style="width: 290px;">{{page.Description}}</h4></a>
+                                <div class="event_date">{{page.Date | date : 'dd/MM/yyyy'}}</div>
+                            </owl-item>
+                        </owl-carousel>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                <div class="section">
+                    <h2 class="section_title">
+                        סקר מהיר
+                    </h2>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                <div class="section" data-appear-animation="fadeInDown" data-appear-animation-delay="1150">
+                    <h2 class="section_title">
+                        רשתות חברתיות
+                    </h2>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            <iframe src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fisrschspo%2F&width=450&layout=standard&action=like&size=small&show_faces=true&share=true&height=80&appId" width="450" height="80" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4">
+                            <ul class="social_media_list clearfix">
+                                <li style="margin-right: 10px;">
+                                    <a href="#" class="fb">
+                                        <i class="fa fa-instagram"></i>
+                                        <div>2,500</div>
+                                        <p>Followers</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4">
+                            <ul class="social_media_list clearfix">
+                                <li style="margin-right: 10px;">
+                                    <a href="#" class="you_tube">
+                                        <i class="fa fa-youtube-play"></i>
+                                        <div>1700</div>
+                                        <p>Subscribers</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4">
+                            <ul class="social_media_list clearfix">
+                                <li style="margin-right: 10px;">
+                                    <a href="#" class="fb">
+                                        <i class="fa fa-facebook"></i>
+                                        <div>777k</div>
+                                        <p>Likes</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            סטטוסים אחרונים בפייסבוק
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="section">
+                    <h2 class="section_title">
+                        קישורים מהירים
+                    </h2>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="section photo_gallery gallery_color2" data-appear-animation="fadeInDown" data-appear-animation-delay="400ms">
+                    <h2 class="section_title">ספריית VOD</h2>
+                    <a ui-sref="videos" class="button button_grey view_button">לכל הסרטונים</a>
+                    <div class="row">
+                        <owl-carousel loop="recentVideos.length > 3">
+                            <owl-item ng-repeat="page in recentVideos">
+                                <div class="crop-thumbnail"> <!-- scale_image_container  -->
+                                    <a ui-sref="video({page: page.Seq})">
+                                        <img ng-src="{{page.DefaultImagePath}}" alt="" class="scale_image" style="">
+                                    </a>
+                                    <div class="post_image_buttons">
+                                        <a ui-sref="video({page: page.Seq})" class="icon_box">
+                                            <i class="fa fa-video-camera"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <a ui-sref="video({page: page.Seq})"><h4 style="width: 290px;">{{page.Description}}</h4></a>
+                                <div class="event_date">{{page.Date | date : 'dd/MM/yyyy'}}</div>
+                            </owl-item>
+                        </owl-carousel>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end row -->
+
+</div>

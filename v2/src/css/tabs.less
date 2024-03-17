@@ -1,0 +1,192 @@
+.xtab {
+  position: relative;
+  min-width: 2rem;
+  border: none;
+  text-align: center;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  cursor: pointer;
+  padding: 0 5px;
+  display: flex;
+  align-items: center;
+  background-color: #f4f4f4;
+  margin-left: 15px;
+  font-size: 16.5px;
+  font-weight: 600;
+  color: #666666;
+}
+
+.xtab.selected {
+  border-bottom: none;
+  background-color: white;
+  box-shadow: 0px 0px 11px 0px rgba(0, 0, 0, 0.15);;
+}
+
+.add-tab {
+  background-color: #f4f4f4;
+  height: 2rem;
+  color: #176ae6;
+  border: none;
+  width: 3rem;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+  cursor: pointer;
+}
+
+
+.add-tab-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tab-card {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 25%;
+  margin: 1.5%;
+}
+
+.actions {
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.drawer {
+  width: 20%;
+  padding: 6px 1rem;
+  border: 1px solid;
+  height: calc(100vh - 7rem);
+  overflow-y: scroll;
+}
+
+.drawer-text {
+  white-space: nowrap;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  color:#1453b1;
+}
+
+
+.drawer-content {}
+
+.tab-content {
+  left: 0px;
+  right: 25%;
+  min-height: 100%;
+  display: flex;
+  padding: 0px 0rem;
+  width: 100%;
+  //overflow: auto;
+  max-height: calc(100vh - 5rem);
+}
+
+.slide-fade-enter-active {
+  transition: all .3s linear;
+}
+.slide-fade-leave-active {
+  transition: all .3s linear;
+}
+.slide-fade-enter, .slide-fade-leave-to
+  /* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(20%);
+  opacity: 0;
+}
+
+.th-container {
+  display: flex;
+  flex-direction: row;
+  white-space: nowrap;
+  text-align: center;
+  align-items: center;
+}
+
+.multiselect-input {
+
+}
+
+.filter-select {
+  position: absolute;
+  background-color: white;
+  border: 1px solid;
+  border-color: darkgrey;
+  padding: 10px;
+  text-align: right;
+  font-size: 16.5px;
+  font-weight: normal;
+  min-width: 178px;
+  top: 2.5rem;
+  max-height: 250px;
+}
+
+.filter-search {
+  margin-right: 0;
+  width: 100%;
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+.underlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: grey;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  z-index: 10;
+}
+
+.field-value {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.editable-field:after {
+  content: '\0270E';
+  font-size: 10px;
+  position: absolute;
+}
+
+.editable-field-on {
+}
+
+.field-title {
+  white-space: nowrap;
+  font-weight: bold;
+  margin-top: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.field-title.required:after {
+  content: '*';
+  color: red;
+  margin-right: 3px;
+}
+
+.link-to-tab {
+  text-decoration: underline;
+  cursor: pointer;
+  color: #1453b1;
+}
+
+.tab-head {
+  display: flex;
+  justify-content: space-between;
+}
+
+.disabled-button {
+  color: lightgray;
+  pointer-events: none;
+}

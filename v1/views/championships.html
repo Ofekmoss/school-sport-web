@@ -1,0 +1,319 @@
+<style type="text/css">
+    .panel-default > .panel-heading {
+        color: #333;
+        background-color: #f5f5f5;
+        border-color: #ddd;
+    }
+
+    .table_type_1 tr th {
+        width: auto;
+    }
+    .team_name {
+        font-weight: bold;
+    }
+
+    .article_thumbnail {
+        height: 250px !important;
+    }
+
+    .section {
+        margin-top: 25px !important;
+    }
+
+    .sport_field_rectangle, .championship_rectangle, .category_rectangle, .permanent_champ_rectangle {
+        float: right;
+        margin-right: 10px;
+        margin-bottom: 5px;
+        overflow: hidden;
+    }
+
+    .sport_field_rectangle {
+        width: 120px;
+        line-height: 46px;
+        vertical-align: middle;
+    }
+
+    .championship_rectangle {
+        width: 130px;
+    }
+
+    .category_rectangle {
+        width: 140px;
+        line-height: 46px;
+        vertical-align: middle;
+    }
+
+    .permanent_champ_rectangle {
+        width: 160px;
+        height: 55px !important;
+        line-height: 25px;
+        vertical-align: middle;
+    }
+</style>
+<div class="wide-container" ng-if="error">
+    <div class="alert alert-danger" role="alert">
+        {{error}}
+    </div>
+</div>
+
+<div class="wide-container" ng-if="!error" ng-style="IsMobileDevice ? {'margin-top': '60px'} : {}">
+    <div class="breadcrumb">
+        <div>
+            <span><a ui-sref="home">בית </a></span> /
+            <span ng-if="isClubs">
+                <a ui-sref="championships({clubs: 1})">
+                    מועדון ספורט בית ספרי
+                </a>
+            </span>
+            <span ng-if="!isClubs">
+                <a ui-sref="championships({clubs: 0})">
+                    אירועי ספורט משרד החינוך
+                </a>
+            </span>
+
+            <span ng-show="region && region.REGION_NAME">
+                /
+                <span ng-show="region.REGION_ID == 0">
+                    <a ui-sref="championships.region({region:  0, clubs: 0})">
+                    ארצי
+                    </a>
+                </span>
+                <span ng-show="region.REGION_ID > 0">
+                    <a ui-sref="championships.region({region: region.REGION_ID, clubs: isClubs ? 1 : 0})">
+                מחוז
+                        {{region.REGION_NAME}}
+                    </a>
+                </span>
+            </span>
+
+            <span ng-show="showPermanentChampionships">
+                /
+                <a ui-sref="championships.region({region: 'p', clubs: 0})">
+                ליגות תיכונים
+                </a>
+            </span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div>
+            <div id="pnlRegionSelection" class="row" ng-show="!IsMobileDevice && region">
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                    &nbsp;
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="text-align: center;">
+                    <h1 style="font-size: 60px;">
+                        <span ng-show="region.REGION_ID > 0">
+                        מחוז
+                        {{region.REGION_NAME}}
+                        </span>
+                        <span ng-show="region.REGION_ID == 0">
+                            אליפויות ארציות
+                        </span>
+                    </h1>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                    &nbsp;
+                </div>
+            </div>
+            <div id="pnlChampionshipFiles" class="row" style="margin-bottom: 10px;" ng-show="!IsMobileDevice && region">
+                <div style="display: none;" class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                    <div class="section" style="border: 1px solid #00ada7; padding: 5px; overflow-x: hidden; overflow-y: auto; height: 320px;">
+                        <div style="border-top: none;">
+                            <div class="clearfix">
+                                <h2 class="section_title" style="color: #337ab7; border-top: none;">
+                                    קבצים
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="alert alert-danger" role="alert" ng-show="attachmentsLoadingError">
+                            שגיאה בעת טעינת נתונים
+                        </div>
+                        <div ng-show="!attachmentsLoadingError">
+                            <table class="table_type_1">
+                                <tr class="f_size_large">
+                                    <th style="width: 5%;">#</th>
+                                    <th>תיאור</th>
+                                    <th>תאריך העלאה</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-show="!IsMobileDevice && regionPages.length > 0">
+                    <div class="section" style="border: 1px solid #00ada7; padding: 5px; overflow: hidden; height: 320px;">
+                        <div style="border-top: none;">
+                            <div class="clearfix">
+                                <h2 class="section_title" style="color: #337ab7; border-top: none;">
+                                    כתבות, גלריות, ספריית VOD
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="row" style="padding-right: 20px;">
+                            <owl-carousel loop="{{regionPages.length > 3}}" id="contentCarousel">
+                                <owl-item ng-repeat="page in regionPages | orderBy:'-Date'"> <!-- RegionIndex -->
+                                    <div class="scale_image_container article_thumbnail">
+                                        <a ui-sref="article({page: page.Seq})"><img ng-src="{{page.CroppedImage_Slider}}" alt="" class="scale_image"></a>
+                                        <div class="caption_type_1">
+                                            <div class="caption_inner">
+                                                <div class="clearfix">
+                                                    <a ui-sref="article({page: page.Seq})" class="{{page.BannerButtonClass}}">
+                                                        {{page.HebrewType}}
+                                                    </a>
+                                                    <div class="event_date">{{page.Date | date : 'dd/MM/yyyy'}}</div>
+                                                </div>
+                                                <a ui-sref="article({page: page.Seq})"><h3>{{page.Description}}</h3></a>
+                                                <p ng-bind-html="page.ShortSubCaption"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </owl-item>
+                            </owl-carousel>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="pnlNoChampionshipsFound" class="row" ng-show="!loading && totalChampionshipsCount() == 0 && region != null"  style="margin-top: 15px; padding-bottom: 15px;">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    לא נמצאו אליפויות
+                    <span ng-show="region && region.REGION_NAME">
+                            <span ng-show="region.REGION_ID == 0">
+                                ארציות
+                            </span>
+                            <span ng-show="region.REGION_ID > 0">
+                                במחוז
+                                {{region.REGION_NAME}}
+                            </span>
+                        </span>
+                    <span ng-show="currentSeason && currentSeason.Name">
+                        לעונת
+                        {{currentSeason.Name}}
+                    </span>
+                </div>
+            </div>
+            <div class="row" ng-show="!loading && (region == null || totalChampionshipsCount() > 0 || showPermanentChampionships)">
+                <div id="pnlChooseRegion" class="row" style="background-color: #f5f5f5; margin-bottom: 10px;" ng-show="!IsMobileDevice && !region">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="section" ng-if="allRegions.length > 0 || showPermanentChampionships">
+                            <h3 class="section_title">
+                                בחירת
+                                <span ng-show="!showPermanentChampionships">
+                                    מחוז
+                                </span>
+                                <span ng-show="showPermanentChampionships">
+                                    ליגת תיכונים
+                                </span>
+                            </h3>
+                            <div class="championship-item-panel" ng-repeat="permanentChampionship in permanentChampionships" ng-if="permanentChampionships">
+                                <div class="{{getRoundedRectangleClass(permanentChampionship, 'permanent_champ_rectangle')}}" ng-click="PermanentChampionshipClicked(permanentChampionship)"
+                                     change-background colorcode="{{getSportFieldColor(permanentChampionship.SPORT_ID)}}" selected="{{permanentChampionship.Selected}}"
+                                     style="{{getPermanentChampionshipFilterStyle(permanentChampionship)}}">
+                                    {{permanentChampionship.CHAMPIONSHIP_TITLE}}
+                                </div>
+                            </div>
+                            <div class="championship-item-panel" ng-repeat="region in allRegions" ng-if="region.REGION_ID > 0 || !isClubs">
+                                <div class="{{getRoundedRectangleClass(region, 'category_rectangle')}}" ng-click="RegionClicked(region)"
+                                     change-background colorcode="{{getRegionColor(region.REGION_ID)}}" selected="{{region.Selected}}"
+                                     style="{{getRegionFilterStyle(region)}}">
+                                    <span ng-show="region.REGION_ID > 0">
+                                        {{region.REGION_NAME}}
+                                    </span>
+                                    <span ng-show="region.REGION_ID == 0">
+                                        ארציות
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="pnlChooseSportAndCategory" class="row mobile-reverse-order" style="background-color: #f5f5f5;" ng-if="region != null" ng-show="!IsMobileDevice">
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <div class="section" ng-show="categoriesInUse.Rows.length > 0">
+                            <h3 class="section_title">
+                                בחירת
+                                {{categoryChoosingTitle}}
+                            </h3>
+                            <div ng-repeat="categoryRow in categoriesInUse.Rows" style="margin-bottom: 10px;">
+                                <div class="championship-item-panel" ng-repeat="category in categoryRow" style="padding-right: 0px;">
+                                    <div class="{{getRoundedRectangleClass(category, 'category_rectangle')}}" ng-click="JumpToCategory(category)"
+                                         change-background colorcode="{{getSportFieldColor(category.SportField)}}" selected="{{category.Selected}}"
+                                         style="{{getSportFieldFilterStyle(category)}}" ng-if="category.SportField">
+                                        {{category.Name}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <div class="section" ng-show="championshipsInUse.Rows.length > 0 && !noEventsInRange">
+                            <h3 class="section_title">
+בחירת
+                                {{championshipChoosingTitle}}
+                                <div class="pull-left" ng-show="championshipsFilters.Championship">
+                                    <button type="button" class="button button_grey" style="font-size: 14px; padding: 5px 10px;" ng-click="clearChampionshipFilter()">
+                                        ניקוי בחירה
+                                    </button>
+                                </div>
+                            </h3>
+                            <div ng-repeat="championshipRow in championshipsInUse.Rows" style="margin-bottom: 10px;">
+                                <div class="championship-item-panel" ng-repeat="championship in championshipRow" style="padding-right: 0px;">
+                                    <div class="{{getRoundedRectangleClass(championship, 'championship_rectangle')}}" ng-click="toggleChampionshipFilter(championship)"
+                                         change-background colorcode="{{getSportFieldColor(championship.SportField)}}" selected="{{championship.Selected}}"
+                                         style="{{getSportFieldFilterStyle(championship)}}" ng-if="championship.SportField">
+                                        {{championship.Name}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <div class="section">
+                            <h3 class="section_title">
+                                בחירת ענף ספורט:
+                                <div class="pull-left" ng-show="championshipsFilters.SportField">
+                                    <button type="button" class="button button_grey" style="font-size: 14px; " ng-click="clearSportFieldFilter()">
+                                        ניקוי בחירה
+                                    </button>
+                                </div>
+                            </h3>
+                        </div>
+                        <div ng-repeat="sportFieldRow in sportFieldsInUse.Rows"> <!--  class="row" -->
+                            <div class="championship-item-panel" ng-repeat="sportField in sportFieldRow" style="padding-right: 0px;"> <!--  class="col-lg-3 col-md-3 col-sm-3" -->
+                                <div class="{{getRoundedRectangleClass(sportField, 'sport_field_rectangle')}}" ng-click="toggleSportFieldFilter(sportField)"
+                                     change-background colorcode="{{getSportFieldColor(sportField.Id)}}" selected="{{sportField.Selected}}"
+                                     style="{{getSportFieldFilterStyle(sportField)}}" ng-if="sportField.Id && sportField.Name">
+                                    {{sportField.Name}}
+                                </div>
+                                </br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="pnlChampionshipName" class="row" ng-show="selectedCategory && selectedCategory.Name"
+                     ng-style="IsMobileDevice ? {'margin-top': '-20px', 'margin-bottom': '10px'} : {'margin-top': '30px', 'margin-bottom': '30px'}">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <h2 class="section_title section_title_big" style="margin-bottom: 0px;">
+                            <span id="lblFullChampionshipName">{{selectedCategory.Name}}</span>
+                            <span ng-show="!IsMobileDevice && region && region.REGION_NAME && !selectedCategory.SportFlowersData">
+                             -
+                            <span ng-show="region.REGION_ID == 0">
+                                ארצי
+                            </span>
+                            <span ng-show="region.REGION_ID > 0">
+                                {{region.REGION_NAME}}
+                            </span>
+                        </span>
+                        </h2>
+                    </div>
+                </div>
+                <div id="pnlChangeChampionship" class="pull-left" ng-show="IsMobileDevice" style="margin-bottom: 10px;">
+                    <button class="button button_grey" ng-click="ChangeChampionshipClicked()">
+                        שינוי אליפות
+                    </button>
+                </div>
+                <championship-category category="selectedCategory"></championship-category>
+            </div>
+        </div>
+    </div>
+</div>

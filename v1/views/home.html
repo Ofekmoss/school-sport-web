@@ -1,0 +1,437 @@
+﻿<!--==============================content================================-->
+<style type="text/css">
+    #items-container {
+        margin-right: 20px;
+    }
+    .crop-thumbnail {
+        position: relative;
+        width: 290px;
+        height: 195px;
+        overflow: hidden;
+    }
+    .crop-thumbnail img {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        height: 100%;
+        width: auto;
+        -webkit-transform: translate(-50%,-50%);
+        -ms-transform: translate(-50%,-50%);
+        transform: translate(-50%,-50%);
+    }
+    .crop-thumbnail img.portrait {
+        width: 100%;
+        height: auto;
+    }
+
+    .sponsor-img, .partner-img {
+        width: 200px;
+        height: 112px;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-bottom: 10px;
+        position: relative;
+        top: 25%;
+        bottom: 25%;
+        border: 2px solid black;
+        border-radius: 5px;
+        background-color: white;
+        padding-top: 7px;
+        position: relative;
+    }
+
+    .sponsor-img .scale_image, .partner-img .scale_image {
+        max-height: 100%;
+        max-width: 100%;
+        width: auto;
+        height: auto;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        padding: 5px 15px 5px 15px;
+    }
+
+    .owl-carousel .owl-item img {
+        vertical-align: middle;
+    }
+    .homepage-advertisement {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        width: 100%;
+    }
+
+    .section_title {
+        margin-right: 10px !important;
+    }
+</style>
+<div class="alert alert-error" ng-show="error">
+    שגיאה בעת  טעינת נתונים
+</div>
+<div class="tp-banner-container" ng-show="!featuredPagesLoadError">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 hidden-sm hidden-xs">
+            <div class="tp-banner">
+                <ul>
+                    <!-- SLIDE  -->
+                    <li data-transition="fade" data-slotamount="10" ng-repeat="page in featuredPages">
+                        <!-- MAIN IMAGE -->
+                        <img ng-src="{{page.CroppedImage_Homepage || 'images/logo_main_white.png'}}" alt="" data-bgfit="cover" data-bgposition="center center">
+                        <!-- LAYERS -->
+                        <div class="tp-caption skewfromrightshort fadeout" style="width: 100%; cursor: pointer;" ng-click="GoToPage(page.Seq)"
+                             data-y="bottom"
+                             data-easing="Power4.easeOut">
+                            <div class="rev_caption">
+                                <div class="clearfix">
+                                    <a ui-sref="article({page: page.Seq})"><h2>{{page.Description}}</h2></a>
+                                    <p ng-bind-html="page.EncodedSubCaption" style="color: white;"></p>
+                                    <br />
+                                    <a ui-sref="article({page: page.Seq})" class="{{page.BannerCssClass}}">{{page.HebrewType}}</a>
+                                    <div class="event_date">
+                                        {{page.Date | date : 'dd/MM/yyyy'}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!--==============================news carousel=================================-->
+<div class="section" ng-show="!error">
+    <div class="wide-container">
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                <div id="pnlAllEvents" class="section" style="border: 1px solid #00ada7; padding: 5px; overflow: hidden; height: 840px; margin-top: 0px;">
+                    <div class="tabs variation_2" style="border-top: none;">
+                        <!--tabs navigation-->
+                        <div class="clearfix">
+                            <h2 class="section_title">
+                                <a ui-sref="events">
+                                    אירועים קרובים
+                                </a>
+                            </h2>
+                            <div class="clearfix tabs_container" style="float: none; clear: both;">
+                                <ul class="tabs_nav clearfix">
+                                    <li class="" ng-click="changeEventsTab(1)">
+                                        <a href="#tab-all-events">
+                                            כל האירועים
+                                        </a>
+                                    </li>
+                                    <li class="" ng-click="changeEventsTab(5)">
+                                        <a href="#tab-non-club-events">
+                                            משרד החינוך
+                                        </a>
+                                    </li>
+                                    <li class="" ng-click="changeEventsTab(6)">
+                                        <a href="#tab-club-events">
+                                            מועדון ספורט
+                                        </a>
+                                    </li>
+                                    <li class="" ng-click="changeEventsTab(7)">
+                                        <a href="#tab-young-players-events">
+                                            טיפוח  ספורטאים
+                                        </a>
+                                    </li>
+                                    <li class="" ng-click="changeEventsTab(2)">
+                                        <a href="#tab-flower-events">
+                                            פרחי ספורט
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div ng-show="!eventsLoadFinished">
+                            מערכת טוענת נתונים, נא להמתין<span class="progress-dot"></span>
+                        </div>
+                        <div class="alert alert-danger" role="alert" ng-show="eventsLoadError">
+                            שגיאה בעת טעינת אירועים, נא לנסות שוב מאוחר יותר
+                        </div>
+                        <div class="row schoolsport-event" ng-if="eventsLoadFinished" ng-repeat="event in upcomingEvents | limitTo:9" ng-show="activeEventsTab == 1 || (activeEventsTab - 1) == event.Type" style="height: 85px; overflow: hidden;">
+                            <div class="col-lg-10 col-md-10 col-sm-10 col-xs-8">
+                                <div class="clearfix caption_inner" style="background-color: transparent;">
+                                    <h3 class="event-link-header" style="{{($index == 0) ? 'margin-top: -10px; width: 110%; font-size: 15px;' : 'margin-top: -20px; width: 110%; font-size: 15px;'}}">
+                                        <a class="event-link" ui-sref="championships.region.championship({clubs: 0, region: 0, category: event.CHAMPIONSHIP_CATEGORY_ID})" ng-show="event.CHAMPIONSHIP_CATEGORY_ID">
+                                            {{event.Name}}
+                                        </a>
+                                        <a class="event-link" ui-sref="championships.region.championship({clubs: 0, region: 0, category: 'sf-' + event.Seq})" ng-show="event.SportFieldSeq == sportFlowersSeq">
+                                            {{event.Name}}
+                                        </a>
+                                        <span class="event-link" ng-show="!event.CHAMPIONSHIP_CATEGORY_ID && event.SportFieldSeq != sportFlowersSeq">
+                                            {{event.Name}}
+                                        </span>
+                                    </h3>
+                                    <p class="event-details" style="font-size: 15px;">{{event.Details}}</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">
+                                <div class="clearfix" style="{{getEventDateStyle(event, $index)}}" ng-click="GoToEvent(event)" title="{{event.Date | date : 'dd/MM/yyyy'}}">
+                                    <div style="font-size: 30px; text-align: center;">
+                                        {{event.Date | date : 'dd'}}
+                                    </div>
+                                    <div style="font-size: 15px; text-align: center;">
+                                        {{event.MonthName}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="pnlSales" class="section" style="margin-top: 30px; border: 1px solid #00ada7; padding: 5px; overflow: hidden; height: 525px;">
+                    <h2 class="section_title" style="border-top: none;">
+                        מכירות
+                    </h2>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            <!-- script type="text/javascript" src="//cdn.playbuzz.com/widget/feed.js"></script -->
+                            <!-- div class="pb_feed" style="height: 100px;" data-embed-by="d8ca066b-e06b-4a5b-92cc-cb18572b7560" data-game="/guyksu10/10-30-2016-6-46-32-am" data-recommend="false" data-game-info="false" data-comments="false" data-shares="false" ></div -->
+                            כאן יופיע איזור מכירות
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-9 col-md-9 col-sm-12">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <div class="section photo_gallery gallery_color3" style="border: 1px solid #00ada7; padding: 5px; overflow: hidden; margin-top:  0px;">
+                            <h2 class="section_title" style="border-top: none;">
+                                <a ui-sref="articles">
+                                    כתבות אחרונות
+                                </a>
+                            </h2>
+                            <div class="row">
+                                <div ng-show="!recentPagesLoadFinished">
+                                    מערכת טוענת נתונים, נא להמתין<span class="progress-dot"></span>
+                                </div>
+                                <div class="alert alert-danger" role="alert" ng-show="recentPagesLoadError">
+                                    שגיאה בעת טעינת כתבות, נא לנסות שוב מאוחר יותר
+                                </div>
+                                <owl-carousel loop="recentArticles.length > 3" ng-show="recentPagesLoadFinished && !recentPagesLoadError">
+                                    <owl-item ng-repeat="page in recentArticles">
+                                        <div class="scale_image_container article_thumbnail">
+                                            <a ui-sref="article({page: page.Seq})"><img ng-src="{{page.CroppedImage_Slider}}" alt="" class="scale_image"></a>
+                                            <div class="caption_type_1">
+                                                <div class="caption_inner">
+                                                    <div class="clearfix">
+                                                        <a ui-sref="article({page: page.Seq})" class="button banner_button" style="{{getSportFieldStyle(page.SportFieldSeq)}}">{{page.SportFieldName}}</a>
+                                                        <div class="event_date">{{page.Date | date : 'dd/MM/yyyy'}}</div>
+                                                    </div>
+                                                    <a ui-sref="article({page: page.Seq})"><h3>{{page.Description}}</h3></a>
+                                                    <p ng-bind-html="page.ShortSubCaption"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </owl-item>
+                                </owl-carousel>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 20px;" ng-if="advertisementBanner">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align: center;">
+                        <!-- img src="images/ad_banner_728x90.jpg" / -->
+                        <a ng-if="advertisementBanner.ExternalLink" href="{{advertisementBanner.ExternalLink}}" target="_blank">
+                            <video class="homepage-advertisement" ng-src="{{advertisementBanner.VideoPath}}" autoplay loop></video>
+                        </a>
+                        <span ng-if="!advertisementBanner.ExternalLink">
+                            <video class="homepage-advertisement" ng-src="{{advertisementBanner.VideoPath}}" autoplay loop></video>
+                        </span>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-lg-8 col-md-8 col-sm-12">
+                        <div class="section photo_gallery gallery_color1" data-appear-animation="fadeInDown" data-appear-animation-delay="400" style="border: 1px solid #00ada7; padding: 5px; overflow: hidden; margin-top: 20px;">
+                            <h2 class="section_title" style="border-top: none;">
+                                <a ui-sref="galleries">
+                                    גלריות תמונות
+                                </a>
+                            </h2>
+                            <div class="row">
+                                <div ng-show="!recentPagesLoadFinished">
+                                    מערכת טוענת נתונים, נא להמתין<span class="progress-dot"></span>
+                                </div>
+                                <div class="alert alert-danger" role="alert" ng-show="recentPagesLoadError">
+                                    שגיאה בעת טעינת גלריות תמונות, נא לנסות שוב מאוחר יותר
+                                </div>
+                                <owl-carousel loop="recentGalleries.length > 3">
+                                    <owl-item ng-repeat="page in recentGalleries">
+                                        <div class="scale_image_container article_thumbnail">
+                                            <a ui-sref="gallery({page: page.Seq})"><img ng-src="{{page.CroppedImage_Slider}}" alt="" class="scale_image"></a>
+                                            <!--caption-->
+                                            <div class="caption_type_1">
+                                                <div class="caption_inner">
+                                                    <div class="clearfix">
+                                                        <a ui-sref="gallery({page: page.Seq})" class="button banner_button" style="{{getSportFieldStyle(page.SportFieldSeq)}}">{{page.SportFieldName}}</a>
+                                                        <div class="event_date">{{page.Date | date : 'dd/MM/yyyy'}}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a ui-sref="gallery({page: page.Seq})"><h4 style="width: 290px;">{{page.Description}}</h4></a>
+                                    </owl-item>
+                                </owl-carousel>
+                            </div>
+                        </div>
+                        <div class="section photo_gallery gallery_color2" style="border: 1px solid #00ada7; padding: 5px; overflow: hidden; margin-bottom: 10px; margin-top: 30px;"
+                             ng-if="contentMapping.RoadTripPartners.Seq && contentMapping.RoadTripPartners.Images && contentMapping.RoadTripPartners.Images.length > 0">
+                            <h2 class="section_title" style="border-top: none;">
+                                <a ui-sref="article({page: contentMapping.RoadTripPartners.Seq})">{{contentMapping.RoadTripPartners.Description}}</a>
+                            </h2>
+                            <owl-carousel loop="1" id="sponsorsCarousel" data-auto-slide-seconds="{{sponsorAutoSlideInterval}}" data-arrows-top="35">
+                                <owl-item ng-repeat="image in contentMapping.RoadTripPartners.Images">
+                                    <div class="scale_image_container sponsor-img">
+                                        <a ng-if="image.ExternalLink" ng-href="{{image.ExternalLink}}" target="_blank">
+                                            <img ng-src="/content/Images/{{contentMapping.RoadTripPartners.Seq}}/{{image.FileName}}" alt="" class="scale_image">
+                                        </a>
+                                        <img ng-if="!image.ExternalLink" ng-src="/content/Images/{{contentMapping.RoadTripPartners.Seq}}/{{image.FileName}}" alt="" class="scale_image">
+                                    </div>
+                                </owl-item>
+                            </owl-carousel>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 hidden-sm hidden-xs">
+                        <div class="section" data-appear-animation="fadeInDown" data-appear-animation-delay="1150" style="border: 1px solid #00ada7; padding: 5px; overflow: hidden; margin-top: 20px;">
+                            <h2 class="section_title" style="color: #3b5998; border-top: none; margin-right: 15px !important;">
+                                <img src="images/fb-logo.png" />
+                                פייסבוק
+                            </h2>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <iframe id="facebook_likebox_frame" src="//:0" data-src="https://www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fisrschspo&width=300&colorscheme=light&show_faces=true&border_color&stream=true&height=462" scrolling="no" style="border:none; overflow:hidden; width:100%; height:462px; background: white; float:left; " allowtransparency="true" frameborder="0"></iframe>
+                                    <!-- iframe id="facebook_likebox_frame" src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fisrschspo%2F&tabs=timeline&width=340&height=530&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId=683703801781785" width="340" height="530" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="VOD_row" class="row" style="margin-bottom: 10px;">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <div class="section photo_gallery gallery_color2" data-appear-animation="fadeInDown" data-appear-animation-delay="400ms" style="border: 1px solid #00ada7; padding: 5px; overflow: hidden; margin-top: 10px;">
+                            <h2 class="section_title" style="border-top: none;">
+                                <a ui-sref="videos">
+                                    ספריית VOD
+                                </a>
+                            </h2>
+                            <div class="row">
+                                <div ng-show="!recentPagesLoadFinished">
+                                    מערכת טוענת נתונים, נא להמתין<span class="progress-dot"></span>
+                                </div>
+                                <div class="alert alert-danger" role="alert" ng-show="recentPagesLoadError">
+                                    שגיאה בעת טעינת ספריית VOD, נא לנסות שוב מאוחר יותר
+                                </div>
+                                <owl-carousel loop="recentVideos.length > 3">
+                                    <owl-item ng-repeat="page in recentVideos">
+                                        <div class="scale_image_container article_thumbnail">
+                                            <a ui-sref="video({page: page.Seq})"><img ng-src="{{page.CroppedImage_Slider}}" alt="" class="scale_image"></a>
+                                            <!--caption-->
+                                            <div class="caption_type_1">
+                                                <div class="caption_inner">
+                                                    <div class="clearfix">
+                                                        <a ui-sref="video({page: page.Seq})" class="button banner_button" style="{{getSportFieldStyle(page.SportFieldSeq)}}">{{page.SportFieldName}}</a>
+                                                        <div class="event_date">{{page.Date | date : 'dd/MM/yyyy'}}</div>
+                                                    </div>
+                                                    <p ng-bind-html="page.ShortSubCaption"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a ui-sref="video({page: page.Seq})"><h4 style="width: 290px;">{{page.Description}}</h4></a>
+                                    </owl-item>
+                                </owl-carousel>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="section photo_gallery gallery_color2" style="border: 1px solid #00ada7; padding: 5px; overflow: hidden; margin-bottom: 10px; margin-top: 20px; margin-right: 15px;"
+                     ng-if="contentMapping.BusinessPartners.Seq && contentMapping.BusinessPartners.Images && contentMapping.BusinessPartners.Images.length > 0">
+                    <h2 class="section_title" style="border-top: none;">
+                        <a ui-sref="article({page: contentMapping.BusinessPartners.Seq})">{{contentMapping.BusinessPartners.Description}}</a>
+                    </h2>
+                    <owl-carousel loop="1" id="partnersCarousel" data-auto-slide-seconds="{{partnersAutoSlideInterval}}" data-arrows-top="35">
+                        <owl-item ng-repeat="image in contentMapping.BusinessPartners.Images">
+                            <div class="scale_image_container sponsor-img">
+                                <a ng-if="image.ExternalLink" ng-href="{{image.ExternalLink}}" target="_blank">
+                                    <img ng-src="/content/Images/{{contentMapping.BusinessPartners.Seq}}/{{image.FileName}}" alt="" class="scale_image">
+                                </a>
+                                <img ng-if="!image.ExternalLink" ng-src="/content/Images/{{contentMapping.BusinessPartners.Seq}}/{{image.FileName}}" alt="" class="scale_image">
+                            </div>
+                        </owl-item>
+                    </owl-carousel>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function AttachFeaturedPagesEvents() {
+        var leftArrow = $('.tp-leftarrow');
+        if (leftArrow.length > 0) {
+            var rightArrow = $('.tp-rightarrow');
+            var featuredPagesAutoSlide = 0;
+            var arrowClick = function() {
+                if (featuredPagesAutoSlide)
+                    window.clearTimeout(featuredPagesAutoSlide);
+                featuredPagesAutoSlide = window.setTimeout(function() {
+                    leftArrow.trigger('click');
+                }, 10000);
+            };
+            leftArrow.bind('click', arrowClick);
+            rightArrow.bind('click', arrowClick);
+            leftArrow.trigger('click');
+        } else {
+            window.setTimeout(AttachFeaturedPagesEvents, 100);
+        }
+    }
+    AttachFeaturedPagesEvents();
+
+    function EventsLoadedHandler() {
+        var windowWidth = $(window).width();
+        if (windowWidth <= 1024) {
+            $(".schoolsport-event").css("height", "auto");
+            $("#pnlAllEvents").css("height", "auto");
+        } else if (windowWidth < 1200) {
+            $(".event-link").css("font-size", "12px");
+            $(".event-link-header").css("margin-right", "10px");
+            $(".event-details").css({"font-size": "12px", "margin-right": "10px"});
+        }
+    }
+
+    $(document).ready(function() {
+        if ($(window).width() <= 640) {
+            $("#pnlSales").hide();
+        }
+    });
+</script>
+<script type="text/javascript">
+    window.setInterval(function() {
+        $(".event-link[href^='#/championships/'").each(function() {
+            var oLink = $(this);
+            if (oLink.data("region_hanled") != "1") {
+                var curHref = oLink.attr("href");
+                var parts = curHref.split("/");
+                var champCategory = parseInt(parts[parts.length - 1]);
+                if (!isNaN(champCategory) && champCategory > 0) {
+                    var url = "/api/sportsman/championship-region?category=" + champCategory;
+                    $.get(url, function(response) {
+                        if (response && response.CHAMPIONSHIP_NAME && response.REGION_NAME) {
+                            var curText = oLink.text();
+                            curText = curText.replace(response.CHAMPIONSHIP_NAME, response.CHAMPIONSHIP_NAME + " (" + response.REGION_NAME + ")");
+                            oLink.text(curText);
+                        }
+                    });
+                }
+                oLink.data("region_hanled", "1");
+            }
+        });
+    }, 500);
+</script>

@@ -1,0 +1,130 @@
+<div class="dialog wide" style="height: 500px; display: flex; justify-content: space-between">
+    <div>
+        <div class="horizontal-flex" style="justify-content: space-between; flex-direction: column; max-height: 430px;">
+            <div class="panel-header" style="display: flex; justify-content: center">
+                עריכת תעודת חיוב -
+                {{paymentRequest.parsedOrder}}
+            </div>
+            <div style="display: flex; justify-content: space-between; flex-direction: column;
+        position: relative; overflow-y: auto; padding: 5px;">
+                <div v-if="loading" style="width: 100%; height: 100%; text-align: center;">
+                    <img align="center" src="img/progress.gif" />
+                </div>
+                <div v-if="!loading" class="tight-container" style="width: 100%; box-sizing: border-box; padding-top: 5px;">
+                    <form id="validated-form">
+                        <div>
+                            <div style="float: right; width: 60%;">
+                                <div class="label">חשבון/גורם משלם</div>
+                                <selectex class="ml-sm" style="width: 250px; margin-right: 10px; font-size: 14px; margin-left: 2px !important;"
+                                          v-bind:options="accounts"
+                                          v-bind:label="'label'"
+                                          v-bind:init="paymentRequestInitialAccount"
+                                          placeholder="חשבון..."
+                                          v-model="paymentRequestAccount"
+                                          v-on:input="setAccount($event)"></selectex>
+                            </div>
+                            <div style="float: left; width: 30%; margin-left: 10px;">
+                                <div class="label">מחוז</div>
+                                <select v-model="paymentRequestRegion" v-on:change="regionChanged()" title="מחוז">
+                                    <option v-for="(region, index) in regions" v-bind:value="region.id">{{region.name}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="clear: both;"></div>
+                        <div class="label" style="margin-top: 5px;">
+                            <span>
+                                נמענים
+                            </span>
+                        </div>
+                        <div class="panel-body" style="overflow: visible; padding: 5px 5px 5px 5px;" v-for="(contact, index) in contacts">
+                            <span>
+                                <input type="text" v-model="contact.name" style="width: 110px;"
+                                       v-bind:style="{borderColor: contact.name.trim().length > 0 ? 'inherit' : 'red'}"
+                                       v-on:change="contactChanged(index)" placeholder="שם מלא" />
+                            </span>
+                            <span style="margin-right: 5px;">
+                                <input type="text" v-model="contact.phoneNumber" style="width: 120px;"
+                                       v-on:change="contactChanged(index)" placeholder="מספר טלפון" />
+                            </span>
+                            <span style="margin-right: 5px;">
+                                <input type="text" v-model="contact.email" style="width: 160px;"
+                                       v-bind:style="{borderColor: isValidEmail(contact.email) ? 'inherit' : 'red'}"
+                                       v-on:change="contactChanged(index)" placeholder="דואר אלקטרוני" />
+                            </span>
+                            <span style="margin-right: 5px;">
+                                <input type="text" v-model="contact.role" style="width: 65px;"
+                                       v-on:change="contactChanged(index)" placeholder="תפקיד" />
+                            </span>
+                            <button type="button" v-if="!contact.removing" class="btn small red" v-on:click="removeContact(index)">הסרת נמען</button>
+                            <span v-if="contact.removing" style="display: inline-block; font-size: smaller;">
+                                להסיר נמען זה?
+                                <br />
+                                <button type="button" class="btn red" v-on:click="reallyRemoveContact(index)">כן</button>
+                                &nbsp;&nbsp;&nbsp;
+                                <button type="button" class="btn green" v-on:click="abortContactRemoval(index)">לא</button>
+                            </span>
+                        </div>
+                        <div class="label" style="margin-top: 0px;">
+                            <span>
+                                <button type="button" class="btn green" v-on:click="addNewContact()">הוספת נמען חדש</button>
+                            </span>
+                        </div>
+                        <div class="label" style="margin-top: 5px;">
+                            <span>
+                                חיובים לפי קבוצות
+                            </span>
+                        </div>
+                        <div class="panel-body" style="overflow: visible;">
+                            <data-table v-bind:columns="paymentRequestDetailsColumns" v-bind:data="paymentRequest.details"
+                                        v-bind:enableExport="false" v-bind:disableSort="true" v-bind:slimTable="true"
+                                        v-bind:disableAbsolutePosition="true" v-bind:hide-toolbar="true"
+                                        v-bind:disableSelection="true"
+                                        v-on:records-change="paymentRequestDetailsChanged()">
+                            </data-table>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="display: flex; justify-content: space-evenly;">
+        <div v-if="!loading && paymentRequestInvalidReason() != null" style="width: 150px; font-size: 14px; font-weight: bold; color: red; max-height: 40px; overflow: auto;">
+            {{paymentRequestInvalidReason()}}
+        </div>
+        <img v-if="paymentRequestProgress.editing" src="img/progress.gif" style="height: 30px;" />
+        <span v-if="paymentRequestProgress.edited" style="color: blue;">
+             שינויים נשמרו בהצלחה
+        </span>
+        <span v-if="paymentRequestProgress.failed" style="color: red;">
+              שגיאה בעת שמירת שינויים, נא לנסות מאוחר יותר
+        </span>
+        <button class="btn"
+                v-if="paymentRequestInvalidReason() == null && anyTrue(paymentRequestProgress) === false"
+                style="width: 100px;"
+                v-on:click="savePaymentRequest()"
+                v-bind:disabled="!changed"
+        >
+            שמירת שינויים
+        </button>
+        <template v-if="anyTrue(paymentRequestProgress) === false">
+            <span v-if="confirmClosure">
+                כל השינויים ייאבדו! האם לבטל בכל זאת?
+                <br />
+                <button class="btn red" v-on:click="reallyCancel()">כן</button>
+                &nbsp;&nbsp;&nbsp;
+                <button class="btn green" v-on:click="abortCancel()">לא</button>
+            </span>
+            <button v-if="!confirmClosure" class="btn"
+                    style="background-color: rgba(217, 1, 17, 0.82); white-space: nowrap"
+                    v-on:click="cancel()"
+            >
+                <template v-if="changed">
+                    ביטול ויציאה ללא שמירת שינויים
+                </template>
+                <template v-if="!changed">
+                    סגירת חלונית
+                </template>
+            </button>
+        </template>
+    </div>
+</div>

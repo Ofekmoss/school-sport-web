@@ -1,0 +1,332 @@
+<div>
+    <div class="panel">
+        <div class="panel-header">
+            הרשמת קבוצות - הסברים
+        </div>
+        <div class="panel-body">
+            <p>
+                דמי רישום לקבוצה תחרותית יעמוד על {{teamPrice}} ש"ח עבור כל קטגוריית גיל ומין.
+            </p>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-header">
+            כללי
+        </div>
+        <div class="panel-body">
+            <table>
+                <tr>
+                    <td class="pl-lg" v-if="!inactiveSeason">פעיל\לא פעיל</td>
+                    <td class="pl-lg">ענף</td>
+                    <td class="pl-lg">קטגוריה</td>
+                    <td class="pl-lg">לתשלום</td>
+                    <td class="pl-lg">סטטוס</td>
+                    <td v-if="team.payment != null">הערות</td>
+                </tr>
+                <tr>
+                    <td class="pl-lg" v-if="!inactiveSeason">
+                        <label class="switch">
+                            <input type="checkbox" v-model="team.active" id="slider_input" v-on:change="onTeamActiveChange()">
+                            <span class="slider round" id="slider_span"></span>
+                        </label>
+                    </td>
+                    <td>{{team.sport.name}}</td>
+                    <td class="pl-lg">{{team.category.name}}</td>
+                    <!--<td>{{getFacilityName(team.facility)}}</td>-->
+                    <!--<td>{{getActivityText(team.activity)}}</td>-->
+                    <td class="pl-lg">
+                        {{teamPrice}}
+                    </td>
+                    <td class="pl-lg">
+                        לא שולם
+                    </td>
+                    <td class="pl-lg" v-if="team.payment !== null">
+                        <span>נשלחה דרישת תשלום</span>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+
+    <div class="panel" v-if="team.active">
+        <div class="panel-header">
+            הצהרת השתתפות
+        </div>
+        <div class="panel-body">
+            <p>
+
+                אנו מתחייבים לקבל עלינו את תכנית המסגרת של "אליפות בתי הספר התיכוניים" על כל היבטיה הספורטיביים, החינוכיים, הארגוניים והתקציביים ומתחייבים בזאת להופיע ולהשתתף באליפות מתחילתה ועד סופה.
+            </p>
+            <div>
+                <input id="chkConfirmChampionship" type="checkbox" v-model="confirmationA" v-bind:disabled="inactiveSeason || confirmedAt" />
+                <label for="chkConfirmChampionship">
+                    <span class="label" v-if="!confirmedAt">אישור קריאת ההצהרה</span>
+                    <span class="label" v-if="confirmedAt">
+                        הצהרה אושרה בתאריך
+                        {{confirmedAt | customDate('dd/MM/yyyy')}}
+                        בשעה
+                            {{confirmedAt | customDate('HH:mm')}}
+                    </span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel" v-if="!team.active">
+        <div class="panel-header">
+            הצהרת אי השתתפות באליפות
+        </div>
+        <div class="panel-body">
+            <p>
+                איננו מעוניינים להפעיל את קבוצת {{team.sport.name}} {{team.category.name}} בליגת תיכונים בענף {{team.sport.name}} לשנת {{seasonName}}.
+            </p>
+            <div>
+                <input id="chkConfirmInactive" type="checkbox" v-model="inactiveConfirmation" v-bind:disabled="inactiveSeason || confirmedAt" />
+                <label for="chkConfirmInactive">
+                     <span class="label" v-if="!confirmedAt">אישור קריאת ההצהרה</span>
+                    <span class="label" v-if="confirmedAt">
+                        הצהרה אושרה בתאריך
+                        {{confirmedAt | customDate('dd/MM/yyyy')}}
+                        בשעה
+                            {{confirmedAt | customDate('HH:mm')}}
+                    </span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <form id="form">
+        <div class="panel" v-if="team.active">
+            <div class="panel-header">
+                בעלי תפקידים
+            </div>
+            <div class="panel-body">
+
+                <div class="pb-sm">
+                    <div class="label">מאמן</div>
+                    <table>
+                        <tr>
+                            <td class="label required">שם</td>
+                            <td class="label required">טלפון</td>
+                            <td class="label required">מייל</td>
+                            <td class="label required">האם עבר השתלמות מאמן ללא תעודת הוראה?</td>
+                        </tr>
+                        <tr>
+                            <td class="pl-sm">
+                                <input required type="text" style="width: 100%;" v-model="team.coach.name" v-bind:disabled="inactiveSeason || !team.category">
+                            </td>
+                            <td class="pl-sm">
+                                <input required pattern="(0[0-9]{2}-[0-9]{7}|0[0-9]{1}-[0-9]{7}|0[0-9]{2}[0-9]{7}|0[0-9]{1}[0-9]{7})"
+                                       type="text" style="width: 100%;" v-model="team.coach.phoneNumber" v-bind:disabled="inactiveSeason || !team.category">
+                            </td>
+                            <td class="pl-sm">
+                                <input pattern="^\S+@\S+$" required type="text" style="width: 100%;" v-model="team.coach.email" v-bind:disabled="inactiveSeason || !team.category">
+                            </td>
+                            <td class="pl-sm" required>
+                                <div>
+                                    כן
+                                    <input type="radio" name="certification" v-model="team.coach.certification" value="1" v-bind:disabled="inactiveSeason">
+                                    לא
+                                    <input type="radio" name="certification" v-model="team.coach.certification" value="0" v-bind:disabled="inactiveSeason">
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="pb-sm">
+                    <div class="label">מורה אחראי</div>
+                    <table>
+                        <tr>
+                            <td class="label required">שם</td>
+                            <td class="label required">טלפון</td>
+                            <td class="label required">מייל</td>
+                        </tr>
+                        <tr>
+                            <td class="pl-sm">
+                                <input required type="text" style="width: 100%;" v-model="team.teacher.name" v-bind:disabled="inactiveSeason || !team.category">
+                            </td>
+                            <td class="pl-sm">
+                                <input required pattern="(0[0-9]{2}-[0-9]{7}|0[0-9]{1}-[0-9]{7}|0[0-9]{2}[0-9]{7}|0[0-9]{1}[0-9]{7})"
+                                       type="text" style="width: 100%;" v-model="team.teacher.phoneNumber" v-bind:disabled="inactiveSeason || !team.category">
+                            </td>
+                            <td>
+                                <input pattern="^\S+@\S+$" required type="text" style="width: 100%;" v-model="team.teacher.email" v-bind:disabled="inactiveSeason || !team.category">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="pb-sm">
+                    <div class="label">מנהל מקצועי</div>
+                    <table>
+                        <tr>
+                            <td class="label required">שם</td>
+                            <td class="label required">טלפון</td>
+                            <td class="label required">מייל</td>
+                        </tr>
+                        <tr>
+                            <td class="pl-sm">
+                                <input required type="text" style="width: 100%;" v-model="team.manager.name" v-bind:disabled="inactiveSeason || !team.category">
+                            </td>
+                            <td class="pl-sm">
+                                <input required pattern="(0[0-9]{2}-[0-9]{7}|0[0-9]{1}-[0-9]{7}|0[0-9]{2}[0-9]{7}|0[0-9]{1}[0-9]{7})"
+                                       type="text" style="width: 100%;" v-model="team.manager.phoneNumber" v-bind:disabled="inactiveSeason || !team.category">
+                            </td>
+                            <td>
+                                <input pattern="^\S+@\S+$" required type="text" style="width: 100%;" v-model="team.manager.email" v-bind:disabled="inactiveSeason || !team.category">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="pb-sm">
+                    <div class="label">עוזר מאמן</div>
+                    <table>
+                        <tr>
+                            <td>שם</td>
+                            <td>טלפון</td>
+                            <td>מייל</td>
+                        </tr>
+                        <tr>
+                            <td class="pl-sm">
+                                <input type="text" style="width: 100%;" v-model="team.coachHelper.name" v-bind:disabled="inactiveSeason || !team.category">
+                            </td>
+                            <td class="pl-sm">
+                                <input type="text" pattern="(0[0-9]{2}-[0-9]{7}|0[0-9]{1}-[0-9]{7}|0[0-9]{2}[0-9]{7}|0[0-9]{1}[0-9]{7})"
+                                       style="width: 100%;" v-model="team.coachHelper.phoneNumber" v-bind:disabled="inactiveSeason || !team.category">
+                            </td>
+                            <td>
+                                <input pattern="^\S+@\S+$" type="text" style="width: 100%;" v-model="team.coachHelper.email" v-bind:disabled="inactiveSeason || !team.category">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel" v-if="team.active">
+            <div class="panel-header">
+                הצהרה בדבר אולם
+            </div>
+            <div class="panel-body">
+                <div class="pb-sm">
+                    <table>
+                        <tr>
+                            <td class="label required">מתקן</td>
+                            <td class="label required" v-if="team.facility == null || editingFacility">שם</td>
+                            <td class="label required" v-if="team.facility == null || editingFacility">כתובת</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <select v-model="team.facility" style="min-width: 100px;">
+                                    <option v-for="facility in facilities" v-bind:value="facility.id">{{facility.name}}</option>
+                                    <option v-bind:value="null"></option>
+                                </select>
+                            </td>
+                            <td v-if="team.facility == null || editingFacility">
+                                <input type="text" v-model="newFacilityName" required v-bind:disabled="inactiveSeason">
+                            </td>
+                            <td v-if="team.facility == null || editingFacility">
+                                <input type="text" v-model="newFacilityAddress" required v-bind:disabled="inactiveSeason">
+                            </td>
+                            <td>
+                                <button type="button" v-if="team.facility != null && !editingFacility" class="btn" v-on:click="editFacility(true)" v-bind:disabled="inactiveSeason">
+                                    עדכון
+                                </button>
+                                <button type="button" v-if="team.facility != null && editingFacility" class="btn" v-on:click="editFacility(false)" v-bind:disabled="inactiveSeason">
+                                    ביטול
+                                </button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="pb-sm">
+                    <div class="label">שעות פעילות אירוח משחקים</div>
+
+                    <table v-for="(activity, index) in team.activity">
+                        <tr>
+                            <td class="label required">יום</td>
+                            <td class="label required">משעה</td>
+                        </tr>
+                        <tr v-for="act in team.activity">
+                            <td class="pl-sm">
+                                <select required v-model="act.day" v-bind:disabled="!team.category" style="min-width: 60px;" >
+                                    <template v-for="(day, index) in days">
+                                        <option :value=index>{{day}}</option>
+                                    </template>
+                                </select>
+
+                            </td>
+                            <td class="pl-sm">
+                                <select required v-model="act.startTime" v-bind:disabled="!team.category || act.day == null" style="min-width: 80px;">
+                                    <option v-for="hour in startHours" v-bind:value="hour.value">{{hour.text}}</option>
+                                </select>
+                            </td>
+
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="pb-sm" style="display: flex;">
+                    <div>
+                        <div class="label required"> מתקן חלופי</div>
+                        <input required type="text" style="width: 100%;" v-model="team.facilityAlternative.name" v-bind:disabled="inactiveSeason">
+                    </div>
+                    <div class="pr-sm">
+                        <div class="label required">כתובת מתקן חלופי</div>
+                        <input required type="text" style="width: 100%;" v-model="team.facilityAlternative.address" v-bind:disabled="inactiveSeason">
+                    </div>
+                </div>
+
+                <p>
+                    אנו מודיעים בזאת כי אולם המשחקים הרשום מעלה ישמש אותנו במשחקי הבית במסגרת "אליפות בתי הספר התיכוניים" בשנת הלימודים {{seasonName}}. אנו מודעים לכך שאם האולם לא יאושר ע"י הוועדה המארגנת נדאג לאולם חלופי תקני אשר ישמש אותנו באירוח משחקי האליפות.
+                </p>
+                <div>
+                    <input id="chkConfirmFacility" type="checkbox" v-model="confirmationB" v-bind:disabled="inactiveSeason || confirmedAt" />
+                    <label for="chkConfirmFacility">
+                        <span class="label" v-if="!confirmedAt">אישור קריאת ההצהרה</span>
+                        <span class="label" v-if="confirmedAt">
+                            הצהרה אושרה בתאריך
+                            {{confirmedAt | customDate('dd/MM/yyyy')}}
+                            בשעה
+                                {{confirmedAt | customDate('HH:mm')}}
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="panel" v-if="team.active">
+            <div class="panel-header">
+                הצהרה בדבר תלבושת
+            </div>
+            <div class="panel-body">
+                <p>
+
+                    אנו מתחייבים בזאת להופיע למשחקים בשנת הלימודים {{seasonName}}, בתלבושת הספורט שאותה נקבל מכם וכן לשחק בכדור הרשמי של האליפות אשר יסופק לנו על ידכם.
+                    אנו מתחייבים ומודעים לכך שעלינו להופיע במשחקים המשודרים בשידור ישיר בטלוויזיה עם תלבושת הכוללת גופייה, מכנס וגרבי משחק שניתנו לנו על ידכם.
+                    אנו מודעים להנחיות משרד החינוך האוסרות הופעה עם פרסומת מסחרית על גבי התלבושות וננהג על פיהן.
+                </p>
+                <div>
+                    <input id="chkConfirmGames" type="checkbox" v-model="confirmationC" v-bind:disabled="inactiveSeason || confirmedAt" />
+                    <label for="chkConfirmGames">
+                        <span class="label" v-if="!confirmedAt">אישור קריאת ההצהרה</span>
+                        <span class="label" v-if="confirmedAt">
+                            הצהרה אושרה בתאריך
+                            {{confirmedAt | customDate('dd/MM/yyyy')}}
+                            בשעה
+                                {{confirmedAt | customDate('HH:mm')}}
+                        </span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <button type="button" class="btn green float-left" v-on:click="saveAndNext()" v-bind:disabled="!isValid() || !teamDataChanged">
+            אישור והמשך
+        </button>
+    </form>
+</div>

@@ -1,0 +1,307 @@
+<style type="text/css">
+    .section {
+        margin-top: 5px !important;
+    }
+
+    .section_title {
+        margin-bottom: 10px !important;
+    }
+
+    .player-selection {
+        pointer-events: none;
+    }
+
+    .selection-checkbox {
+        pointer-events: auto;
+        width: 15px;
+        height: 15px;
+        font-size: 0px;
+        border: 1px solid #c0c0c0;
+        cursor: pointer;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .selection-checkbox:hover {
+        background-color: #cfcfcf;
+    }
+
+    .selection-checkbox .fa {
+        font-size: 15px;
+    }
+
+    .player-selection:hover {
+        background-color: #e0e0e0;
+    }
+
+    .new-student-panel .row {
+        margin-bottom: 10px;
+    }
+
+    .missing-required-field {
+        color: red;
+        font-size: smaller;
+    }
+</style>
+<div dir="rtl">
+    <div class="section_3" style="margin-top: 5px; margin-right: 10px;">
+        <h3 ng-if="!data.NewStudent || (data.NewStudent && !data.NewStudent.IsEditMode)">
+            רישום שחקנים
+            {{data.ChampionshipFullName}}
+        </h3>
+        <h3 ng-if="data.NewStudent && data.NewStudent.IsEditMode">
+            עריכת פרטי תלמיד קיים
+            <div class="pull-left" style="margin-left: 15px;" ng-show="data.NewStudent.CanDelete">
+                <a href="#" ng-click="deleteStudent()"
+                   class="button button_type_icon_medium button_orange" onclick="return false;">
+                    מחיקת תלמיד מהמערכת
+                    <i class="fa fa-remove"></i>
+                </a>
+            </div>
+        </h3>
+    </div>
+    <div class="modal-body" style="padding-top: 0px;">
+        <input type="text" class="form-control" maxlength="9" ng-model="data.search" placeholder="חיפוש או הוספת תלמיד חדש על ידי הקלדת מספר תעודת זהות (9 ספרות)"  style="margin-bottom: 10px;" ng-show="!data.NewStudent || (data.NewStudent && !data.NewStudent.IsEditMode)"/>
+        <span style="color: red;" ng-show="data.invalidIdNumber">
+            <br />
+מספר זהות לא תקין
+        </span>
+        <span style="color: red;" ng-show="data.alreadyInTeam">
+            <br />
+            {{data.alreadyInTeam.FIRST_NAME}} {{data.alreadyInTeam.LAST_NAME}}
+            כבר בקבוצה
+        </span>
+        <div class="row player-selection" ng-repeat="selectedPlayer in filteredPlayers = (selected.Players | filter: parsedSearchTerm())" style="margin-bottom: 5px;">
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <span ng-if="!selectedPlayer.DifferentSchool">
+                    {{selectedPlayer.Remarks}}
+                </span>
+                <span ng-if="selectedPlayer.DifferentSchool" ng-click="selectedPlayer.DifferentSchool.Show = !selectedPlayer.DifferentSchool.Show"
+                      style="color: red; cursor: pointer; pointer-events: auto; font-size: 15px;">
+                    <span class="glyphicon glyphicon-warning-sign"></span>
+                   בית ספר אחר
+                </span>
+                <span ng-if="selectedPlayer.DifferentSchool.Show">
+                    <br />
+                    סמל מוסד:
+                    {{selectedPlayer.DifferentSchool.Symbol}}
+                    <br />
+                    שם ביה"ס:
+                    {{selectedPlayer.DifferentSchool.Name}}
+                </span>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                {{selectedPlayer.BIRTH_DATE | date : 'dd/MM/yyyy'}}
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                {{selectedPlayer.FIRST_NAME}} {{selectedPlayer.LAST_NAME}}
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-5 col-xs-11">
+                <span class="label label-info">{{selectedPlayer.ID_NUMBER}}</span>
+            </div>
+            <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">
+                <div class="selection-checkbox" ng-click="RemoveSelectedPlayer(selectedPlayer)">
+                    <span class="fa fa-check"></span>
+                </div>
+            </div>
+        </div>
+        <div class="section" style="margin-bottom: 10px;">
+            <h3 class="section_title" ng-if="!data.NewStudent">
+                בחירת שחקנים:
+            </h3>
+            <h3 class="section_title" ng-if="data.NewStudent">
+                <span ng-show="data.NewStudent.IsEditMode">
+                נא למלא את השדות הדרושים
+                </span>
+                <span ng-show="!data.NewStudent.IsEditMode">
+                הוספת תלמיד חדש למערכת
+                </span>
+            </h3>
+            <h3 class="section_title" ng-if="data.EditStudent">
+
+            </h3>
+        </div>
+        <div ng-if="data.NewStudent" class="new-student-panel">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <input type="text" class="form-control" readonly ng-model="data.NewStudent.IdNumber" />
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    מספר ת"ז
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <input type="text" id="txtNewStudentFirstName" class="form-control" ng-model="data.NewStudent.FirstName" maxlength="15" style="direction: rtl;" />
+                    <span class="missing-required-field" ng-show="data.TriedToSubmit && !data.NewStudent.FirstName">
+                        <br />
+                        יש להזין שם פרטי
+                    </span>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <span style="color: red;">*</span>
+                    שם פרטי
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <input type="text" class="form-control" ng-model="data.NewStudent.LastName" maxlength="20" style="direction: rtl;" />
+                    <span class="missing-required-field" ng-show="data.TriedToSubmit && !data.NewStudent.LastName">
+                        <br />
+                        יש להזין שם משפחה
+                    </span>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <span style="color: red;">*</span>
+                    שם משפחה
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <ui-select id="ddlGrades"
+                               ng-model="data.NewStudent.Grade"
+                               theme="bootstrap"
+                               title="בחירת כיתה">
+                        <ui-select-match placeholder="נא לבחור כיתה">{{$select.selected.Name}}</ui-select-match>
+                        <ui-select-choices repeat="grade in data.Grades | filter: $select.search">
+                            <div>{{grade.Name}}</div>
+                        </ui-select-choices>
+                    </ui-select>
+                    <span class="missing-required-field" ng-show="data.TriedToSubmit && (!data.NewStudent.Grade || !data.NewStudent.Grade.Index)">
+                        <br />
+                        יש לבחור כיתה
+                    </span>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <span style="color: red;">*</span>
+                    כיתה
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <input type="date" class="form-control" ng-model="data.NewStudent.Birthday" />
+                    <span class="missing-required-field" ng-show="data.TriedToSubmit && !data.NewStudent.Birthday">
+                        <br />
+                        יש להזין תאריך לידה
+                    </span>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <span style="color: red;">*</span>
+                    תאריך לידה
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <select class="form-control" ng-model="data.NewStudent.Gender">
+                        <option value="1" ng-selected="data.NewStudent.Gender == 1">
+                            זכר
+                        </option>
+                        <option value="2" ng-selected="data.NewStudent.Gender == 2">
+נקבה
+                        </option>
+                    </select>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+מגדר
+                </div>
+            </div>
+        </div>
+        <div class="row player-selection" ng-show="data.doubleRegistration" style="margin-bottom: 5px; background-color: #e0e0ff;">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <span class="glyphicon glyphicon-warning-sign"></span>
+                שחקן רשום בהתאחדות
+                ל{{data.doubleRegistration}},
+                לא ניתן להוסיף לקבוצה
+            </div>
+        </div>
+        <div class="row player-selection" ng-if="data.matchingStudent" style="margin-bottom: 5px; background-color: #e0e0ff;" ng-show="!data.NewStudent">
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <span ng-if="!data.matchingStudent.DifferentSchool">
+                    {{data.matchingStudent.Remarks}}
+                </span>
+                <span ng-if="data.matchingStudent.DifferentSchool" ng-click="data.matchingStudent.DifferentSchool.Show = !data.matchingStudent.DifferentSchool.Show"
+                      style="color: red; cursor: pointer; pointer-events: auto; font-size: 15px;">
+                    <span class="glyphicon glyphicon-warning-sign"></span>
+                   בית ספר אחר
+                </span>
+                <span ng-if="data.matchingStudent.DifferentSchool.Show">
+                    <br />
+                    סמל מוסד:
+                    {{data.matchingStudent.DifferentSchool.Symbol}}
+                    <br />
+                    שם ביה"ס:
+                    {{data.matchingStudent.DifferentSchool.Name}}
+                </span>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                {{data.matchingStudent.BIRTH_DATE | date : 'dd/MM/yyyy'}}
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                {{data.matchingStudent.FIRST_NAME}} {{data.matchingStudent.LAST_NAME}}
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-5 col-xs-11">
+                <span class="label label-info">{{data.matchingStudent.ID_NUMBER}}</span>
+            </div>
+            <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">
+                <div class="selection-checkbox" ng-click="SelectPlayer(data.matchingStudent)"> </div>
+            </div>
+        </div>
+        <div class="row player-selection" ng-repeat="availablePlayer in data.AvailablePlayers" style="margin-bottom: 5px;" ng-show="!data.NewStudent">
+            <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                {{availablePlayer.Remarks}}
+            </div>
+            <div class="col-lg-1 col-md-1 col-sm-6 col-xs-12">
+                {{availablePlayer.ParsedGrade}}
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                {{availablePlayer.BIRTH_DATE | date : 'dd/MM/yyyy'}}
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                {{availablePlayer.FIRST_NAME}} {{availablePlayer.LAST_NAME}}
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-5 col-xs-11">
+                <span class="label label-info">{{availablePlayer.ID_NUMBER}}</span>
+            </div>
+            <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">
+                <div class="selection-checkbox" ng-click="SelectPlayer(availablePlayer)"> </div>
+            </div>
+        </div>
+        <div class="pagination_block var2" ng-if="pagingService.pagingData && pagingService.pagingData.gotPaging" style="margin-top: 15px; float: right;">
+                <span>
+                    עמוד
+                    {{pagingService.pagingData.selectedPage}}
+                    מתוך
+                    {{pagingService.pagingData.pageCount}}
+                </span>
+            <ul class="pagination clearfix" style="margin-top: 0px;">
+                <li><a href="#" ng-click="pagingService.previousPage()" class="{{(pagingService.pagingData.isFirstPage) ? 'disabled-link' : ''}}" onclick="return false;"><i class="fa fa-angle-right"></i></a></li>
+                <li ng-repeat="page in pagingService.pagingData.pages"><a href="#" class="{{(page == pagingService.pagingData.selectedPage) ? 'active' : ''}}" ng-click="pagingService.changePage(page)" onclick="return false;">{{page}}</a></li>
+                <li><a href="#" ng-click="pagingService.nextPage()" class="{{(pagingService.pagingData.isLastPage) ? 'disabled-link' : ''}}" onclick="return false;"><i class="fa fa-angle-left"></i></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="pull-left">
+                    <button class="button button_grey_light" ng-click="cancel()">
+                        ביטול
+                    </button>
+                    <button class="button button_grey" ng-click="confirm()">
+                        <span ng-show="!data.NewStudent">
+רישום שחקנים נבחרים
+                        </span>
+                        <span ng-if="data.NewStudent">
+                            <span ng-show="data.NewStudent.IsEditMode">
+                                שמירת פרטים מעודכנים
+                            </span>
+                            <span ng-show="!data.NewStudent.IsEditMode">
+אישור והוספת תלמיד למערכת
+                            </span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

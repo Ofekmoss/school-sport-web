@@ -1,0 +1,43 @@
+<div class="wide-container" ng-if="Unauthorized">
+    <div class="alert alert-danger" role="alert">
+עמוד זה דורש הרשאות ניהול
+    </div>
+</div>
+
+<div class="wide-container" ng-if="!Unauthorized">
+    <manage-breadcrumbs description="מחנות אימון"></manage-breadcrumbs>
+    <manage-tabs sender="upya-manage"></manage-tabs>
+    <div class="alert alert-error" ng-show="error">
+        שגיאה בעת  טעינת נתונים
+    </div>
+    <div class="content" ng-show="!error">
+        <table class="table_type_1 report-table">
+            <tr class="f_size_large">
+                <th style="position: relative; padding-left: 25px; padding-right: 25px;">
+                    זיהוי מחנה אימון
+                </th>
+                <th style="position: relative; padding-left: 25px; padding-right: 25px;">
+                    שם מחנה האימון
+                </th>
+                <th style="position: relative; padding-left: 25px; padding-right: 25px;">
+                    מצב הופעה באתר
+                </th>
+            </tr>
+            <tr ng-repeat="practiceCamp in data.availableCamps">
+                <td>
+                    {{practiceCamp.PRACTICE_CAMP_ID}}
+                </td>
+                <td>
+                    {{practiceCamp.Name}}
+                </td>
+                <td>
+                    <a href="#" class="{{practiceCamp.StateClass}}" onclick="return false;"
+                       ng-click="ToggleState(practiceCamp)"
+                       title="{{practiceCamp.Tooltip}}">
+                        <i class="{{practiceCamp.IconClass}}"></i>
+                    </a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

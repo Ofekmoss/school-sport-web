@@ -1,0 +1,44 @@
+<style type="text/css">
+    .section {
+        margin-top: 10px !important;
+    }
+
+    .modal-dialog {
+        width: 1200px !important;
+    }
+</style>
+<div dir="rtl">
+    <div class="section_3" style="margin-top: 5px; margin-right: 10px;">
+        <h2>
+בחירת תמונה ממוזערת -
+            {{title}}
+            <div class="pull-left" style="margin-left: 15px;" ng-show="existingImages && existingImages.length > 0">
+                <button class="button button_grey" ng-click="changePicture()">
+                    שינוי תמונה
+                </button>
+            </div>
+        </h2>
+    </div>
+    <div class="modal-body">
+        <div class="row" style="margin-bottom: 10px;">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <iframe id="CropperFrame" src="cropper/demo/index.html" frameborder="0" style="border: none; width: 1170px; height: 540px;"></iframe>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="pull-left">
+                    <button class="btn btn-warning" ng-click="cancel()">
+                        ביטול
+                    </button>
+                    <button class="button button_grey" ng-click="confirm()" ng-disabled="loading">
+                        שמירת תמונה ממוזערת
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

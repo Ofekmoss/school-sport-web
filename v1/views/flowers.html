@@ -1,0 +1,161 @@
+<div class="alert alert-error" ng-show="error">
+    שגיאה בעת  טעינת נתונים
+</div>
+<div class="wide-container" ng-show="!error">
+    <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+            &nbsp;
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="text-align: center;">
+            <img src="images/logo_sport_flowers.png" style="height: 140px;" />
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+            <div style="margin-top: 60px;">
+                <a href="https://www.schoolsport.co.il" class="button button_type_icon_medium button_orange">
+                    כניסה למערכת פרחי ספורט
+                    <i class="fa fa-globe"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 10px;">
+        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+            <div class="section" style="border: 1px solid #00ada7; padding: 5px; overflow: hidden; height: 455px;">
+                <div class="tabs variation_2" style="border-top: none;">
+                    <!--tabs navigation-->
+                    <div class="clearfix">
+                        <h2 class="section_title">
+                            <a ui-sref="events">
+                                אירועים
+                            </a>
+                        </h2>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <div class="row" ng-repeat="event in upcomingEvents| limitTo:5" style="height: 85px; overflow: hidden;">
+                            <div class="col-lg-10 col-md-10 col-sm-10 col-xs-8">
+                                <div class="clearfix caption_inner" style="background-color: transparent;">
+                                    <h3 style="{{($index == 0) ? 'margin-top: -10px; width: 120%;' : 'margin-top: -20px; width: 120%;'}}">
+                                        {{event.Name}}
+                                    </h3>
+                                    <p style="font-size: 15px;">{{event.Details}}</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">
+                                <div class="clearfix" style="{{getEventDateStyle(event, $index)}}" ng-click="GoToEvent(event)" title="{{event.Date | date : 'dd/MM/yyyy'}}">
+                                    <div style="font-size: 30px; text-align: center;">
+                                        {{event.Date | date : 'dd'}}
+                                    </div>
+                                    <div style="font-size: 15px; text-align: center;">
+                                        {{event.MonthName}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+            <div class="row">
+                <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                    <div class="section" style="border: 1px solid #00ada7; padding: 5px; overflow-x: hidden; overflow-y: auto; height: 455px;">
+                        <div style="border-top: none;">
+                            <div class="clearfix">
+                                <h2 class="section_title" style="color: #337ab7; border-top: none;">
+                                        קבצים
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="alert alert-danger" role="alert" ng-show="attachmentsLoadingError">
+                            שגיאה בעת טעינת נתונים
+                        </div>
+                        <div ng-show="!attachmentsLoadingError">
+                            <table class="table_type_1">
+                                <tr class="f_size_large">
+                                    <th style="width: 5%;">#</th>
+                                    <th>תיאור</th>
+                                    <th>סוג קובץ</th>
+                                    <th>תאריך העלאה</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                                <tr ng-repeat="attachment in attachments" ng-show="attachment.Description && attachment.Description.length > 0">
+                                    <td>{{$index + 1}}</td>
+                                    <td>{{attachment.Description}}</td>
+                                    <td>{{attachment.FileType}}</td>
+                                    <td>{{attachment.DateUploaded | date : 'dd/MM/yyyy'}}</td>
+                                    <td>
+                                        <a class="button button_grey button_type_icon_small" style="width: 80px; text-align: center; font-weight: bold;"
+                                           href="/content/flowers-attachment/{{attachment.FileName}}" target="_blank">
+                                            הורדה
+                                            <i class="fa fa-download"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                    <div class="section" style="border: 1px solid #00ada7; padding: 5px; overflow-x: hidden; overflow-y: scroll; height: 455px;">
+                        <div style="border-top: none;">
+                            <div class="clearfix">
+                                <h2 class="section_title" style="color: #337ab7; border-top: none;">
+                                    הודעות חשובות
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="alert alert-danger" role="alert" ng-show="messageLoadingError">
+                            שגיאה בעת טעינת נתונים
+                        </div>
+                        <div ng-show="!messageLoadingError">
+                            <div ng-repeat="message in messages">
+                                <div style="font-weight: bold;">
+                                    {{message.Contents}}
+                                </div>
+                                <div>
+                                    {{message.DateCreated | date : 'dd/MM/yyyy'}}
+                                </div>
+                                <div ng-show="$index < (messages.length - 1)" style="background-color: #c0c0c0; height: 1px; font-size: 0px; margin-top: 10px; margin-bottom: 10px;">
+                                    &nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 10px;">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="section" style="border: 1px solid #00ada7; padding: 5px; overflow: hidden; height: 320px;">
+                <div style="border-top: none;">
+                    <div class="clearfix">
+                        <h2 class="section_title" style="color: #337ab7; border-top: none;">
+                            כתבות, גלריות, ספריית VOD
+                        </h2>
+                    </div>
+                </div>
+                <div class="row" style="padding-right: 20px;">
+                    <owl-carousel loop="3" id="contentCarousel" data-auto-slide-seconds="{{contentAutoSlideInterval}}">
+                        <owl-item ng-repeat="page in recentContent">
+                            <div class="scale_image_container article_thumbnail">
+                                <a href="#/page/{{page.Seq}}"><img ng-src="{{page.CroppedImage_Slider}}" alt="" class="scale_image"></a>
+                                <div class="caption_type_1">
+                                    <div class="caption_inner">
+                                        <div class="clearfix">
+                                            <a href="#/page/{{page.Seq}}" class="{{page.BannerButtonClass}}">
+                                                {{page.HebrewType}}
+                                            </a>
+                                            <div class="event_date">{{page.Date | date : 'dd/MM/yyyy'}}</div>
+                                        </div>
+                                        <a href="#/page/{{page.Seq}}"><h3>{{page.Description}}</h3></a>
+                                        <p ng-bind-html="page.ShortSubCaption"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </owl-item>
+                    </owl-carousel>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

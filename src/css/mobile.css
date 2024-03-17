@@ -1,0 +1,292 @@
+#wrapper_container_mobile {
+    height: 65px;
+    vertical-align: middle;
+    background-color: #fff;
+    position: fixed;
+    width: 100%;
+    top: 0px;
+    z-index: 1;
+    -webkit-transform: translate3d(0,0,0);
+}
+
+.mobile-top-header-main-item {
+    line-height: 65px;
+    position: absolute;
+}
+
+.mobile-top-header-main-item label, .mobile-top-header-main-item input, .mobile-top-header-main-item li {
+    line-height: 20px;
+}
+
+.mobile-top-header-main-item label, .mobile-top-header-main-item input {
+    margin-bottom: 10px;
+}
+
+.mobile-top-header-button {
+    font-size: 30px;
+}
+
+.mobile-top-header-button, .mobile-top-header-button:hover, .mobile-top-header-button:active, .mobile-top-header-button:visited {
+    color: black;
+}
+
+#mobile_login_panel {
+    left: 10px;
+}
+
+#mobile_register_panel {
+    left: 45px;
+}
+
+#mobile_menu_panel {
+    right: 10px;
+}
+
+#mobile_logo_panel {
+    right: 45px;
+}
+
+#mobile_logo_panel img {
+    height: 65px;
+}
+
+#mobile_menu_panel .mobile-open-button {
+    font-size: 35px;
+    cursor: pointer;
+    color: #383e44;
+}
+
+#mobile_contents_panel {
+    margin-top: 75px;
+}
+
+#LoginForm_Mobile {
+    background-color: #fff;
+    position: absolute;
+    left: 0px;
+    padding: 10px 10px 10px 10px;
+    top: 60px;
+    z-index: 1;
+    width: 100%;
+}
+
+#LoginForm_Mobile input {
+    height: 35px;
+}
+
+.mobile-featured-page {
+    position: relative;
+    margin-top: 10px;
+}
+
+.mobile-featured-page img {
+    width: 100%;
+    opacity: 0.9;
+}
+
+.mobile-featured-caption {
+    position: absolute;
+    bottom: 20px;
+    left: 0px;
+    height: 20px;
+    width: 100%;
+    line-height: 20px;
+    vertical-align: middle;
+    padding-left: 5px;
+    padding-right: 5px;
+    z-index: 1;
+}
+
+.mobile-featured-caption, .mobile-featured-caption a, .mobile-featured-caption a:active, .mobile-featured-caption a:visited {
+    color: #fff;
+    font-size: 30px;
+}
+
+.mobile-more-pages {
+    text-align: left;
+    margin-top: 5px;
+}
+
+.mobile-wide-button, .mobile-wide-button-half, .mobile-wide-button-third {
+    text-align: center;
+    margin-top: 10px;
+    height: 60px;
+    line-height: 60px;
+    vertical-align: middle;
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.mobile-wide-button {
+    width: 100%;
+}
+
+.mobile-wide-button-half, .mobile-wide-button-third {
+    position: absolute;
+}
+
+.mobile-wide-button-half {
+    width: 45%;
+}
+
+.mobile-wide-button-third {
+    width: 30%;
+}
+
+.mobile-blue-button {
+    background-color: #22a7f0;
+}
+
+.mobile-sport-field-categories-panel {
+    position: relative;
+    background-color: #98bfe3ff;
+}
+
+.mobile-region-panel {
+    background-color: #98bfe3ff;
+}
+
+.mobile-region-selected {
+    background-color: #56799cff;
+}
+
+.mobile-sport-field-category-list {
+    display: none;
+}
+
+.mobile-sport-field-category-filter-panel {
+    background-color: #56799cff;
+}
+
+.mobile-category-grade-and-gender-panel {
+    background-color: #22a7f0ff;
+}
+
+.mobile-category-grade-and-gender-panel>span {
+    position: absolute;
+}
+
+.mobile-permanent-championships-categories-list, .mobile-central-region-championships-list, .mobile-club-championships-placeholder, .mobile-regional-championships-placeholder {
+    position: relative;
+    display: none;
+}
+
+.mobile-club-championships-list, .mobile-regional-championships-list {
+    position: absolute;
+}
+
+.mobile-sport-field-categories-panel>span {
+    position: absolute;
+}
+
+.mobile-category-panel-sport-field-name {
+    right: 50px;
+}
+
+.mobile-category-panel-sport-field-icon {
+    left: 50px;
+}
+
+.mobile-category-grades-panel {
+    right: 20px;
+}
+
+.mobile-category-gender-panel {
+    left: 20px;
+}
+
+.mobile-category-grades-panel-small {
+    right: 5px;
+}
+
+.mobile-category-gender-panel-small {
+    left: 5px;
+}
+
+.mobile-championship-name {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 100%;
+    padding-right: 5px;
+    padding-left: 5px;
+    font-size: 25px;
+    height: 25px;
+    line-height: 25px;
+    vertical-align: middle;
+}
+
+.mobile-championships-container {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+}
+
+.sport-field-name-small-font {
+    font-size: 20px;
+}
+
+.mobile-link-panel {
+    left: 0px;
+    width: 100%;
+    text-align: center;
+}
+
+#mobileGamePlansPlaceholder, #mobileMoreLinksPlaceholder {
+    display: none;
+}
+
+.mobile-image-slider {
+    margin-top: 10px;
+    padding: 5px 5px 5px 5px;
+}
+
+#pnlMobileFooterSocialIcons {
+    margin-top: 10px;
+}
+
+#pnlMobileFooterSocialIcons .mobile-social-icon {
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    vertical-align: middle;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 5px;
+    text-align: center;
+}
+
+#pnlMobileFooterSocialIcons .mobile-social-icon a, #pnlMobileFooterSocialIcons .mobile-social-icon a:active, #pnlMobileFooterSocialIcons .mobile-social-icon a:visited {
+    color: white;
+    font-size: 35px;
+}
+
+#pnlMobileFooterSocialIcons .facebook {
+    background-color: #3b5998;
+    border-color: #3b5998;
+}
+
+#pnlMobileFooterSocialIcons .instagram {
+    background-color: #835e42;
+    border-color: #835e42;
+
+}
+
+#pnlMobileFooterSocialIcons .youtube {
+    background-color: #ff3132;
+    border-color: #ff3132;
+}
+
+#pnlMobileFooterContactUs, #pnlMobileFooterContactForm {
+    padding-right: 10px;
+    padding-left: 10px;
+    line-height: 30px;
+}
+
+#pnlMobileFooterContactForm {
+    margin-top: 10px;
+}

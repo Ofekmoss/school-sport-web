@@ -1,0 +1,144 @@
+@import "colors";
+
+@step-size: 42px;
+@step-mark-size: 18px;
+@step-bar-size: 7px;
+
+.step-progress {
+  position: relative;
+  width: 60%;
+  height: @step-size;
+  right: 20%;
+  margin-top: 12px;
+  margin-bottom: 64px;
+  z-index: 900;
+  padding-bottom: 15px;
+}
+
+.step-bar {
+  position: absolute;
+  background-color: @primary-light-color;
+  height: @step-bar-size;
+  top: (@step-size - @step-bar-size) / 2;
+  left: 0;
+  right: 0;
+}
+
+.p1-5 {
+  position: absolute;
+}
+
+.p2-5 {
+  position: absolute;
+  right: 25%;
+}
+
+.p3-5 {
+  position: absolute;
+  right: 50%;
+}
+
+.p4-5 {
+  position: absolute;
+  right: 75%;
+}
+
+.p5-5 {
+  position: absolute;
+  right: 100%;
+}
+
+.p1-4 {
+  position: absolute;
+}
+
+.p2-4 {
+  position: absolute;
+  right: 30%;
+}
+
+.p3-4 {
+  position: absolute;
+  left: 30%;
+}
+
+.p4-4 {
+  position: absolute;
+  left: 0%;
+}
+
+.p1-3 {
+  position: absolute;
+}
+
+.p2-3 {
+  position: absolute;
+  right: 45%;
+}
+
+.p3-3 {
+  position: absolute;
+  left: 0%;
+}
+
+.p1-2 {
+  position: absolute;
+}
+
+.p2-2 {
+  position: absolute;
+  left: 0%;
+}
+
+.step-mark {
+  position: absolute;
+  width: @step-size;
+  height: @step-size;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  border: 2px solid transparent;
+}
+
+.step-mark.enabled {
+  border: 2px solid @primary-light-color;
+  background-color: #fff;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+}
+
+.step-mark::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: @step-mark-size;
+  height: @step-mark-size;
+  border: 2px solid @primary-light-color;
+  background-color: #fff;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+}
+
+.step-mark.active::after {
+  background-color: @primary-light-color;
+}
+
+.step-mark > * {
+  position: absolute;
+  top: 100%;
+  left: -20px;
+  right: -20px;
+  padding-top: 4px;
+  color: #a2a2a2;
+  text-align: center;
+}
+
+.step-mark.enabled > * {
+  color: @primary-light-color;
+}
+

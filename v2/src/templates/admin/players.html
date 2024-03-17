@@ -1,0 +1,48 @@
+<div class="panel p-sm"  style="width: auto; position: absolute; left: 39px; right: 39px; top: 13px; bottom: 0px;">
+    <data-table v-bind:enableExport="true" v-bind:title="'שחקנים'" v-bind:columns="columns" v-bind:data="players" v-on:selection-change="handleSelectionChange()">
+        <div>
+            <label>עונה</label>
+            <select  style="width: 100%;" v-model="season">
+                <option v-for="season in seasons" v-bind:value="season.Id">{{season.Name}}</option>
+            </select>
+        </div>
+        <div>
+            <label>ענף ספורט</label>
+            <select  style="width: 100%;" v-model="sport">
+                <option value="">כל ענפי הספורט</option>
+                <option v-for="sport in sports" v-bind:value="sport.id">{{sport.name}}</option>
+            </select>
+        </div>
+        <div>
+            <label>סוג אליפות</label>
+            <select  style="width: 100%;" v-model="competitionType">
+                <option value="">הכל</option>
+                <option value="1">מועדונים</option>
+                <option value="2">ליגות תיכוניים</option>
+            </select>
+        </div>
+        <div>
+            <label>מחוז</label>
+            <select  style="width: 100%;" v-model="region">
+                <option value="">כל המחוזות</option>
+                <option v-for="region in regions" v-bind:value="region.id">{{region.name}}</option>
+            </select>
+        </div>
+        <div>
+            <label>אליפות</label>
+            <select style="width: 100%;" v-model="championship">
+                <option value="">כל האליפויות</option>
+                <option v-for="championship in filteredChampionships" v-bind:value="championship.id">{{championship.name + (region || !championship.region || championship.region.id == 0 ? "" : " (" + championship.region.name + ")")}}</option>
+            </select>
+        </div>
+
+        <div>
+            <label>סטטוס</label>
+            <div class="btn-group">
+                <button class="btn-link small" v-bind:disabled="selectedPlayers.length == 0" v-bind:class="{active: selectedStatus == 1}" v-on:click="changeStatus(1)">רשום</button>
+                <button class="btn-link small" v-bind:disabled="selectedPlayers.length == 0" v-bind:class="{active: selectedStatus == 2}" v-on:click="changeStatus(2)">אושר</button>
+                <button class="btn-link small" v-bind:disabled="selectedPlayers.length == 0" v-bind:class="{active: selectedStatus == 3}" v-on:click="changeStatus(3)">לא אושר</button>
+            </div>
+        </div>
+    </data-table>
+</div>

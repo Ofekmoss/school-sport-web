@@ -1,0 +1,24 @@
+<div class="vertical-flex" style="position: absolute; left: 0px; right: 0px;">
+    <div class="ph-lg pt-lg">
+        <div class="float-right">
+            <strong>
+                אישור מפקח
+            </strong>
+        </div>
+        <div class="float-left">
+            <strong>
+                מפקח            </strong>
+            <strong style="color: blue; cursor: pointer" v-on:click="logout()">
+                התנתק
+            </strong>
+        </div>
+    </div>
+
+    <div class="flex-fill ph-lg pv-sm">
+        <div class="panel p-sm">
+            <data-table v-bind:enableExport="true" v-bind:columns="columns" v-bind:data="teams" v-on:selection-change="handleSelectionChange()">
+            </data-table>
+        </div>
+    </div>
+
+</div>

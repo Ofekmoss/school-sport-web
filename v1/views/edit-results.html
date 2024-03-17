@@ -1,0 +1,465 @@
+<style type="text/css">
+    .sport_field_rectangle, .championship_rectangle, .category_rectangle {
+        float: right;
+        margin-right: 10px;
+        margin-bottom: 5px;
+        overflow: hidden;
+    }
+
+    .sport_field_rectangle {
+        width: 120px;
+        line-height: 46px;
+        vertical-align: middle;
+    }
+
+    .championship_rectangle {
+        width: 130px;
+    }
+
+    .category_rectangle {
+        width: 170px;
+        line-height: 46px;
+        vertical-align: middle;
+    }
+
+    .panel-default > .panel-heading {
+        color: #333;
+        background-color: #f5f5f5;
+        border-color: #ddd;
+    }
+
+    .table_type_1 tr th {
+        width: auto;
+    }
+    .team-name {
+        white-space: nowrap;
+        display: inline-block;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .section {
+        margin-top: 25px !important;
+    }
+
+    .score-container {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .team-score {
+        font-size: 35px;
+        display: inline-block;
+        width: 80px;
+        height: 70px;
+        text-align: center;
+        line-height: 70px;
+        padding-top: 0px;
+        /* padding-right: 10px; */
+    }
+
+    .pending-score {
+        color: #000000 !important;
+        border: 1px dashed black;
+    }
+
+    .match-row {
+        margin-left: auto !important;
+    }
+
+    .match-row .glyphicon-edit {
+        font-size: 22px;
+        margin-top: 30px;
+        cursor: pointer;
+    }
+
+    .phase-row:hover {
+        background-color: #5bc0de;
+    }
+
+    .match-row .common_rounded_rectangle {
+        border-color: #00ada7;
+        width: 100px;
+        height: 100px;
+        padding-top: 7px !important;
+        padding-bottom: 7px !important;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .match-row .common_rounded_rectangle:hover {
+        background-color: rgba(0, 173, 167, 0.6);
+    }
+
+    .pending-score-actions {
+        width: 100px;
+    }
+
+    .approve-pending-score, .reject-pending-score {
+        font-size: 25px !important;
+        padding: 3px 3px 3px 3px !important;
+        margin-left: 5px;
+        margin-right: 5px;
+        cursor: pointer;
+        margin-bottom: 5px;
+    }
+
+    .approve-pending-score:hover, .reject-pending-score:hover {
+        color: #ffffff !important;
+    }
+
+    .approve-pending-score {
+        float: left;
+        color: #3DCC00 !important;
+    }
+
+    /*
+    .approve-pending-score:hover {
+        color: #4CFF00;
+    }
+    */
+
+    .reject-pending-score {
+        float: right;
+        color: #DD5A5A !important;
+    }
+
+    /*
+    .reject-pending-score:hover {
+        color: #FF6868;
+    }
+    */
+
+    .winner-team {
+        background-color: #8ADD5A !important;
+    }
+
+    .loser-team {
+        background-color: #DB7F7F !important;
+    }
+
+    .technical-win {
+        border: 1px dashed black;
+        padding: 2px 2px 2px 2px;
+        font-weight: bold;
+        margin-top: 5px;
+        display: inline-block;
+    }
+
+    .part-score {
+        position: absolute;
+        top: 0px;
+        width: 20px;
+        height: 70px;
+        font-size: 14px;
+        line-height: 15px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .part-score-b {
+        right: 60px;
+    }
+
+    .part-score-a {
+        left: 60px;
+    }
+
+    .part-score div {
+        height: 15px;
+        width: 20px;
+        padding: 0;
+    }
+</style>
+<div class="wide-container" ng-if="error">
+    <div class="alert alert-danger" role="alert">
+        {{error}}
+    </div>
+</div>
+
+<div class="wide-container" ng-if="!error">
+    <manage-breadcrumbs description="הזנת תוצאות משחקים"></manage-breadcrumbs>
+    <manage-tabs sender="edit-results"></manage-tabs>
+    <div class="content">
+        <div ng-if="Unauthorized">
+            <div>
+                <label for="txtDummyUserName">שם משתמש</label><br>
+                <input type="text" class="auto-click" data-button-id="btnDummyLogin" id="txtDummyUserName" />
+            </div>
+            <div style="margin-top: 15px;">
+                <label for="txtDummyPassword">סיסמא</label><br>
+                <input type="password" class="auto-click" data-button-id="btnDummyLogin" id="txtDummyPassword" />
+            </div>
+            <div style="margin-top: 15px;">
+                <a id="btnDummyLogin" href="#" class="button button_grey" onclick="return false;">
+                    התחברות
+                </a>
+            </div>
+            <div id="pnlLoginError" class="alert alert-danger" role="alert" style="display: none; margin-top: 15px;"></div>
+        </div>
+        <div ng-show="loading">
+            מערכת טוענת נתונים, נא להמתין...
+        </div>
+        <div ng-show="!loading && !Unauthorized">
+            <div class="row" ng-show="totalChampionshipsCount() == 0"  style="margin-top: 15px; padding-bottom: 15px;">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+לא נמצאו משחקים מתאימים
+                    <span ng-show="currentSeason && currentSeason.Name">
+                        לעונת
+                        {{currentSeason.Name}}
+                    </span>
+                </div>
+            </div>
+            <div class="row" ng-show="totalChampionshipsCount() > 0">
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="section" ng-if="data.Regions.length > 0">
+                            <h3 class="section_title">
+                                <span ng-show="data.Regions.length > 1">
+                                    בחירת
+                                </span>
+ מחוז:
+                            </h3>
+                            <div class="championship-item-panel" ng-repeat="region in data.Regions">
+                                <div class="{{getRoundedRectangleClass(region, 'category_rectangle')}}" ng-click="RegionClicked(region)"
+                                     change-background colorcode="{{getRegionColor(region.REGION_ID)}}" selected="{{region.Selected}}"
+                                     style="{{getRegionFilterStyle(region)}}">
+                                    <span ng-show="region.REGION_ID > 0">
+                                        {{region.REGION_NAME}}
+                                    </span>
+                                    <span ng-show="region.REGION_ID == 0">
+                                        ארציות
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" ng-if="selected.Region != null">
+                    <!-- mobile view -->
+                    <div class="hidden-lg hidden-md col-sm-12 col-xs-12">
+                        <div class="section">
+                            <h3 class="section_title">
+                                <span ng-show="data.SportFields.length > 1">
+                                    בחירת
+                                </span>
+                                ענף ספורט:
+                            </h3>
+                        </div>
+                        <div class="championship-item-panel" ng-repeat="sportField in data.SportFields" style="padding-right: 0px;">
+                            <div class="{{getRoundedRectangleClass(sportField, 'sport_field_rectangle')}}" ng-click="SportFieldClicked(sportField)"
+                                 change-background colorcode="{{getSportFieldColor(sportField.SPORT_ID)}}" selected="{{sportField.Selected}}"
+                                 style="{{getSportFieldFilterStyle(sportField)}}">
+                                {{sportField.SPORT_NAME}}
+                            </div>
+                            </br>
+                        </div>
+                    </div>
+                    <div class="hidden-lg hidden-md col-sm-12 col-xs-12">
+                        <div class="section" ng-show="data.Championships.length > 0">
+                            <h3 class="section_title">
+                                <span ng-show="data.Championships.length > 1">
+                                    בחירת
+                                </span>
+                                אליפות:
+                            </h3>
+                            <div style="margin-bottom: 10px;">
+                                <div class="championship-item-panel" ng-repeat="championship in data.Championships" style="padding-right: 0px;">
+                                    <div class="{{getRoundedRectangleClass(championship, 'championship_rectangle')}}" ng-click="ChampionshipClicked(championship)"
+                                         change-background colorcode="{{getSportFieldColor(championship.SPORT_ID)}}" selected="{{championship.Selected}}"
+                                         style="{{getSportFieldFilterStyle(championship)}}">
+                                        {{championship.CHAMPIONSHIP_NAME}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden-lg hidden-md col-sm-12 col-xs-12">
+                        <div class="section" ng-show="data.Categories.length > 0">
+                            <h3 class="section_title">
+                                <span ng-show="data.Categories.length > 1">
+                                    בחירת
+                                </span>
+                                קטגוריית  אליפות:
+                                <span ng-show="selected.Category">
+                                    <a href="/sport/#/edit-results?v={{selected.Category.CHAMPIONSHIP_CATEGORY_ID}}" title="קישור קבוע לאליפות זו"><img src="images/permalink.png" style="width: 18px;" /></a>
+                                </span>
+                            </h3>
+                            <div style="margin-bottom: 10px;">
+                                <div class="championship-item-panel" ng-repeat="category in data.Categories" style="padding-right: 0px;">
+                                    <div class="{{getRoundedRectangleClass(category, 'category_rectangle')}}" ng-click="CategoryClicked(category)"
+                                         change-background colorcode="{{getSportFieldColor(category.SPORT_ID)}}" selected="{{category.Selected}}"
+                                         style="{{getSportFieldFilterStyle(category)}}">
+                                        {{category.CATEGORY_NAME}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- full view -->
+                    <div class="col-lg-4 col-md-4 hidden-sm hidden-xs">
+                        <div class="section" ng-show="data.Categories.length > 0">
+                            <h3 class="section_title">
+                                <span ng-show="data.Categories.length > 1">
+                                    בחירת
+                                </span>
+ קטגוריית  אליפות:
+                                <span ng-show="selected.Category">
+                                    <a href="/sport/#/edit-results?v={{selected.Category.CHAMPIONSHIP_CATEGORY_ID}}" title="קישור קבוע לאליפות זו"><img src="images/permalink.png" style="width: 18px;" /></a>
+                                </span>
+                            </h3>
+                            <div style="margin-bottom: 10px;">
+                                <div class="championship-item-panel" ng-repeat="category in data.Categories" style="padding-right: 0px;">
+                                    <div class="{{getRoundedRectangleClass(category, 'category_rectangle')}}" ng-click="CategoryClicked(category)"
+                                         change-background colorcode="{{getSportFieldColor(category.SPORT_ID)}}" selected="{{category.Selected}}"
+                                         style="{{getSportFieldFilterStyle(category)}}">
+                                        {{category.CATEGORY_NAME}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 hidden-sm hidden-xs">
+                        <div class="section" ng-show="data.Championships.length > 0">
+                            <h3 class="section_title">
+                                <span ng-show="data.Championships.length > 1">
+                                    בחירת
+                                </span>
+ אליפות:
+                            </h3>
+                            <div style="margin-bottom: 10px;">
+                                <div class="championship-item-panel" ng-repeat="championship in data.Championships" style="padding-right: 0px;">
+                                    <div class="{{getRoundedRectangleClass(championship, 'championship_rectangle')}}" ng-click="ChampionshipClicked(championship)"
+                                         change-background colorcode="{{getSportFieldColor(championship.SPORT_ID)}}" selected="{{championship.Selected}}"
+                                         style="{{getSportFieldFilterStyle(championship)}}">
+                                        {{championship.CHAMPIONSHIP_NAME}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 hidden-sm hidden-xs">
+                        <div class="section">
+                            <h3 class="section_title">
+                                <span ng-show="data.SportFields.length > 1">
+                                    בחירת
+                                </span>
+                                 ענף ספורט:
+                            </h3>
+                        </div>
+                        <div class="championship-item-panel" ng-repeat="sportField in data.SportFields" style="padding-right: 0px;">
+                            <div class="{{getRoundedRectangleClass(sportField, 'sport_field_rectangle')}}" ng-click="SportFieldClicked(sportField)"
+                                 change-background colorcode="{{getSportFieldColor(sportField.SPORT_ID)}}" selected="{{sportField.Selected}}"
+                                 style="{{getSportFieldFilterStyle(sportField)}}">
+                                {{sportField.SPORT_NAME}}
+                            </div>
+                            </br>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 15px; margin-bottom: 30px;">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="phase-row" ng-repeat="phase in data.Phases" style="margin-bottom: 10px;">
+                            <div class="section" style="{{(phase.Expanded) ? 'background-color: #5bc0de;' : ''}}">
+                                <h3 style="cursor: pointer;" ng-click="PhaseClicked(phase)">
+                                    {{phase.Name}}
+                                    <span class="plus-icon">
+                                        <span ng-if="!phase.Expanded">+</span>
+                                        <span ng-if="phase.Expanded">-</span>
+                                    </span>
+                                </h3>
+                            </div>
+                            <div style="display: none;" class="phase-contents" data-phase-index="{{phase.Index}}">
+                                <div class="row match-row alternating-colors" ng-repeat="match in phase.Matches | orderBy:'-TIME'" data-colors="#e0e0e0,#c0c0c0">
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <div class="row">
+                                            <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                                                <div ng-show="match.UploadedFileUrl">
+                                                    <a ng-href="{{match.UploadedFileUrl}}" target="_blank">
+                                                         טופס משחק
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                                                <div class="common_rounded_rectangle transparent_rounded_rectangle" ng-click="editScore(match)" style="{{MobileStyle('cursor: pointer;', 'margin-right: 33%;')}}">
+                                                    <span class="glyphicon glyphicon-edit" style="{{getEditIconStyle(match)}}"></span>
+                                                    <br />
+                                                    <span ng-show="HasPendingScore(match) || (match.TEAM_A_SCORE != null && match.TEAM_B_SCORE != null)">
+                                                        עריכת תוצאה
+                                                    </span>
+                                                    <span ng-hide="HasPendingScore(match) || (match.TEAM_A_SCORE != null && match.TEAM_B_SCORE != null)">
+                                                        הזנת תוצאה
+                                                    </span>
+                                                </div>
+                                                <div class="pending-score-actions" ng-if="LoggedInUser.role == 1" ng-show="HasPendingScore(match)">
+                                                    <span class="button button_type_icon_small icon button_grey_light glyphicon glyphicon-ok approve-pending-score" ng-click="approvePendingScore(match)"></span>
+                                                    <span class="button button_type_icon_small icon button_grey_light glyphicon glyphicon-remove reject-pending-score" ng-click="rejectPendingScore(match)"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" style="text-align: center;">
+                                                <span class="team-name">{{match | teamName : 'B'}}</span>
+                                                <br />
+                                                <div class="score-container" ng-show="match.TEAM_B_SCORE != null || HasPendingScore(match)" style="position: relative;">
+                                                    <span class="{{getTeamScoreClass(match, 'B')}}">
+                                                        {{HasPendingScore(match) ? match.OVERRIDEN_TEAM_B_SCORE : match.TEAM_B_SCORE}}
+                                                    </span>
+                                                    <span ng-if="match.TechnicalWin_B">
+                                                        <br />
+                                                        <span class="technical-win">
+                                                            טכני
+                                                        </span>
+                                                    </span>
+
+                                                </div>
+                                                <!--  class="part-score part-score-b" -->
+                                                <div ng-if="match.PartsData && match.PartsData.TeamB" style="font-size: 22px;">
+                                                    <div ng-repeat="score in match.PartsData.TeamB track by $index" style="{{getScoreStyle(match, 'B', $index)}}">
+                                                        {{score}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" style="text-align: center;">
+                                                <span class="team-name">{{match | teamName : 'A'}}</span>
+                                                <br />
+                                                <div class="score-container" ng-show="match.TEAM_A_SCORE != null || HasPendingScore(match)" style="position: relative;">
+                                                    <span class="{{getTeamScoreClass(match, 'A')}}">
+                                                        {{HasPendingScore(match) ? match.OVERRIDEN_TEAM_A_SCORE : match.TEAM_A_SCORE}}
+                                                    </span>
+                                                    <span ng-if="match.TechnicalWin_A">
+                                                        <br />
+                                                        <span class="technical-win">
+                                                            טכני
+                                                        </span>
+                                                    </span>
+                                                </div>
+                                                <!--  class="part-score part-score-a" -->
+                                                <div ng-if="match.PartsData && match.PartsData.TeamA" style="font-size: 22px;">
+                                                    <div ng-repeat="score in match.PartsData.TeamA track by $index" style="{{getScoreStyle(match, 'A', $index)}}">
+                                                        {{score}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <h3>
+                                            {{match.ROUND_NAME}}, {{match.CYCLE_NAME}}, {{match.GROUP_NAME}}
+                                        </h3>
+                                        <br />
+                                        {{match.TIME | formatDateTime : 'dd/MM/yyyy HH:mm'}}
+                                        <br />
+                                        <span>
+                                                    מתקן:
+                                            {{match.FACILITY_NAME}}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

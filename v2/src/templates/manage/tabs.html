@@ -1,0 +1,223 @@
+<div class="vertical-flex" style="position: absolute; left: 0px; right: 0px;">
+    <div class="ph-lg pt-lg">
+        <div class="float-right">
+            <strong>
+                <!--קבוצות-->
+            </strong>
+        </div>
+        <div class="float-left" v-bind:style="{border: user.delegatedUser != null ? '1px dashed black' : '',
+            padding: user.delegatedUser != null ? '5px 5px 5px 5px' : 'inherit'}">
+            <strong v-if="user.delegatedUser">
+                {{user.delegatedUser.name}}
+                &larr;
+                מחובר בתור
+                &larr;
+            </strong>
+            <strong>
+                {{user.name}}
+            </strong>
+            <strong style="color: blue; cursor: pointer" v-on:click="logout()">
+                התנתק
+            </strong>
+        </div>
+    </div>
+
+    <div class="flex-fill ph-lg pv-sm horizontal-flex">
+        <div style="width: 100%;">
+            <div class="horizontal-flex" style="height: 2rem;">
+                <div class="tab" v-for="(tab, tabIndex) in tabs"
+                     v-bind:class="{selected: tabIndex === selectedTab}"
+                     v-on:click="selectTab(tabIndex)">
+                    <img v-bind:src="tab.image" style="max-width: 1.5rem; margin-left: 5px;">
+                    {{tab.title}}
+                    <div class="float-left clickable" v-if="!tab.permanent" style="margin-right: 10px;"
+                         v-on:click="closeTab(tabIndex)">&#x2715;</div>
+                </div>
+                <div class="add-tab"
+                     v-on:click="openNewTabDialog()">
+                    +
+                </div>
+            </div>
+
+            <div class="tab-content">
+
+                <div v-if="tabs[selectedTab].buttons" class="actions horizontal-flex" style="align-items: start">
+                    <div>
+                        <button id="new" v-if="tabs[selectedTab].buttons.new" class="btn" v-on:click="newRecord()">חדש</button>
+                        <!--<button id="edit" v-if="tabs[selectedTab].buttons.edit" class="btn" v-on:click="">עריכה</button>-->
+                    </div>
+                    <div style="display: flex; flex-direction: row">
+                        <filters-teams v-if="tabs[selectedTab].type == 1"
+                                       v-on:change="refreshData($event)"
+                                       :activeFilters="tabs[selectedTab].initFilters"
+                        ></filters-teams>
+                        <filters-players v-if="tabs[selectedTab].type == 2"
+                                       v-on:change="refreshData($event)"
+                        ></filters-players>
+                    </div>
+                    <div class="horizontal-flex">
+                        <multi-select caption="עמודות פעילות" v-bind:options="tabs[selectedTab].columns"
+                                      v-on:change="handleColumnChange(tabs[selectedTab])"
+                                      style="margin-left: 10px;"
+                        ></multi-select>
+                        <button v-on:click="exportExcel()" class="btn">יצא לאקסל</button>
+                    </div>
+                </div>
+
+                <div class="horizontal-flex" style="">
+                    <transition name="slide-fade">
+                        <div class="drawer" v-if="drawerState">
+                            <div>
+                                <!--<div class="float-left clickable" v-on:click="toggleDrawer()">&#x2715;</div>-->
+                                <div class="drawer-text">פרטים נוספים</div>
+                            </div>
+                            <div class="horizontal-flex"
+                            >
+                                <!--<multi-select v-if="tabs[selectedTab].selectedRecords && tabs[selectedTab].selectedRecords.length > 0"-->
+                                              <!--caption="שדות פעילים"-->
+                                              <!--type="1"-->
+                                              <!--v-bind:options="tabs[selectedTab].columns"-->
+                                              <!--v-on:change="updateTab(tabs[selectedTab])"-->
+                                              <!--style="margin-left: 10px;"-->
+                                <!--&gt;</multi-select>-->
+                                <button v-if="tabs[selectedTab].selectedRecords && tabs[selectedTab].selectedRecords.length > 0 || newEmptyRecord"
+                                        class="btn"
+                                        v-on:click="saveRecord()"
+                                >
+                                    שמור
+                                </button>
+                            </div>
+                            <div class="drawer-content">
+                                <template v-if="tabs[selectedTab] &&
+                                                    tabs[selectedTab].selectedRecords &&
+                                                    tabs[selectedTab].selectedRecords.length == 1">
+                                    <new-team v-if="tabs[selectedTab].type == 1"
+                                              :teams="tabs[selectedTab].records"
+                                              v-bind:record="tabs[selectedTab].selectedRecords[0].__editedRecord"
+                                    ></new-team>
+                                </template>
+                                <template v-if="newEmptyRecord">
+                                    <new-team v-if="tabs[selectedTab] && tabs[selectedTab].type == 1"
+                                              :teams="tabs[selectedTab].records"
+                                              v-bind:record="newEmptyRecord"
+                                    ></new-team>
+                                </template>
+                            </div>
+                        </div>
+                    </transition>
+
+                    <template v-for="(tab, tabIndex) in tabs" v-if="tabIndex === selectedTab">
+                        <transition name="slide">
+                            <div style="width: 100%; overflow: auto; padding: 0 1rem;">
+
+                                {{tab.title}}
+
+                                <table class="table"
+                                       id="headerTable"
+                                       v-if="tab.columns">
+                                    <thead>
+                                    <tr>
+                                        <!--<th style="width: 22px;">-->
+                                            <!--<input type="checkbox"-->
+                                                   <!--v-if="tab.selectionType == 2"-->
+                                                   <!--v-model="tab.isSelectAll"-->
+                                                   <!--v-on:change="selectAll(tab)"-->
+                                                   <!--style="margin-right: 1px; position: relative;"-->
+                                            <!--&gt;-->
+                                        <!--</th>-->
+                                        <th v-for="column in tab.columns" v-if="column.active">
+
+                                            <div class="th-container">
+                                                <div>
+                                                    {{column.name}}
+                                                </div>
+
+                                                <div>
+                                                <span class="clickable"
+                                                      v-bind:style="{color: column.isFilterActive ? '#666' : '#ddd'}"
+                                                      v-on:click="filter(tab, column)">
+                                                    <span>&#x2632;</span>
+                                                </span>
+                                                    <div class="underlay"
+                                                         v-on:click="filter(tab, column)"
+                                                         v-if="column.openFilter"></div>
+                                                    <div v-if="column.openFilter"
+                                                         style="z-index: 90;"
+                                                         class="filter-select">
+                                                        <input type="text"
+                                                               placeholder="חפש..."
+                                                               class="filter-search"
+                                                               v-model="column.searchText"
+                                                               v-on:change="onFilterSearch(tab, column)"
+                                                        >
+                                                        <div class="horizontal-flex"
+                                                             style="align-items: center;margin-bottom: 3px;"
+                                                             v-for="option of column.textFilterOptions"
+                                                             v-if="option.isActive"
+                                                        >
+                                                            <input type="checkbox"
+                                                                   v-model="option.value"
+                                                                   v-on:change="filterRecords(tab, column)"
+                                                            >
+                                                            <div>{{option.title}}</div>
+                                                        </div>
+                                                    </div>
+
+                                                    <span class="clickable"
+                                                          v-bind:style="{color: column.sort == null ? '#ddd' : '#666'}"
+                                                          v-on:click="sort(tab, column)">
+                                                    <span v-if="column.sort != 'd'">&#x2BC6;</span>
+                                                    <span v-if="column.sort == 'd'">&#x2BC5;</span>
+                                                </span>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    <tr v-for="(record, index) in tab.records" v-if="record.__show"
+                                        v-bind:class="{selected: record.selected, highlighted: record.highlighted, green: record.green, red: record.red}"
+                                        v-on:click="toggleRecordSelect(tab, record)"
+                                    >
+                                        <!--<td>-->
+                                            <!--<input type="checkbox" v-model="record.selected" v-on:change="handleSelectionChange(record)">-->
+                                        <!--</td>-->
+                                        <td v-for="column in tab.columns" v-if="column.active">
+                                        <span class="tooltip" v-if="record.highlighted && column.maxAge" style="color: red;">&#9888;
+                                             <div class="tooltip-content">
+                                                    <p>התלמיד מעבר לטווח הגילאים שמוגדר לקטגוריה</p>
+                                                    <i></i>
+                                                </div></span>
+                                            <span class="tooltip" v-if="record.tooltip && column.tooltip" style="color: red;">&#9888;
+                                             <div class="tooltip-content">
+                                                    <p>{{record.tooltip}}</p>
+                                                    <i></i>
+                                                </div></span>
+                                            <button class="btn" v-if="column.type == 'openFile'">צפה במסמך</button>
+                                            <button class="btn" v-else-if="column.type == 'button'" v-on:click="column.onclick(record, index)">{{column.name}}</button>
+                                            <a v-else-if="column.type == 'imageLink' && getValue(record, column) != null" class="btn" v-bind:href="'/api/v2/document/' + getValue(record, column)" target="_blank"><span class="icon">&#x1F441;</span></a>
+                                            <span v-else-if="column.type == 'documentNumber'">{{getValue(record, column) | documentNumber}} <button v-if="getValue(record, column) != null" class="btn" v-on:click="downloadDocument(record, column)">הורד</button></span>
+                                            <span v-else-if="column.type == 'date'">{{getValue(record, column) | date}}</span>
+                                            <span v-else-if="column.type == 'activity'">{{getValue(record, column)}}</span>
+                                            <span v-else
+                                                  v-bind:class="{'link-to-tab' : column.linkToTab}"
+                                                  v-on:click="onColumnClick(record, column)"
+                                            >
+                                                {{getValue(record, column)}}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+
+
+                            </div>
+                        </transition>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

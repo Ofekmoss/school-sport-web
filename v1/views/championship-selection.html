@@ -1,0 +1,267 @@
+<style type="text/css">
+    .section {
+        margin-top: 10px !important;
+    }
+
+    .rating-container .rating {
+        float: left;
+        margin-left: 5px;
+        width: 24px;
+        height: 28px;
+        line-height: 24px;
+        text-align: center;
+        vertical-align: middle;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+    }
+
+    .rating-container .rating-1 {
+        background-color: #00ADEE;
+    }
+
+    .rating-container .rating-1:hover, .rating-1.selected-rating {
+        color: #00ADEE;
+    }
+
+    .rating-container .rating-2 {
+        background-color: #009ED8;
+    }
+
+    .rating-container .rating-2:hover, .rating-2.selected-rating {
+        color: #009ED8;
+    }
+
+    .rating-container .rating-3 {
+        background-color: #0093C9;
+    }
+
+    .rating-container .rating-3:hover, .rating-3.selected-rating {
+        color: #0093C9;
+    }
+
+    .rating-container .rating-4 {
+        background-color: #0086B7;
+    }
+
+    .rating-container .rating-4:hover, .rating-4.selected-rating {
+        color: #0086B7;
+    }
+
+    .rating-container .rating-5 {
+        background-color: #0077A3;
+    }
+
+    .rating-container .rating-5:hover, .rating-5.selected-rating {
+        color: #0077A3;
+    }
+
+    .rating-container .rating:hover, .rating-container .selected-rating {
+        background-color: white;
+    }
+</style>
+<div dir="rtl">
+    <!-- div class="modal-header">
+        <div class="modal-title">
+            <div class="modal-title-main">{{title}}</div>
+            <div class="modal-title-sub">{{subTitle}}</div>
+        </div>
+    </div -->
+    <div class="section_3" style="margin-top: 5px; margin-right: 10px;">
+        <h2>{{title}}</h2>
+    </div>
+    <div class="modal-body">
+        <div class="bg-info" style="margin-bottom: 12px;" ng-if="info">{{info}}</div>
+        <div class="row" ng-if="!isFlowers && data.Seasons" style="margin-bottom: 10px;">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <ui-select id="ddlSeasons"
+                           ng-model="selected.Season"
+                           on-select="dataChanged($item)"
+                           theme="bootstrap"
+                           title="בחירת עונה">
+                    <ui-select-match placeholder="בחרו עונה...">{{$select.selected.Name}}</ui-select-match>
+                    <ui-select-choices repeat="season in data.Seasons | filter: $select.search">
+                        <div>{{season.Name}}</div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                בחירת עונה
+            </div>
+        </div>
+        <div class="row" ng-if="!isFlowers && data.Types" style="margin-bottom: 10px;">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <ui-select id="ddlHampType"
+                           ng-model="selected.Type"
+                           on-select="dataChanged($item)"
+                           theme="bootstrap"
+                           title="בחירת סוג אליפות">
+                    <ui-select-match placeholder="בחרו סוג אליפות...">{{$select.selected.Name}}</ui-select-match>
+                    <ui-select-choices repeat="type in data.Types | filter: $select.search">
+                        <div>{{type.Name}}</div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                בחירת סוג אליפות
+            </div>
+        </div>
+        <div class="row" ng-if="!isFlowers && data.Regions" style="margin-bottom: 10px;">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <ui-select id="ddlRegions"
+                           ng-model="selected.Region"
+                           on-select="dataChanged($item)"
+                           theme="bootstrap"
+                           title="בחירת מחוז">
+                    <ui-select-match placeholder="בחרו מחוז...">{{$select.selected.Name}}</ui-select-match>
+                    <ui-select-choices repeat="region in data.Regions | filter: $select.search">
+                        <div>{{region.Name}}</div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                בחירת מחוז
+            </div>
+        </div>
+        <div class="row" ng-if="!isFlowers && schoolTeamSelection" style="margin-bottom: 10px;">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <div id="TeamsAmount" class="rating-container">
+                    <div class="rating rating-1 selected-rating" onclick="RatingClicked(this);">1</div>
+                    <div class="rating rating-2" onclick="RatingClicked(this);">2</div>
+                    <div class="rating rating-3" onclick="RatingClicked(this);">3</div>
+                    <div class="rating rating-4" onclick="RatingClicked(this);">4</div>
+                    <div class="rating rating-5" onclick="RatingClicked(this);">5</div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                כמות קבוצות לרישום
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 10px;" ng-show="!loading && data.Championships.Rows.length == 0 && (isFlowers || (selected.Season.Season && selected.Type.Value && selected.Region.Id))">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <span ng-show="isFlowers">
+אין אירועי פרחי ספורט בעונה נוכחית
+                </span>
+                <span ng-show="!isFlowers">
+אין אליפויות מתאימות
+                </span>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 10px;" ng-show="loading">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                מערכת טוענת נתונים, נא להמתין...
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 10px;" ng-if="!loading && data.SportFields && data.SportFields.Rows.length > 0">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="section">
+                    <h3 class="section_title">
+                        בחירת ענף ספורט:
+                    </h3>
+                </div>
+                <div class="row" ng-repeat="sportFieldRow in data.SportFields.Rows" style="margin-bottom: 5px; margin-right: 5px;">
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" ng-repeat="sportField in sportFieldRow" style="padding-right: 0px;">
+                        <div class="{{getRoundedRectangleClass(sportField)}}" ng-click="selectSportField(sportField)"
+                             change-background colorcode="{{getSportFieldColor(sportField.Seq)}}" selected="{{sportField.Selected}}"
+                             style="{{getSportFieldFilterStyle(sportField)}}" ng-if="sportField.Seq">
+                            {{sportField.Name}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 10px;" ng-if="!loading && data.Championships.Rows.length > 0">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="section">
+                    <h3 class="section_title" ng-if="isFlowers">
+בחירת אירוע פרחי ספורט:
+                    </h3>
+                    <h3 class="section_title" ng-if="!isFlowers">
+                        בחירת אליפות:
+                    </h3>
+                </div>
+                <div class="row" ng-show="selected.Championship && selected.Championship.Remarks">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="alert alert-info" role="alert">
+                            {{selected.Championship.Remarks}}
+                        </div>
+                    </div>
+                </div>
+                <div class="row" ng-repeat="championshipRow in data.Championships.Rows" style="margin-bottom: 5px; margin-right: 5px;">
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" ng-repeat="championship in championshipRow" style="padding-right: 0px;">
+                        <div class="{{getRoundedRectangleClass(championship)}}" ng-click="selectChampionship(championship)"
+                             change-background colorcode="{{getSportFieldColor(championship.SportField)}}" selected="{{championship.Selected}}"
+                             style="{{getSportFieldFilterStyle(championship)}}" ng-if="championship.SportField">
+                            {{championship.Name}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 10px;" ng-if="!loading && data.Categories.Rows.length > 0">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="section">
+                    <h3 class="section_title" ng-if="isFlowers">
+                        בחירת פעילות פרחי ספורט:
+                        <span ng-show="selected.Category && selected.Category.CategoryId">
+                            ({{selected.Category.CategoryId}})
+                        </span>
+                    </h3>
+                    <h3 class="section_title" ng-if="!isFlowers">
+בחירת קטגוריית אליפות:
+                    </h3>
+                </div>
+                <div class="row" ng-repeat="categoryRow in data.Categories.Rows" style="margin-bottom: 5px; margin-right: 5px;">
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" ng-repeat="category in categoryRow" style="padding-right: 0px;">
+                        <div class="{{getRoundedRectangleClass(category)}}" ng-click="selectCategory(category)"
+                             change-background colorcode="{{getSportFieldColor(category.SportField)}}" selected="{{category.Selected}}"
+                             style="{{getSportFieldFilterStyle(category)}}" ng-if="category.SportField">
+                            {{category.Name}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="pull-left">
+                    <button class="btn btn-warning" ng-click="cancel()">
+                        ביטול
+                    </button>
+                    <button class="button button_grey" ng-click="confirm()" ng-disabled="!selected.Category || !selected.Category.CategoryId">
+                        המשך
+                    </button>
+
+                </div>
+                <div class="pull-right" ng-if="data.RegisteredTeamsCount">
+                    <span class="glyphicon glyphicon-warning-sign" style="color: #5bc0de;"></span>
+                    <span ng-show="data.RegisteredTeamsCount == 1">
+                        קבוצה אחת
+                    </span>
+                    <span ng-show="data.RegisteredTeamsCount > 1">
+                        {{data.RegisteredTeamsCount}}
+                        קבוצות
+                    </span>
+                    כבר
+                    <span ng-show="data.RegisteredTeamsCount == 1">
+                        רשומה
+                    </span>
+                    <span ng-show="data.RegisteredTeamsCount > 1">
+רשומות
+                    </span>
+בקטגוריה זו
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function RatingClicked(sender) {
+        var element = $(sender);
+        var container = element.parents(".rating-container").first();
+        container.find(".rating").removeClass("selected-rating");
+        element.addClass("selected-rating");
+    }
+</script>

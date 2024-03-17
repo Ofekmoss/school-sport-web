@@ -1,0 +1,349 @@
+<div id="pnlClubDetails">
+    <div class="panel">
+        <img src="img/calendar-image.png" srcset="img/calendar-image@2x.png 2x, img/calendar-image@3x.png 3x">
+        <div class="panel-header">
+            פרטי בית ספר
+        </div>
+        <div class="panel-body">
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 30%;"><div class="label">שם בית ספר</div></td>
+                    <td style="width: 30%;"><div class="label">שם רשות</div></td>
+                    <td class="medium-up"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input autofocus type="text" required tabindex="1" style="width: 90%;" v-model="school.name" v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" readonly="readonly"  style="width: 90%;" v-model="school.cityName" v-bind:disabled="inactiveSeason">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 30%;"><div class="label">סמל בית ספר</div></td>
+                    <td style="width: 30%;"><div class="label">טלפון</div></td>
+                    <td class="medium-up"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" tabindex="-1" style="width: 90%;" v-model="school.symbol" readonly v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" tabindex="5" required style="width: 90%;" v-model="school.phoneNumber" v-bind:disabled="inactiveSeason">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 30%;"><div class="label">הגדרת כיתות</div></td>
+                    <td style="width: 30%;"><div class="label">פקס</div></td>
+                    <td class="medium-up"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <select tabindex="3" style="width: 90%;" v-model="school.type" v-bind:disabled="inactiveSeason">
+                            <option value="0">א-ו</option>
+                            <option value="1">א-ח</option>
+                            <option value="2">ז-ט</option>
+                            <option value="3">ז-י&quot;ב</option>
+                            <option value="4">ט-י&quot;ב</option>
+                            <option value="5">י-י"ב</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" required tabindex="6" style="width: 90%;" v-model="school.fax" v-bind:disabled="inactiveSeason">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 30%;"><div class="label">כתובת</div></td>
+                    <td style="width: 30%;"><div class="label">מייל</div></td>
+                    <td class="medium-up"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" required tabindex="4" style="width: 90%;" v-model="school.address" v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" required tabindex="7" style="width: 90%;" v-model="school.email" v-bind:disabled="inactiveSeason">
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="panel-header">
+            פרטי הנהלת המועדון הבית ספרי
+        </div>
+        <div class="panel-body">
+            <table style="width: 100%;">
+                <tr>
+                    <td style=""><div class="label">שם מנהל/ת בית הספר</div></td>
+                    <td style=""><div class="label">שם יו"ר</div></td>
+                    <td style=""><div class="label">שם רכז מועדון</div></td>
+                    <td style=""><div class="label">שם נציג ברשות</div></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" required tabindex="8" style="width: 90%;" v-model="principal.name" v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" required tabindex="11" style="width: 90%;" v-model="chairman.name" v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" required tabindex="14" style="width: 90%;" v-model="coordinator.name" v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" required tabindex="17" style="width: 90%;" v-model="representative.name" v-bind:disabled="inactiveSeason">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 25%;"><div class="label">טלפון נייד</div></td>
+                    <td style="width: 25%;"><div class="label">טלפון נייד</div></td>
+                    <td style="width: 25%;"><div class="label">טלפון נייד</div></td>
+                    <td style="width: 25%;"><div class="label">טלפון נייד</div></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" required tabindex="9" style="width: 90%;" v-model="principal.phoneNumber" v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" required tabindex="12" style="width: 90%;" v-model="chairman.phoneNumber" v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" required tabindex="15" style="width: 90%;" v-model="coordinator.phoneNumber" v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" required tabindex="18" style="width: 90%;" v-model="representative.phoneNumber" v-bind:disabled="inactiveSeason">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 25%;"><div class="label">מייל</div></td>
+                    <td style="width: 25%;"><div class="label">מייל</div></td>
+                    <td style="width: 25%;"><div class="label">מייל</div></td>
+                    <td style="width: 25%;"><div class="label">מייל</div></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" required tabindex="10" style="width: 90%;" v-model="principal.email" v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" required tabindex="13" style="width: 90%;" v-model="chairman.email" v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" required tabindex="16" style="width: 90%;" v-model="coordinator.email" v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" required tabindex="19" style="width: 90%;" v-model="representative.email" v-bind:disabled="inactiveSeason">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span v-bind:style="{border: principal.gender ? 'none' : '1px solid red', padding: principal.gender ? '0px' : '5px 5px 5px 5px'}">
+                            <label for="rdPrincipalGender1">מר</label>
+                            <input required type="radio" id="rdPrincipalGender1" v-model="principal.gender" value="1" v-bind:disabled="inactiveSeason">
+                            <label for="rdPrincipalGender2">גב'</label>
+                            <input required type="radio" id="rdPrincipalGender2" v-model="principal.gender" value="2" v-bind:disabled="inactiveSeason">
+                            <input type="button" value="איפוס" v-if="principal.gender" v-on:click="resetGender(principal)"
+                                   style="margin-right: 10px;" v-bind:disabled="inactiveSeason" />
+                        </span>
+                    </td>
+                    <td>
+                        <span v-bind:style="{border: chairman.gender ? 'none' : '1px solid red', padding: chairman.gender ? '0px' : '5px 5px 5px 5px'}">
+                            <label for="rdChairmanGender1">מר</label>
+                            <input type="radio" id="rdChairmanGender1" v-model="chairman.gender" value="1" v-bind:disabled="inactiveSeason">
+                            <label for="rdChairmanGender2">גב'</label>
+                            <input type="radio" id="rdChairmanGender2" v-model="chairman.gender" value="2" v-bind:disabled="inactiveSeason">
+                            <input type="button" value="איפוס" v-if="chairman.gender" v-on:click="resetGender(chairman)"
+                                   style="margin-right: 10px;" v-bind:disabled="inactiveSeason" />
+                        </span>
+                    </td>
+                    <td>
+                        <span v-bind:style="{border: coordinator.gender ? 'none' : '1px solid red', padding: coordinator.gender ? '0px' : '5px 5px 5px 5px'}">
+                            <label for="rdCoordinatorGender1">מר</label>
+                            <input type="radio" id="rdCoordinatorGender1" v-model="coordinator.gender" value="1" v-bind:disabled="inactiveSeason">
+                            <label for="rdCoordinatorGender2">גב'</label>
+                            <input type="radio" id="rdCoordinatorGender2" v-model="coordinator.gender" value="2" v-bind:disabled="inactiveSeason">
+                            <input type="button" value="איפוס" v-if="coordinator.gender" v-on:click="resetGender(coordinator)"
+                                   style="margin-right: 10px;" v-bind:disabled="inactiveSeason" />
+                        </span>
+                    </td>
+                    <td>
+                        <span v-bind:style="{border: representative.gender ? 'none' : '1px solid red', padding: representative.gender ? '0px' : '5px 5px 5px 5px'}">
+                            <label for="rdRepresentativeGender1">מר</label>
+                            <input type="radio" id="rdRepresentativeGender1" v-model="representative.gender" value="1" v-bind:disabled="inactiveSeason">
+                            <label for="rdRepresentativeGender2">גב'</label>
+                            <input type="radio" id="rdRepresentativeGender2" v-model="representative.gender" value="2" v-bind:disabled="inactiveSeason">
+                            <input type="button" value="איפוס" v-if="representative.gender" v-on:click="resetGender(representative)"
+                                   style="margin-right: 10px;" v-bind:disabled="inactiveSeason" />
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="panel-body">
+            <table style="width: 100%;">
+                <tr>
+                    <td style=""><div class="label">שם  מורה מצוות בית הספר</div></td>
+                    <td style=""><div class="label">שם נציג/ת וועד ההורים</div></td>
+                    <td style=""><div class="label">שם נציג/ת התלמידים</div></td>
+                    <td style=""><div class="label">שם נציג/ת אגודה קולטת</div></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" tabindex="88" style="width: 90%;" v-model="teacher.name" v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" tabindex="91" style="width: 90%;" v-model="parentsCommittee.name" v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" tabindex="94" style="width: 90%;" v-model="studentsRepresentative.name" v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" tabindex="97" style="width: 90%;" v-model="associationRepresentative.name" v-bind:disabled="inactiveSeason">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 25%;"><div class="label">טלפון נייד</div></td>
+                    <td style="width: 25%;"><div class="label">טלפון נייד</div></td>
+                    <td style="width: 25%;"><div class="label">טלפון נייד</div></td>
+                    <td style="width: 25%;"><div class="label">טלפון נייד</div></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" tabindex="89" style="width: 90%;" v-model="teacher.phoneNumber" v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" tabindex="92" style="width: 90%;" v-model="parentsCommittee.phoneNumber" v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" tabindex="95" style="width: 90%;" v-model="studentsRepresentative.phoneNumber" v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" tabindex="98" style="width: 90%;" v-model="associationRepresentative.phoneNumber" v-bind:disabled="inactiveSeason">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 25%;"><div class="label">מייל</div></td>
+                    <td style="width: 25%;"><div class="label">מייל</div></td>
+                    <td style="width: 25%;"><div class="label">מייל</div></td>
+                    <td style="width: 25%;"><div class="label">מייל</div></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" tabindex="90" style="width: 90%;" v-model="teacher.email" v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" tabindex="93" style="width: 90%;" v-model="parentsCommittee.email" v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" tabindex="96" style="width: 90%;" v-model="studentsRepresentative.email" v-bind:disabled="inactiveSeason">
+                    </td>
+                    <td>
+                        <input type="text" tabindex="99" style="width: 90%;" v-model="associationRepresentative.email" v-bind:disabled="inactiveSeason">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>
+                            <label for="rdTeacherGender1">מר</label>
+                            <input type="radio" id="rdTeacherGender1" v-model="teacher.gender" value="1" v-bind:disabled="inactiveSeason">
+                            <label for="rdTeacherGender2">גב'</label>
+                            <input type="radio" id="rdTeacherGender2" v-model="teacher.gender" value="2" v-bind:disabled="inactiveSeason">
+                            <input type="button" value="איפוס" v-if="teacher.gender" v-on:click="resetGender(teacher)"
+                                   style="margin-right: 10px;" v-bind:disabled="inactiveSeason" />
+                        </span>
+                    </td>
+                    <td>
+                        <span>
+                            <label for="rdParentsCommitteeGender1">מר</label>
+                            <input type="radio" id="rdParentsCommitteeGender1" v-model="parentsCommittee.gender" value="1" v-bind:disabled="inactiveSeason">
+                            <label for="rdParentsCommitteeGender2">גב'</label>
+                            <input type="radio" id="rdParentsCommitteeGender2" v-model="parentsCommittee.gender" value="2" v-bind:disabled="inactiveSeason">
+                            <input type="button" value="איפוס" v-if="parentsCommittee.gender" v-on:click="resetGender(parentsCommittee)"
+                                   style="margin-right: 10px;" v-bind:disabled="inactiveSeason" />
+                        </span>
+                    </td>
+                    <td>
+                        <span>
+                            <label for="rdStudentsRepresentativeGender1">מר</label>
+                            <input type="radio" id="rdStudentsRepresentativeGender1" v-model="studentsRepresentative.gender" value="1" v-bind:disabled="inactiveSeason">
+                            <label for="rdStudentsRepresentativeGender2">גב'</label>
+                            <input type="radio" id="rdStudentsRepresentativeGender2" v-model="studentsRepresentative.gender" value="2" v-bind:disabled="inactiveSeason">
+                            <input type="button" value="איפוס" v-if="studentsRepresentative.gender" v-on:click="resetGender(studentsRepresentative)"
+                                   style="margin-right: 10px;" v-bind:disabled="inactiveSeason" />
+                        </span>
+                    </td>
+                    <td>
+                        <span>
+                            <label for="rdAssociationRepresentativeGender1">מר</label>
+                            <input type="radio" id="rdAssociationRepresentativeGender1" v-model="associationRepresentative.gender" value="1" v-bind:disabled="inactiveSeason">
+                            <label for="rdAssociationRepresentativeGender2">גב'</label>
+                            <input type="radio" id="rdAssociationRepresentativeGender2" v-model="associationRepresentative.gender" value="2" v-bind:disabled="inactiveSeason">
+                            <input type="button" value="איפוס" v-if="associationRepresentative.gender" v-on:click="resetGender(associationRepresentative)"
+                                   style="margin-right: 10px;" v-bind:disabled="inactiveSeason" />
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="panel-header">
+            עמותה / אגודה
+        </div>
+        <div class="panel-body">
+            <div class="label">האם המועדון משויך לעמותה / אגודה?</div>
+            <div>
+                כן
+                <input type="radio" v-model="association.set" value="1" v-bind:disabled="inactiveSeason">
+                לא
+                <input type="radio" v-model="association.set" value="0" v-bind:disabled="inactiveSeason">
+            </div>
+            <template v-if="association.set == 1">
+            <div class="label mt-lg">האם קיים בידי העמותה / אגודה אישור ניהול תקין לשנת זו?</div>
+                <div>
+                    כן
+                    <input type="radio" v-model="association.validForThisYear" value="1" v-bind:disabled="inactiveSeason">
+                    לא
+                    <input type="radio" v-model="association.validForThisYear" value="0" v-bind:disabled="inactiveSeason">
+                </div>
+            </template>
+            <template v-if="association.set == 1">
+                <div class="label mt-lg">מספר עמותה / אגודה</div>
+                <input type="text" style="width: 30%;" v-model="association.number" v-bind:disabled="inactiveSeason">
+            </template>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="panel-header">
+            הצהרה
+        </div>
+        <div class="panel-body">
+            <p>
+                הרינו מבקשים בזאת להקים/להפעיל מועדון ספורט בית ספרי במסגרת התאחדות הספורט לבתי-הספר בישראל.
+                אנו מצהירים בזאת על התחייבותנו לפעול על פי עקרונות ותקנון התאחדות הספורט לבתי הספר בישראל כפי שהם יעודכנו מעת לעת ויופיעו במסמך המידע ועקרונות הפעולה.
+            </p>
+            <div>
+                <input id="chkConfirmClubDetails" type="checkbox" v-model="confirmation" v-bind:disabled="inactiveSeason || confirmedAt">
+                <label for="chkConfirmClubDetails">
+                    <span class="label" v-if="!confirmedAt">אישור קריאת ההצהרה</span>
+                    <span class="label" v-if="confirmedAt">
+                        הצהרה אושרה בתאריך
+                        {{confirmedAt | customDate('dd/MM/yyyy')}}
+                        בשעה
+                            {{confirmedAt | customDate('HH:mm')}}
+                    </span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn green float-left" v-bind:disabled="inactiveSeason ||
+                                                            !confirmation ||
+                                                            !formValidations.school ||
+                                                            !formValidations.principal ||
+                                                            !formValidations.representative ||
+                                                            !formValidations.chairman ||
+                                                            !formValidations.coordinator"
+            v-on:click="next()">
+        אישור והמשך
+    </button>
+</div>

@@ -1,0 +1,174 @@
+<div class="dialog wide">
+    <div style="display: flex; justify-content: flex-end;">
+        <div class="float-left clickable" v-on:click="cancel">&#x2715;</div>
+    </div>
+    <div class="caption">
+        עריכת קבוצה
+    </div>
+
+    <form v-if="team" style="overflow: hidden; max-height: -webkit-fill-available; overflow-y: auto;">
+        <div class="p-md">
+            <table class="pb-sm">
+                <tr>
+                    <td><div class="label">ענף</div></td>
+                    <td><div class="label">קטגוריה</div></td>
+                    <td><div class="label">פעיל\לא פעיל</div></td>
+                </tr>
+                <tr>
+                    <td class="pl-sm">
+                        <select v-model="sportIndex" style="min-width: 100px;" autofocus disabled>
+                            <option v-for="(sport, index) in sports" v-bind:value="index">{{sport.name}}</option>
+                        </select>
+                    </td>
+                    <td class="pl-sm">
+                        <select v-if="team.sport" v-model="categoryIndex" style="min-width: 100px;" disabled>
+                            <option v-for="(category, index) in team.sport.categories" v-bind:value="index">{{category.name}}</option>
+                        </select>
+                        <select v-if="!team.sport" disabled="true" style="min-width: 100px;"></select>
+                    </td>
+
+                    <td>
+                        <label class="switch">
+                            <input style="position: relative" type="checkbox" v-model="team.active" v-bind:disabled="!team.category">
+                            <span class="slider round"></span>
+                        </label>
+                    </td>
+
+                </tr>
+            </table>
+            <div class="pb-sm">
+                <div class="label">מתקן</div>
+                <select v-model="team.facility" style="min-width: 100px;">
+                    <option v-for="facility in facilities" v-bind:value="facility.id">{{facility.name}}</option>
+                </select>
+            </div>
+            <div class="pb-sm">
+                <div class="label">שעות פעילות</div>
+
+                <table v-for="(activity, index) in team.activity">
+                    <tr>
+                        <td>יום</td>
+                        <td>משעה</td>
+                        <td>עד שעה</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="pl-sm">
+                            <select v-model="activity.day" v-bind:disabled="!team.category" style="min-width: 60px;" >
+                                <option value="0">א'</option>
+                                <option value="1">ב'</option>
+                                <option value="2">ג'</option>
+                                <option value="3">ד'</option>
+                                <option value="4">ה'</option>
+                                <option value="5">ו'</option>
+                                <option value="6">ש'</option>
+                            </select>
+                        </td>
+                        <td class="pl-sm">
+                            <select v-model="activity.startTime" v-bind:disabled="!team.category || activity.day == null" style="min-width: 80px;">
+                                <option v-for="hour in hours" v-bind:value="hour.value">{{hour.text}}</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select v-model="activity.endTime" v-bind:disabled="!team.category || activity.day == null || activity.startTime == null"
+                                    style="min-width: 80px;">
+                                <option v-for="hour in endHours" v-bind:value="hour.value">{{hour.text}}</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button v-if="team.activity.length > 1" class="mr-sm btn red" v-on:click="removeActivityDay(index)">הסרת יום</button>
+                            <button v-if="index == team.activity.length - 1" class="mr-sm btn" v-on:click="addActivityDay()">הוספת יום</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <!--<div class="pb-sm">-->
+                <!--<div class="label">מאמן</div>-->
+                <!--<table>-->
+                    <!--<tr>-->
+                        <!--<td>שם</td>-->
+                        <!--<td>טלפון</td>-->
+                        <!--<td>מייל</td>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
+                        <!--<td class="pl-sm">-->
+                            <!--<input type="text" style="width: 100%;" v-model="team.coach.name" v-bind:disabled="!team.category">-->
+                        <!--</td>-->
+                        <!--<td class="pl-sm">-->
+                            <!--<input type="text" style="width: 100%;" v-model="team.coach.phoneNumber" v-bind:disabled="!team.category">-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<input type="text" style="width: 100%;" v-model="team.coach.email" v-bind:disabled="!team.category">-->
+                        <!--</td>-->
+                    <!--</tr>-->
+                <!--</table>-->
+            <!--</div>-->
+            <!--<div class="pb-sm">-->
+                <!--<div class="label">מורה אחראי</div>-->
+                <!--<table>-->
+                    <!--<tr>-->
+                        <!--<td>שם</td>-->
+                        <!--<td>טלפון</td>-->
+                        <!--<td>מייל</td>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
+                        <!--<td class="pl-sm">-->
+                            <!--<input type="text" style="width: 100%;" v-model="team.teacher.name" v-bind:disabled="!team.category">-->
+                        <!--</td>-->
+                        <!--<td class="pl-sm">-->
+                            <!--<input type="text" style="width: 100%;" v-model="team.teacher.phoneNumber" v-bind:disabled="!team.category">-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<input type="text" style="width: 100%;" v-model="team.teacher.email" v-bind:disabled="!team.category">-->
+                        <!--</td>-->
+                    <!--</tr>-->
+                <!--</table>-->
+            <!--</div>-->
+            <!--<div class="pb-sm">-->
+                <!--<div class="label">מנהל מקצועי</div>-->
+                <!--<table>-->
+                    <!--<tr>-->
+                        <!--<td>שם</td>-->
+                        <!--<td>טלפון</td>-->
+                        <!--<td>מייל</td>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
+                        <!--<td class="pl-sm">-->
+                            <!--<input type="text" style="width: 100%;" v-model="team.manager.name" v-bind:disabled="!team.category">-->
+                        <!--</td>-->
+                        <!--<td class="pl-sm">-->
+                            <!--<input type="text" style="width: 100%;" v-model="team.manager.phoneNumber" v-bind:disabled="!team.category">-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<input type="text" style="width: 100%;" v-model="team.manager.email" v-bind:disabled="!team.category">-->
+                        <!--</td>-->
+                    <!--</tr>-->
+                <!--</table>-->
+            <!--</div>-->
+            <!--<div class="pb-sm">-->
+                <!--<div class="label">עוזר מאמן</div>-->
+                <!--<table>-->
+                    <!--<tr>-->
+                        <!--<td>שם</td>-->
+                        <!--<td>טלפון</td>-->
+                        <!--<td>מייל</td>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
+                        <!--<td class="pl-sm">-->
+                            <!--<input type="text" style="width: 100%;" v-model="team.coachHelper.name" v-bind:disabled="!team.category">-->
+                        <!--</td>-->
+                        <!--<td class="pl-sm">-->
+                            <!--<input type="text" style="width: 100%;" v-model="team.coachHelper.phoneNumber" v-bind:disabled="!team.category">-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<input type="text" style="width: 100%;" v-model="team.coachHelper.email" v-bind:disabled="!team.category">-->
+                        <!--</td>-->
+                    <!--</tr>-->
+                <!--</table>-->
+            <!--</div>-->
+        </div>
+        <div class="pb-md" style="text-align: center;">
+            <button class="btn wide" v-on:click="confirm()" v-bind:disabled="!team.category">אישור</button>
+        </div>
+    </form>
+</div>

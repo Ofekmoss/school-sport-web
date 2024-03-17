@@ -1,0 +1,325 @@
+﻿<!DOCTYPE html>
+<!--[if IE 9 ]><html class="ie9" lang="en" ng-app="manage.home"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html lang="en" ng-app="manage"><!--<![endif]-->
+<head>
+    <meta property="og:url" content="http://www.schoolsport.org.il/manage"/>
+    <meta property="og:title" content="התאחדות הספורט לבתי ספר בישראל"/>
+    <meta property="og:image" content="http://www.schoolsport.org.il/sport/images/logo.png"/>
+    <title>התאחדות הספורט לבתי ספר</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="shortcut icon" type="image/x-icon" href="images/fav_icon.ico">
+
+    <script src="js/jquery-2.1.0.min.js"></script>
+
+    <!-- Angular -->
+    <script src="js/angular/angular.min.js"></script>
+    <script src="js/angular-bootstrap/ui-bootstrap.min.js"></script>
+    <script src="js/angular-ui-router/release/angular-ui-router.min.js"></script>
+
+    <script src="js/paging-service.js"></script>
+    <script src="js/MirHelpers.js"></script>
+    <script src="js/MirTable.js"></script>
+    <script src="js/MirDialog.js"></script>
+    <script src="js/app.js"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Rubik" rel="stylesheet">
+    <link href="css/common.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" rel="stylesheet">
+
+    <!-- css/font-awesome.min.css -->
+
+    <script type="text/javascript">
+        function recaptchaOnload() {
+            if (typeof $ != 'undefined') {
+                if ($('.g-recaptcha').length > 0) {
+                    grecaptcha.render("recaptcha", {
+                        sitekey: '6LfL2DEUAAAAAPEHzbSd-4yUJEAmMxs57Ip2pGY8',
+                        callback: function () {
+                            console.log('recaptcha callback');
+                        }
+                    });
+                    return;
+                }
+            }
+            window.setTimeout(recaptchaOnload, 1000);
+        }
+    </script>
+    <script src='https://www.google.com/recaptcha/api.js?onload=recaptchaOnload&render=explicit&hl=iw' async defer></script>
+</head>
+<body style="direction: rtl;">
+<div class="loader"></div>
+<div id="pnlMain" ng-controller="ManageMainCtrl as main" style="display: none;">
+    <div ng-if="initialLoading">
+        <div class="mir-common-container">
+            מערכת טוענת נתונים, נא להמתין...
+        </div>
+    </div>
+    <div ng-if="!initialLoading">
+        <div class="mir-common-container" ng-show="!loggedInUser || (loggedInUser && !loggedInUser.role)">
+            כניסה
+            <br />
+            <form data-default-button="btnSubmitLogin">
+                <input type="text"  autocomplete="on" ng-model="login.username"  placeholder="שם משתמש" />
+                <br />
+                <input type="password"  autocomplete="on" ng-model="login.password" placeholder="סיסמא"  />
+                <br />
+                <button class="mir-btn-large" type="button" id="btnSubmitLogin" ng-click="submitLoginForm()" ng-disabled="login.loading">
+                    כניסה
+                </button>
+                <div ng-show="login.error" class="mir-common-error">
+                    {{login.error}}
+                </div>
+            </form>
+        </div>
+        <div class="mir-common-container" ng-show="loggedInUser && loggedInUser.role == 1">
+            <h2>
+                מנהל -
+                {{loggedInUser.displayName}}
+            </h2>
+            <div class="mir-control-panel">
+            <span>
+                לוח בקרה - מנהל
+            </span>
+            </div>
+            <div>
+                <button class="mir-btn-large" type="button" class="mir-logout-button" ng-click="logout()" ng-disabled="logout.inProgress" style="margin-top: 15px;">
+                    החלפת משתמש
+                </button>
+                <div ng-show="logout.error" class="mir-common-error">
+                    {{logout.error}}
+                </div>
+            </div>
+        </div>
+        <div class="mir-common-container" ng-show="loggedInUser && loggedInUser.role == 2 && loggedInUser.state == null">
+            <h2>
+                בי"ס -
+                {{loggedInUser.displayName}}
+            </h2>
+            <div class="mir-control-panel">
+            <span>
+                לוח בקרה - בית ספר
+            </span>
+            </div>
+            <div style="position: relative;">
+                <button type="button" class="mir-btn-large" ng-click="schoolClubRegister()" style="margin-top: 15px; margin-left: 160px;">
+                    רישום מועדון
+                </button>
+                <button type="button" class="mir-btn-large" ng-click="logout()" ng-disabled="logout.inProgress" style="margin-top: 15px;">
+                    החלפת משתמש
+                </button>
+                <div ng-show="logout.error" class="mir-common-error">
+                    {{logout.error}}
+                </div>
+            </div>
+        </div>
+        <div class="mir-common-container" ng-show="loggedInUser && loggedInUser.role == 2 && loggedInUser.state == 'club-register'">
+            <h2>
+                בי"ס -
+                {{loggedInUser.displayName}}
+                - רישום מועדון
+            </h2>
+            <div ng-show="data.LoadingSchoolTeams">
+                מערכת טוענת רשימת קבוצות, נא להמתין...
+            </div>
+            <div ng-show="data.SchoolTeamsError" style="color: red; font-weight: bold;">
+                {{data.SchoolTeamsError}}
+            </div>
+            <div ng-show="data.SchoolTeamsTable.TotalRows == 0">
+                אין קבוצות רשומות עבור בית ספר זה
+                <div>
+                    <button type="button" class="mir-blue-button" ng-click="addNewTeam($event)">
+                        הוסף קבוצה חדשה
+                    </button>
+                </div>
+            </div>
+            <div ng-show="!data.LoadingSchoolTeams && !data.SchoolTeamsError && data.SchoolTeamsTable.TotalRows > 0">
+                <table class="mir-table" align="center" id="tblSchoolTeams" data-features="sort;paging;search;filtering;showTotal">
+                    <tr>
+                        <td colspan="{{data.SchoolTeamsTable.Fields.length}}">
+                            <div style="float: right" ng-show="data.SchoolTeamsTable.Features.Search">
+                                <input type="text" id="tblSchoolTeamsSearch" name="search" ng-model="data.SchoolTeamsTable.Search" placeholder="חיפוש" />
+                            </div>
+                            <div style="float: left;">
+                                <div style="display: inline-block; margin-right: 15px;" ng-show="MirTable.gotFilters(data.SchoolTeamsTable)">
+                                    <button type="button" class="mir-btn-large" ng-click="MirTable.clearAllFilters(data.SchoolTeamsTable)">
+                                        ניקוי כל הבחירות
+                                    </button>
+                                </div>
+                                <div style="display: inline-block; margin-right: 15px;" ng-show="data.SchoolTeamsTable.Features.ChooseColumns">
+                                    <button id="btnChooseTableColumns" type="button" class="mir-btn-large" ng-click="MirTable.chooseColumns(data.SchoolTeamsTable)">
+                                        בחירת עמודות
+                                    </button>
+                                </div>
+                                <div id="pnlAvailableColumns" ng-show="data.SchoolTeamsTable.AvailableColumnsVisible">
+                                    <div ng-repeat="field in data.SchoolTeamsTable.Fields" ng-if="field.Visible">
+                                        <div ng-click="MirTable.availableColumnClicked(field, data.SchoolTeamsTable)" style="float: left; width: 30px; margin-bottom: 3px; cursor: pointer;">
+                                            <span class="far fa-check-square" ng-show="!field.IsHidden"></span>
+                                            <span class="far fa-square" ng-show="field.IsHidden"></span>
+                                        </div>
+                                        <div class="available-columns-title" ng-click="MirTable.availableColumnClicked(field, data.SchoolTeamsTable)"
+                                             style="float: right; margin-right: 5px; text-align: right; margin-bottom: 3px; cursor: pointer;">
+                                            {{field.Title}}
+                                        </div>
+                                    </div>
+                                    <div style="clear: both;"></div>
+                                    <div style="text-align: right; margin-bottom: 5px;" ng-show="data.SchoolTeamsTable.HiddenColumnExists">
+                                        <button type="button" class="mir-btn-large" ng-click="MirTable.undoColumnSelection(data.SchoolTeamsTable)">
+                                            איפוס
+                                        </button>
+                                    </div>
+                                </div>
+                                <div style="display: inline-block; margin-right: 15px;" ng-show="data.SchoolTeamsTable.Features.Excel">
+                                    <button type="button" class="mir-btn-large" ng-show="!data.SchoolTeamsTable.ExcelInProgress"
+                                            ng-click="MirTable.exportExcel(data.SchoolTeamsTable, schoolTeamsPagingService, 'TeamsForSchool' + loggedInUser.schoolSymbol)">
+                                        הורדת גיליון אקסל
+                                    </button>
+                                    <span ng-show="data.SchoolTeamsTable.ExcelInProgress">
+                                        מערכת מייצרת גיליון אקסל, נא להמתין...
+                                    </span>
+                                </div>
+                                <div style="display: inline-block; margin-right: 15px;">
+                                    <button type="button" class="mir-blue-button" ng-click="addNewTeam($event)">
+                                        הוסף קבוצה חדשה
+                                    </button>
+                                </div>
+                            </div>
+                            <div style="clear: both;"></div>
+                        </td>
+                    </tr>
+                    <tr class="mir-table-header-row">
+                        <th ng-repeat="field in data.SchoolTeamsTable.Fields" ng-show="field.Visible && !field.IsHidden" style="position: relative; padding-left: 25px; padding-right: 25px;">
+                            <span ng-click="MirTable.changeSort(field, data.SchoolTeamsTable)" ng-show="!field.Filtered" style="{{(field.IsFile) ? 'cursor: default;' : ''}}">{{field.Title}}</span>
+                            <input type="text" data-field-index="{{field.Index}}" ng-model="field.FilterText" placeholder="{{field.Title}}"
+                                   ng-show="field.Filtered" ng-change="MirTable.filterChanged(field, data.SchoolTeamsTable)" style="min-width: 100px;" />
+                            <div class="sortIcon" ng-show="field.Title == data.SchoolTeamsTable.Sort.Column">
+                                <span class="fas fa-arrow-down" ng-click="MirTable.changeSort(field, data.SchoolTeamsTable)" ng-show="data.SchoolTeamsTable.Sort.Descending"></span>
+                                <span class="fas fa-arrow-up" ng-click="MirTable.changeSort(field, data.SchoolTeamsTable)" ng-show="!data.SchoolTeamsTable.Sort.Descending"></span>
+                                <!-- img src="images/arrow.svg" class="mir-arrow" / -->
+                            </div>
+                            <div class="filterIcon" title="סינון לפי עמודה זו" ng-show="data.SchoolTeamsTable.Features.Filtering && !field.IsFile">
+                                <span class="fas fa-filter" ng-click="MirTable.toggleFilter(field, data.SchoolTeamsTable)" style="{{MirTable.getFilterStyle(field)}}"></span>
+                            </div>
+                            <div class="clear-filter" title="ניקוי סינון" ng-show="field.FilterText">
+                                <span class="fas fa-filter" ng-click="MirTable.clearFilter(field, data.SchoolTeamsTable)"></span>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr ng-repeat="row in data.SchoolTeamsTable.Rows">
+                        <td ng-repeat="field in data.SchoolTeamsTable.Fields" ng-show="field.Visible && !field.IsHidden">
+                            <span ng-show="!field.IsFile">
+                                {{row[field.Name]}}
+                            </span>
+                            <span class="mir-table-report-file" ng-if="field.IsFile" data-type="{{field.FileType}}" data-idnumber="{{row.IdNumber}}">
+                                <span class="fas fa-hourglass mir-file-loading-icon" style="font-size: 12px; display: none;"></span>
+                                <a href="#" target="_blank" style="display: none;">
+                                    <img src="//:0" class="mir-file-image" style="width: 40px; display: none;" />
+                                    <span class="mir-file-pdf fas fa-file-pdf-o" style="font-size: 30px; color: red; display: none;"></span>
+                                </a>
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+                <div ng-show="data.SchoolTeamsTable.Features.ShowTotal">
+                    סה"כ
+                    {{schoolTeamsPagingService.pagingData.totalRecords}}
+                    קבוצות
+                </div>
+                <div class="mir-pagination-block" ng-if="data.SchoolTeamsTable.Features.Paging && schoolTeamsPagingService.pagingData && schoolTeamsPagingService.pagingData.gotPaging" style="margin-top: 10px;">
+                    <!-- div>
+                        עמוד
+                        {{schoolTeamsPagingService.pagingData.selectedPage}}
+                        מתוך
+                        {{schoolTeamsPagingService.pagingData.pageCount}}
+                    </div -->
+                    <ul style="margin-top: 0px;">
+                        <li><a href="#" ng-click="schoolTeamsPagingService.nextPage()" class="{{(schoolTeamsPagingService.pagingData.isLastPage) ? 'mir-disabled-link' : ''}}" onclick="return false;"><i class="fas fa-angle-left"></i></a></li>
+                        <li ng-repeat="page in schoolTeamsPagingService.pagingData.pages | reverse"><a href="#" class="{{(page == schoolTeamsPagingService.pagingData.selectedPage) ? 'mir-active-page' : ''}}" ng-click="schoolTeamsPagingService.changePage(page)" onclick="return false;">{{page}}</a></li>
+                        <li><a href="#" ng-click="schoolTeamsPagingService.previousPage()" class="{{(schoolTeamsPagingService.pagingData.isFirstPage) ? 'mir-disabled-link' : ''}}" onclick="return false;"><i class="fas fa-angle-right"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div style="position: relative; margin-top: 10px;">
+                <button type="button" class="mir-btn-large" ng-click="backToDashboard()">
+                    חזרה ללוח בקרה
+                </button>
+            </div>
+        </div>
+        <div class="mir-common-container" ng-show="loggedInUser && loggedInUser.role == 5">
+            <h2>
+                מחוז
+                {{loggedInUser.displayName}}
+            </h2>
+            <div class="mir-control-panel">
+                <span>
+                    לוח בקרה - מחוז
+                </span>
+            </div>
+            <div>
+                <button type="button" class="mir-btn-large" ng-click="logout()" ng-disabled="logout.inProgress" style="margin-top: 15px;">
+                    החלפת משתמש
+                </button>
+                <div ng-show="logout.error" class="mir-common-error">
+                    {{logout.error}}
+                </div>
+            </div>
+        </div>
+        <div class="mir-common-container" ng-show="loggedInUser && loggedInUser.role == 6">
+            <h2>
+                מטה כספים -
+                {{loggedInUser.displayName}}
+            </h2>
+            <div class="mir-control-panel">
+                <span>
+                    לוח בקרה - מטה <כספים></כספים>
+                </span>
+            </div>
+            <div>
+                <button type="button" class="mir-btn-large" ng-click="logout()" ng-disabled="logout.inProgress" style="margin-top: 15px;">
+                    החלפת משתמש
+                </button>
+                <div ng-show="logout.error" class="mir-common-error">
+                    {{logout.error}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="pnlCommonDialog">
+    <div class="mir-dialog-title-container">
+        <div class="mir-dialog-close-button">
+            <!-- i class="far fa-window-close"></i -->
+            <img src="images/delete-copy.svg" />
+        </div>
+        <span class="mir-dialog-title-contents">
+
+        </span>
+    </div>
+    <div class="mir-dialog-body">
+
+    </div>
+    <div style="margin-top: 30px;">
+        <div class="mir-dialog-error"></div>
+        <div style="text-align: center;">
+            <button type="button" class="mir-blue-button" onclick="MirDialog.ConfirmClicked()">
+    אישור
+            </button>
+        </div>
+    </div>
+    <div style="margin-top: 50px;">
+
+    </div>
+</div>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-50864433-5', 'auto');
+    window['google-analytics-page-hit'] = 'true';
+    ga('send', 'pageview', document.location.hash);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<div class="dialog matches-edit vertical-flex" style="min-height: 10rem; max-height: inherit;"
+    v-bind:style="{width: matchesEdit.length > 1 ? '1000px' : '600px'}">
+    <div>
+        <div class="caption" style="position: relative;">
+            <div style="position: absolute; right: 5px; top: -5px; cursor: pointer; font-size: 18px; font-weight: bold;"
+                 title="ביטול וסגירת חלונית"
+                 v-on:click="cancel()">
+                X
+            </div>
+            {{matches.length > 1 ? "עריכת משחקים" : "עריכת משחק"}}
+            <div v-if="matches.length == 1">
+                {{group.phase.name + " - " + group.formatName() + " - משחק " + (matches[0].number + 1)}}
+            </div>
+            <div v-else>
+                {{group.phase.name + " - " + group.formatName()}}
+            </div>
+        </div>
+        <div class="edit-content horizontal-flex">
+            <div v-if="matchesEdit.length > 1" class="match-list" style="width: 40%;">
+                <div class="caption">משחקים</div>
+                <div style="overflow-y: auto; max-height: 300px;">
+                    <table style="width: 100%;">
+                        <tr v-for="match in matchesEdit" v-bind:class="{active: sweeping || match == selectedMatch}" v-on:click="selectedMatch = match">
+                            <td>{{match.match.number + 1}}</td>
+                            <td><div class="match-item" v-html="getOpponentName(match.opponentA, match.matchWinnerA, match.matchLoserA)"></div></td>
+                            <td style="padding-left: 4px; padding-right: 4px;"> - </td>
+                            <td><div class="match-item" v-html="getOpponentName(match.opponentB, match.matchWinnerB, match.matchLoserB)"></div></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="edit-tabs flex-fill vertical-flex">
+                <div v-if="matchesEdit.length > 1" class="horizontal-flex" style="justify-content: space-evenly;">
+                    <div class="tab" v-bind:class="{active: !sweeping}" v-on:click="showDetails()">פרטים</div>
+                    <div class="tab" v-bind:class="{active: sweeping}" v-on:click="showSweeping()">עריכה גורפת</div>
+                </div>
+                <div v-if="!sweeping && selectedMatch" class="match-details" style="padding-left: 16px; padding-right: 16px;">
+                    <table style="width: 100%;">
+                        <tr>
+                            <th style="width: 46%;">קבוצה א</th>
+                            <th style="width: 8%;"></th>
+                            <th style="width: 46%;">קבוצה ב</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <edit-select style="width: 100%;" v-bind:options="getTeams(selectedMatch.opponentB)" v-model="selectedMatch.opponentA" v-on:input="selectedMatch.matchWinnerA = null; selectedMatch.matchLoserA = null;" sort="false" static="true"></edit-select>
+                            </td>
+                            <td>
+                                <div style="text-align: center; padding-right: 3px; padding-bottom: 3px;" v-on:click="switchOpponents(selectedMatch)">
+                                    <span class="action-icon fa fa-exchange"></span>
+                                </div>
+                            </td>
+                            <td>
+                                <edit-select style="width: 100%;" v-bind:options="getTeams(selectedMatch.opponentA)" v-model="selectedMatch.opponentB" v-on:input="selectedMatch.matchWinnerB = null; selectedMatch.matchLoserB = null;" sort="false" static="true"></edit-select>
+                            </td>
+                        </tr>
+                        <tr v-if="(selectedMatch.opponentA && selectedMatch.opponentA.placement < 0) || (selectedMatch.opponentB && selectedMatch.opponentB.placement < 0)">
+                            <td v-if="selectedMatch.opponentA == null">
+                            </td>
+                            <td v-else-if="selectedMatch.opponentA.placement == -1">
+                                <edit-select style="width: 100%;" v-bind:options="getWinners(selectedMatch.opponentB.placement == -1 ? selectedMatch.matchWinnerB : null)" v-model="selectedMatch.matchWinnerA" sort="false" static="true"></edit-select>
+                            </td>
+                            <td v-else-if="selectedMatch.opponentA.placement == -2">
+                                <edit-select style="width: 100%;" v-bind:options="getLosers(selectedMatch.opponentB.placement == -2 ? selectedMatch.matchLoserB : null)" v-model="selectedMatch.matchLoserA" sort="false" static="true"></edit-select>
+                            </td>
+                            <td v-else>
+                            </td>
+                            <td>
+                            </td>
+                            <td v-if="selectedMatch.opponentB == null">
+                            </td>
+                            <td v-else-if="selectedMatch.opponentB.placement == -1">
+                                <edit-select style="width: 100%;" v-bind:options="getWinners(selectedMatch.opponentA.placement == -1 ? selectedMatch.matchWinnerA : null)" v-model="selectedMatch.matchWinnerB" sort="false" static="true"></edit-select>
+                            </td>
+                            <td v-else-if="selectedMatch.opponentB.placement == -2">
+                                <edit-select style="width: 100%;" v-bind:options="getLosers(selectedMatch.opponentA.placement == -2 ? selectedMatch.matchLoserA : null)" v-model="selectedMatch.matchLoserB" sort="false" static="true"></edit-select>
+                            </td>
+                            <td v-else>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table style="width: 100%;">
+                        <tr>
+                            <th style="width: 50%;">מועד</th>
+                            <th style="width: 30%;">
+                                <div v-if="selectedMatch.date" style="padding-right: 8px;">שעה</div>
+                            </th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <td style="width: 50%; padding-left: 8px;">
+                                <datepicker v-model="selectedMatch.date"
+                                            format="dd/MM/yyyy" :typeable="true"
+                                            :language="Hebrew"
+                                            :clear-button="true"
+                                            :inline="false" style="width: 95%; "></datepicker>
+                            </td>
+                            <td style="width: 30%; padding-right: 8px;">
+                                <input v-if="selectedMatch.date" type="text" v-bind:class="{invalid: selectedMatch.timeInvalid}" v-model="selectedMatch.timeText" v-on:input="onTimeInput">
+                            </td>
+                            <td style="width: 20%;">
+
+                            </td>
+                        </tr>
+                    </table>
+
+
+                    <table style="width: 100%;">
+                        <tr>
+                            <th colspan="2">מתקן</th>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%; padding-left: 8px;">
+                                <edit-select style="width: 100%;" v-bind:options="regions" v-model="venueRegion" sort="false" static="true"></edit-select>
+                            </td>
+                            <td style="width: 70%; padding-right: 8px;">
+                                <edit-select style="width: 100%;" v-bind:options="sortedFacilities" v-on:search="onVenueSearch"
+                                             v-bind:display="getFacilityDisplay" v-on:input="updateVenue"
+                                             v-model="selectedMatch.venue" sort="false"></edit-select>
+                            </td>
+                        </tr>
+                    </table>
+                    <table style="width: 100%;" v-if="selectedMatch.functionaries.length > 0">
+                        <tr>
+                            <th colspan="2">בעלי תפקידים</th>
+                        </tr>
+                        <tr v-for="functionary in selectedMatch.functionaries">
+                            <td style="width: 30%; padding-left: 8px;">
+                                {{functionary.typeName}}
+                            </td>
+                            <td style="width: 70%; padding-right: 8px;">
+                                <edit-select style="width: 100%;" v-bind:options="getFunctionaries(functionary.type)" v-on:search="onFunctionarySearch"
+                                     v-bind:display="getFunctionaryDisplay"
+                                     v-model="functionary.functionary" sort="false"></edit-select>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div v-else-if="sweeping" class="match-details" style="padding-left: 16px; padding-right: 16px;">
+                    <table style="width: 100%;">
+                        <tr>
+                            <th style="width: 50%;">מועד</th>
+                            <th style="width: 30%;">
+                                <div v-if="generalTime.date" style="padding-right: 8px;">שעה</div>
+                            </th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <td style="width: 50%; padding-left: 8px;">
+                                <datepicker v-model="generalTime.date"
+                                            format="dd/MM/yyyy" :typeable="true"
+                                            :language="Hebrew" v-on:input="onGeneralDateInput"
+                                            :clear-button="true"
+                                            :inline="false" style="width: 95%; "></datepicker>
+                            </td>
+                            <td style="width: 30%; padding-right: 8px;">
+                                <input v-if="generalTime.date" type="text" v-bind:class="{invalid: generalTime.timeInvalid}" v-model="generalTime.timeText" v-on:input="onTimeInput">
+                            </td>
+                            <td style="width: 20%;">
+
+                            </td>
+                        </tr>
+                        <tr v-if="generalTime.date">
+                            <td>
+                                <span>הפרש זמנים</span>
+                                <input type="text" v-bind:class="{invalid: generalTime.diffInvalid}" v-model="generalTime.diffText" v-on:input="onTimeDiffInput">
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table style="width: 100%;">
+                        <tr>
+                            <th colspan="2">מתקן</th>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%; padding-left: 8px;">
+                                <edit-select style="width: 100%;" v-bind:options="regions" v-model="venueRegion" sort="false" static="true"></edit-select>
+                            </td>
+                            <td style="width: 70%; padding-right: 8px;">
+                                <edit-select style="width: 100%;" v-bind:options="sortedFacilities" v-on:search="onVenueSearch"
+                                             v-bind:display="getFacilityDisplay" v-on:input="updateVenue"
+                                             v-model="generalVenue" sort="false"></edit-select>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="alert text-center">
+    </div>
+
+    <div class="text-center mt-md">
+        <button class="btn gray ml-sm" style="width: 5rem" v-on:click="cancel()">ביטול</button>
+        <button class="btn" v-bind:class="{gray: hasInvalidTime}" v-bind:disabled="hasInvalidTime" style="width: 5rem" v-on:click="confirm()">אישור</button>
+    </div>
+</div>

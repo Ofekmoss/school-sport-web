@@ -1,0 +1,111 @@
+<style type="text/css">
+    .tags {
+        text-align: right;
+    }
+    .tag-item {
+        /* float: right; */
+        display: inline-block;
+        background: #60666b;
+        border: none;
+        margin-left: 5px;
+        margin-bottom: 5px;
+        font-size: 13px;
+        line-height: 18px;
+        color: #fff;
+        padding: 3px 10px;
+        text-shadow: none;
+        border: 1px solid #ffffff;
+        border-radius: 4px;
+    }
+    .scale_image {
+        width: 280px;
+        height: 140px;
+    }
+</style>
+
+<!--==============================content================================-->
+
+<div class="wide-container">
+    <div class="breadcrumb">
+        <div>
+            <span><a ui-sref="home">בית </a></span> /
+            {{pluralCaption}}
+        </div>
+    </div>
+
+    <div class="content">
+        <div> <!-- class="container" -->
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    <!--Featured video-->
+                    <div class="section" ng-show="false">
+                        <h3 class="section_title">
+                            כל התגיות
+                        </h3>
+                        <div class="t_align_c">
+                            <div class="tags">
+                                <span class="tag-item" ng-repeat="tag in data.AllTags">
+                                    {{tag.Name}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12">
+                    <div class="section read_post_list">
+                        <h2 class="section_title section_title_big">
+                            <span ng-if="pageType == 'article'">
+                                ארכיון
+                            </span>
+                            {{pluralCaption}}
+                        </h2>
+                        <ul class="row" ng-repeat="pageRow in pageRows">
+                            <!--Post-->
+                            <li class="col-lg-4 col-md-4 col-sm-4 col-xs-4" ng-repeat="page in pageRow.Pages | reverse">
+                                <div class="section_post_left" ng-if="page.Seq">
+                                    <div class="scale_image_container"> <!--  with_buttons -->
+                                        <a href="#/page/{{page.Seq}}"><img ng-src="{{page.CroppedImage_Slider}}" alt="" class="scale_image"></a>
+                                        <div class="post_image_buttons">
+                                            <div class="buttons_container">
+                                                <a href="#/page/{{page.Seq}}" class="button banner_button travel">{{page.HebrewType}}</a>
+                                            </div>
+                                            <a href="#/page/{{page.Seq}}" class="icon_box" ng-show="false">
+                                                <i class="fa fa-picture-o" ng-show="page.Type == 1"></i>
+                                                <i class="fa fa-file-text" ng-show="page.Type == 2"></i>
+                                                <i class="fa fa-video-camera" ng-show="page.Type == 3"></i>
+                                            </a>
+                                        </div>
+                                        <!-- div class="open_buttons clearfix">
+                                            <div class="f_left"><a href="images/gallery_img_3.jpg" role="button" class="jackbox jackbox_button button button_grey_light" data-group="gallery_1"><i class="fa fa-search-plus"></i></a></div>
+                                            <div class="f_left"><a href="#" role="button" class="jackbox_button button button_grey_light"><i class="fa fa-link"></i></a></div>
+                                        </div -->
+                                    </div>
+                                    <div class="clearfix">
+                                        <div class="f_left">
+                                            <div class="event_date">{{page.Date | date : 'dd/MM/yyyy'}}</div>
+                                        </div>
+                                    </div>
+                                    <div class="post_text">
+                                        <h4 class="post_title"><a href="#/page/{{page.Seq}}">{{page.Description}}</a></h4>
+                                    </div>
+                                </div>
+                                <div class="section_post_left" ng-if="!page.Seq">
+                                    &nbsp;
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- div class="pagination_block">
+                        <span>Page 1 of 4</span>
+                        <ul class="pagination clearfix">
+                            <li><a href="#" class="active">1</a></li>
+                            <li><a href="#">2</a></li>
+                            <li><a href="#">3</a></li>
+                            <li><a href="#"><i class="fa fa-angle-right"></i></a></li>
+                        </ul>
+                    </div -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

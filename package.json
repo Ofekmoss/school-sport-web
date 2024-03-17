@@ -1,0 +1,52 @@
+{
+  "name": "school-sport-web",
+  "version": "1.0.0",
+  "description": "School Sport Web Site",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/mirdev/school-sport-web.git"
+  },
+  "homepage": "https://bitbucket.org/mirdev/school-sport-web#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-concat-css": "^2.3.0",
+    "gulp-jshint": "^2.0.1",
+    "gulp-notify": "^2.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^2.0.0",
+    "jshint": "^2.9.2"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "body-parser": "^1.15.2",
+    "child_process": "^1.0.2",
+    "compression": "^1.6.2",
+    "connect-multiparty": "^2.0.0",
+    "edge": "^6.5.1",
+    "edge-js": "^11.3.1",
+    "excel4node": "^1.7.2",
+    "express": "^4.14.0",
+    "express-session": "^1.14.1",
+    "gulp-filter": "^6.0.0",
+    "html-pdf": "^2.2.0",
+    "morgan": "^1.7.0",
+    "msnodesqlv8": "^2.4.3",
+    "mssql": "^3.3.0",
+    "mustache": "^3.0.1",
+    "node-cache": "^3.2.1",
+    "node-schedule": "^1.2.0",
+    "nodemailer": "^1.3.1",
+    "officegen": "^0.6.0",
+    "path": "^0.12.7",
+    "pdf-puppeteer": "^1.1.8",
+    "promise": "^7.1.1",
+    "soap": "^0.16.0",
+    "winston": "^2.2.0",
+    "xlsx": "^0.15.1"
+  }
+}

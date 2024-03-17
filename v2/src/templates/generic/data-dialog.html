@@ -1,0 +1,48 @@
+<div class="dialog wide" style="position: relative;">
+    <div style="position: absolute; right: 15px; top: 5px; font-size: 22px; cursor: pointer;" title="סגירת חלונית" v-on:click="close()">
+        X
+    </div>
+    <div v-if="!hideSearch" style="position: absolute; left: 15px; top: 8px; font-size: 20px; cursor: pointer;">
+        <input type="text" v-model="searchText" placeholder="חיפוש" />
+    </div>
+    <div class="caption">
+        {{caption}}
+    </div>
+    <div class="pb-md ph-sm">
+        <div v-if="loading" style="width: 100%; height: 100%; text-align: center;">
+            <img align="center" src="img/progress.gif" />
+        </div>
+        <div v-if="error" style="font-weight: bold; color: red;">
+            {{error}}
+        </div>
+        <div v-if="!error && !loading && (tables == null || tables.length === 0)">
+            אין נתוני
+            {{caption}}
+        </div>
+        <div v-if="!error && !loading" style="max-height: 400px; overflow: auto;" id="dataContainer">
+            <div v-for="(table, index) in tables" v-if="table.columns != null && table.columns.length > 0" style="margin-bottom: 15px;">
+                <table class="table">
+                    <tr>
+                        <th v-for="column in table.columns" v-if="column.active">{{column.name}}</th>
+                    </tr>
+                    <tr v-for="(row, index) in table.rows">
+                        <td v-for="column in table.columns" v-if="column.active">
+                            <span v-if="row[column.key] === '[v]'"><img src="img/v.svg" style="width: 1.8rem;padding: 0px 0.5rem;" alt="יש אישור" v-bind:title="table.tooltips[index][column.key]" /></span>
+                            <span v-if="row[column.key] === '[x]'"><img src="img/x-grey.svg" style="width: 1.8rem;padding: 0px 0.5rem;" alt="אין אישור" v-bind:title="table.tooltips[index][column.key]" /></span>
+                            <span v-if="!column.isMoreInfo && row[column.key] !== '[v]' && row[column.key] !== '[x]'">{{row[column.key]}}</span>
+                            <div v-if="column.isMoreInfo" style="display: flex; justify-content: center; cursor: pointer;"
+                                v-on:click="handleMoreInfo(row, column.key)">
+                                <img src="img/blue-dot.png" style="max-width: 5px; margin: 2px;">
+                                <img src="img/blue-dot.png" style="max-width: 5px; margin: 2px;">
+                                <img src="img/blue-dot.png" style="max-width: 5px; margin: 2px;">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="pb-md" style="text-align: center;">
+        <button class="btn wide" v-on:click="close()">סגירת חלונית</button>
+    </div>
+</div>

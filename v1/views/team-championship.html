@@ -1,0 +1,607 @@
+<style type="text/css">
+    .panel-default > .panel-heading {
+		color: #333;
+		background-color: #f5f5f5;
+		border-color: #ddd;
+	}
+	
+	.table_type_1 tr th {
+        width: auto;
+    }
+	.team_name {
+		font-weight: bold;
+	}
+    .event_sport_field {
+        /* padding: 5px 12px; */
+        text-align: center;
+        border-width: 2px;
+        border-style: solid;
+        border-radius: 5px;
+        color: white;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .event_sport_field_row {
+        padding: 40px 0px 40px 0px;
+    }
+
+    #events_table th {
+        cursor: pointer;
+    }
+
+    #events_table th, #events_table td {
+        vertical-align: middle;
+    }
+
+    .transparent_sport_field, .selected_sport_field {
+        cursor: pointer;
+    }
+
+    .selected_sport_field {
+        /* opacity: 1; */
+        color: white;
+    }
+
+    .transparent_sport_field {
+        /* opacity: 0.5; */
+        color: black;
+    }
+
+    .transparent_sport_field:hover {
+        /* opacity: 1; */
+        color: white;
+    }
+
+    .selected_sport_field:hover {
+        text-decoration: underline;
+        color: white;
+    }
+
+    .date-filter-remove-icon {
+        cursor: pointer;
+        font-size: 12px;
+        margin-top: 5px;
+        color: white;
+        margin-right: -25px;
+    }
+
+    .date-filter-remove-icon:hover  {
+        color: red;
+    }
+
+    .custom_select, .custom_select div, .custom_select span, .sorting_block, .sorting_block span, .sorting_block div {
+        color: #3e454c !important;
+    }
+</style>
+<div class="wide-container" ng-if="error">
+    <div class="alert alert-danger" role="alert">
+        {{error}}
+    </div>
+</div>
+
+<div class="wide-container" ng-if="!error">
+    <div class="breadcrumb">
+        <div>
+            <span><a ui-sref="home">בית </a></span> /
+מועדות ספורט בית ספרי / מחוז מרכז
+        </div>
+    </div>
+
+    <div class="content">
+        <div>
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <h2 class="section_title section_title_big" style="margin-bottom: 0px;">
+                        שם האליפות - מחוז
+                    </h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-12" style="display:none;">
+                    <div class="section">
+                        <h3 class="section_title">
+פילטרים
+                        </h3>
+                        <div class="sorting_block var2 clearfix" style="margin-bottom: 10px;">
+                            <div style="float: right;">
+                                <span>
+                                בחירת עונה
+                                </span>
+                                <div class="custom_select" id="ddlSeason" ng-show="seasons.length > 0">
+                                    <div class="select_title">
+                                        {{currentSeason.Name}}
+                                    </div>
+                                    <ul id="menu_type" class="select_list"></ul>
+                                    <select>
+                                        <option ng-repeat="season in seasons" value="season.Season">
+                                            {{season.Name}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <calendar source="eventFilters.Calendar"></calendar>
+                        <!--
+                        מתאריך
+                        <button type="button" class="button button_type_icon_small button_grey" ng-click="SelectDate('start')" style="width: 100px; text-align: center; padding: 0; height: 25px; padding-left: 5px;">
+                            {{getDateFilterText(eventFilters.DateRange.Start)}}
+                        </button>
+                        <span class="date-filter-remove-icon glyphicon glyphicon-remove" ng-click="clearDateFilterStart()" ng-show="false"></span>
+                        &nbsp;&nbsp;
+                        עד תאריך
+                        <button type="button" class="button button_type_icon_small button_grey" ng-click="SelectDate('end')" style="width: 100px; text-align: center; padding: 0; height: 25px; padding-left: 5px;">
+                            {{getDateFilterText(eventFilters.DateRange.End)}}
+                        </button>
+                        <span class="date-filter-remove-icon glyphicon glyphicon-remove" ng-click="clearDateFilterEnd()" ng-show="false"></span>
+                        -->
+                    </div>
+                </div>
+				<div class="row">
+					<div class="col-lg-4 col-md-4 col-sm-12">
+						<div class="section" ng-show="categoriesInUse.Rows.length > 0 && !noEventsInRange">
+							<h3 class="section_title">
+								בחירת קטגוריות אליפות:
+								<div class="pull-left" ng-show="eventFilters.Categories.length > 0">
+									<button type="button" class="button button_grey" style="font-size: 14px; padding: 5px 10px;" ng-click="clearCategoriesFilter()">
+										ניקוי בחירה
+									</button>
+								</div>
+							</h3>
+							<div class="row" ng-repeat="categoryRow in categoriesInUse.Rows" style="margin-bottom: 10px;">
+								<div class="col-lg-3 col-md-3 col-sm-3" ng-repeat="category in categoryRow" style="padding-right: 0px;">
+									<div class="{{getSportFieldFilterClass(category)}}" ng-click="toggleCategoryFilter(category)"
+										 change-background colorcode="{{getSportFieldColor(category.SportField)}}" selected="{{category.Selected}}"
+										 style="{{getSportFieldFilterStyle(category)}}" ng-if="category.SportField">
+										{{category.Name}}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>	
+					<div class="col-lg-4 col-md-4 col-sm-12">
+						<div class="section" ng-show="championshipsInUse.Rows.length > 0 && !noEventsInRange">
+							<h3 class="section_title">
+								<span ng-show="sportFlowersChampFilterCount() == 0">
+בחירת אליפויות:
+								</span>
+								<span ng-show="sportFlowersChampFilterCount() == totalChampionshipsInUse()">
+								בחירת אירועי פרחי ספורט:
+								</span>
+								<span ng-show="sportFlowersChampFilterCount() > 0 && sportFlowersChampFilterCount() < totalChampionshipsInUse()">
+								בחירת אליפויות ואירועי פרחי ספורט:
+								</span>
+								<div class="pull-left" ng-show="eventFilters.Championships.length > 0">
+									<button type="button" class="button button_grey" style="font-size: 14px; padding: 5px 10px;" ng-click="clearChampionshipFilter()">
+										ניקוי בחירה
+									</button>
+								</div>
+							</h3>
+							<div class="row" ng-repeat="championshipRow in championshipsInUse.Rows" style="margin-bottom: 10px;">
+								<div class="col-lg-3 col-md-3 col-sm-3" ng-repeat="championship in championshipRow" style="padding-right: 0px;">
+									<div class="{{getSportFieldFilterClass(championship)}}" ng-click="toggleChampionshipFilter(championship)"
+										 change-background colorcode="{{getSportFieldColor(championship.SportField)}}" selected="{{championship.Selected}}"
+										 style="{{getSportFieldFilterStyle(championship)}}" ng-if="championship.SportField">
+										{{championship.Name}}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-lg-4 col-md-4 col-sm-12">
+						<div class="section" ng-show="!noEventsInRange">
+							<h3 class="section_title">
+בחירת ענף ספורט:
+								<div class="pull-left" ng-show="eventFilters.SportFields.length > 0">
+									<button type="button" class="button button_grey" style="font-size: 14px; " ng-click="clearSportFieldFilter()">
+										ניקוי בחירה
+									</button>
+								</div>
+							</h3>
+						</div>
+						<div class="section" ng-show="noEventsInRange">
+							<h3 class="section_title">
+								אין אירועים בתאריך נבחר
+							</h3>
+						</div>
+						<div class="row">
+							<div class="col-lg-3 col-md-3 col-sm-3" ng-repeat="sportField in sportFieldsInUse" style="padding-right: 0px;">
+								<div class="{{getSportFieldFilterClass(sportField)}}" ng-click="toggleSportFieldFilter(sportField)"
+									 change-background colorcode="{{getSportFieldColor(sportField.Id)}}" selected="{{sportField.Selected}}"
+									 style="{{getSportFieldFilterStyle(sportField)}}" ng-if="sportField.Id">
+									{{sportField.Name}}
+								</div>
+								</br>
+							</div>
+						</div>
+					</div>
+				</div>
+                <div class="row">    
+					<div class="col-lg-9 col-md-9 col-sm-12">
+						<!-- GAMES -->
+						<div class="section_2"  style="height:230px">
+							<h3 class="section_title">תוכנית משחקים</h3>
+							<!--Gallery-->
+							<owl-carousel loop="3">
+								<owl-item  ng-repeat="event in events">
+									<div class="scale_image_container article_thumbnail">
+										<div class="row">
+											<div class="panel panel-default">
+												<div class="panel-heading" style="background-color:#00ADEE; color:#fff;">
+														{{event.Date | date : 'dd/MM/yyyy'}}
+														<br />
+														{{event.GameDetails}}
+													
+												</div>
+												<div class="panel-body">
+													<div class="col-lg-3 col-md-3 col-sm-3">
+														</br></br>
+														{{event.Date | date : 'HH:mm'}}
+													</div>
+													<div class="col-lg-9 col-md-9 col-sm-9">
+														<div class="team_name">
+															{{event.TeamA}}
+														</div>	
+														<h2>
+															80
+														</h2>
+														<h2>
+															50
+														</h2>
+														<div class="team_name">
+															{{event.TeamB}}
+														</div>	
+														<!--
+														מתקן:
+														{{event.FACILITY_NAME}} -->
+													</div>
+												</div>	
+											</div>
+										</div>	
+									</div>
+								</owl-item>
+							</owl-carousel>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-3 col-sm-12">
+						<!-- GAMES -->
+						<div class="section_3">
+							<h3 class="section_title">הורדת קבצים</h3>
+							<div class="buttons_list_big">
+								<ul>
+									<li><a href="#" class="button button_type_icon_big button_grey_light" style="width:100%">חוברת מידע<i class="fa fa-book"></i></a></li>
+									<li><a href="#" class="button button_type_icon_big button_grey_light" style="width:100%">תקנון<i class="fa fa-gavel"></i></a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					</br>
+					<!-- END GAMES -->
+					<!-- Tables -->
+					<div class="row">
+						<div class="col-lg-12 col-md-12 col-sm-12">
+							<div class="section_3">
+								<h3 class="section_title">טבלאות</h3>
+								<div class="col-lg-1 col-md-1 col-sm-12">
+								</div>
+								<div class="col-lg-3 col-md-3 col-sm-12">
+									<div class="section_3">
+										<h3 class="section_title section_title_medium">בית 3</h3>
+										<table class="table_type_1">
+											<tr class="f_size_large">
+												<th>#</th>
+												<th>שם הקבוצה</th>
+												<th>נצחונות</th>
+												<th>תיקו</th>
+												<th>הפסדים</th>
+												<th>נקודות</th>   
+											</tr>
+											<tr>
+												<td>1</td>
+												<td>מודיעין עירוני ב'</td>
+												<td>12</td>
+												<td>22</td>
+												<td>3</td>
+												<td>3</td>
+											</tr>
+											<tr>
+												<td>2</td>
+												<td>מודיעין עירוני ב'</td>
+												<td>12</td>
+												<td>22</td>
+												<td>3</td>
+												<td>3</td>
+											</tr>
+											<tr>
+												<td>3</td>
+												<td>מודיעין עירוני ב'</td>
+												<td>12</td>
+												<td>22</td>
+												<td>3</td>
+												<td>3</td>
+											</tr>
+											<tr>
+												<td>4</td>
+												<td>מודיעין עירוני ב'</td>
+												<td>12</td>
+												<td>22</td>
+												<td>3</td>
+												<td>3</td>
+											</tr>
+										</table>
+									</div>
+								</div>
+								<div class="col-lg-1 col-md-1 col-sm-12">
+								</div>
+								<div class="col-lg-3 col-md-3 col-sm-12">
+									<div class="section_3">
+										<h3 class="section_title section_title_medium">בית 2</h3>
+										<table class="table_type_1">
+											<tr class="f_size_large">
+												<th>#</th>
+												<th>שם הקבוצה</th>
+												<th>נצחונות</th>
+												<th>תיקו</th>
+												<th>הפסדים</th>
+												<th>נקודות</th>   
+											</tr>
+											<tr>
+												<td>1</td>
+												<td>מודיעין עירוני ב'</td>
+												<td>12</td>
+												<td>22</td>
+												<td>3</td>
+												<td>3</td>
+											</tr>
+											<tr>
+												<td>2</td>
+												<td>מודיעין עירוני ב'</td>
+												<td>12</td>
+												<td>22</td>
+												<td>3</td>
+												<td>3</td>
+											</tr>
+											<tr>
+												<td>3</td>
+												<td>מודיעין עירוני ב'</td>
+												<td>12</td>
+												<td>22</td>
+												<td>3</td>
+												<td>3</td>
+											</tr>
+											<tr>
+												<td>4</td>
+												<td>מודיעין עירוני ב'</td>
+												<td>12</td>
+												<td>22</td>
+												<td>3</td>
+												<td>3</td>
+											</tr>
+										</table>
+									</div>
+								</div>
+								<div class="col-lg-1 col-md-1 col-sm-12">
+								</div>
+								<div class="col-lg-3 col-md-3 col-sm-12">
+									<div class="section_3">
+										<h3 class="section_title section_title_medium">בית 1</h3>
+										<table class="table_type_1">
+											<tr class="f_size_large">
+												<th>#</th>
+												<th>שם הקבוצה</th>
+												<th>נצחונות</th>
+												<th>תיקו</th>
+												<th>הפסדים</th>
+												<th>נקודות</th>   
+											</tr>
+											<tr>
+												<td>1</td>
+												<td>מודיעין עירוני ב'</td>
+												<td>12</td>
+												<td>22</td>
+												<td>3</td>
+												<td>3</td>
+											</tr>
+											<tr>
+												<td>2</td>
+												<td>מודיעין עירוני ב'</td>
+												<td>12</td>
+												<td>22</td>
+												<td>3</td>
+												<td>3</td>
+											</tr>
+											<tr>
+												<td>3</td>
+												<td>מודיעין עירוני ב'</td>
+												<td>12</td>
+												<td>22</td>
+												<td>3</td>
+												<td>3</td>
+											</tr>
+											<tr>
+												<td>4</td>
+												<td>מודיעין עירוני ב'</td>
+												<td>12</td>
+												<td>22</td>
+												<td>3</td>
+												<td>3</td>
+											</tr>
+										</table>
+									</div>
+								</div>
+					</div>
+				</div>
+				</div>			
+                        <div class="section" ng-repeat="event in events" style="display:none">
+                            <div class="alternating-colors col-lg-12 col-md-12 col-sm-12 col-xs-12" data-colors="#e0e0e0,#c0c0c0">
+                                <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">
+                                    &nbsp; <!-- live -->
+                                </div>
+                                <div class="col-lg-5 col-md-5 col-sm-10 col-xs-10">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-if="event.ChampionshipType == 2">
+                                        {{event.SPORT_FIELD_TYPE_NAME}}
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-5 col-xs-5" ng-if="event.ChampionshipType == 1">
+
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-5 col-xs-5" ng-if="event.ChampionshipType == 1">
+
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                                        <div class="col-lg-4 col-md-4 col-sm-10 col-xs-10">
+                                            <!-- h3>{{event.Description}}</h3 -->
+                                            {{event.Date | date : 'dd/MM/yyyy HH:mm'}}
+                                            <br />
+                                            {{event.GameDetails}}
+                                            <br />
+                                            {{event.TeamA}}
+                                            <h2>
+                                                80
+                                            </h2>
+                                            <h2>
+                                                50
+                                            </h2>
+                                            {{event.TeamB}}
+                                            <!--
+                                            מתקן:
+                                            {{event.FACILITY_NAME}} -->
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-10 col-xs-10">
+                                            <!-- h3>{{event.Description}}</h3 -->
+                                            {{event.Date | date : 'dd/MM/yyyy HH:mm'}}
+                                            <br />
+                                            {{event.GameDetails}}
+                                            <br />
+                                            {{event.TeamA}}
+                                            <h2>
+                                                80
+                                            </h2>
+                                            <h2>
+                                                50
+                                            </h2>
+                                            {{event.TeamB}}
+                                            <!--
+                                            מתקן:
+                                            {{event.FACILITY_NAME}} -->
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-10 col-xs-10">
+                                            <!-- h3>{{event.Description}}</h3 -->
+                                            {{event.Date | date : 'dd/MM/yyyy HH:mm'}}
+                                            <br />
+                                            {{event.GameDetails}}
+                                            <br />
+                                            {{event.TeamA}}
+                                            <h2>
+                                                80
+                                            </h2>
+                                            <h2>
+                                                50
+                                            </h2>
+                                            {{event.TeamB}}
+                                            <!--
+                                            מתקן:
+                                            {{event.FACILITY_NAME}} -->
+                                        </div>
+                                        
+                                     </div>
+                                </div>
+
+                                <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
+                                    <!-- div class="event_sport_field event_sport_field_row" style="{{getSportFieldStyle(event.SPORT_ID)}}">
+                                        <span style="color: white;">
+                                            {{event.SPORT_NAME}}
+                                        </span>
+                                    </div -->
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!--table class="table_type_1" id="events_table" ng-show="ng-show="events.length > 0">
+                            <tr class="f_size_large">
+                                <th ng-click="sortBy('SPORT_NAME')">
+ענף
+                                    <span class="pull-left" ng-show="sortColumn == '-SPORT_NAME'">▼</span>
+                                    <span class="pull-left" ng-show="sortColumn == '+SPORT_NAME'">▲</span>
+                                </th>
+                                <th ng-click="sortBy('Description')">
+אליפות
+                                    <span class="pull-left" ng-show="sortColumn == '-Description'">▼</span>
+                                    <span class="pull-left" ng-show="sortColumn == '+Description'">▲</span>
+                                </th>
+                                <th ng-click="sortBy('Date')">
+תאריך
+                                    <span class="pull-left" ng-show="sortColumn == '-Date'">▼</span>
+                                    <span class="pull-left" ng-show="sortColumn == '+Date'">▲</span>
+                                </th>
+                                <th>
+                                    שעה
+                                </th>
+                                <th ng-click="sortBy('FACILITY_NAME')">
+                                    אולם
+                                    <span class="pull-left" ng-show="sortColumn == '-FACILITY_NAME'">▼</span>
+                                    <span class="pull-left" ng-show="sortColumn == '+FACILITY_NAME'">▲</span>
+                                </th>
+                                <th ng-click="sortBy('TeamA')">
+                                    קבוצה א'
+                                    <span class="pull-left" ng-show="sortColumn == '-TeamA'">▼</span>
+                                    <span class="pull-left" ng-show="sortColumn == '+TeamA'">▲</span>
+                                </th>
+                                <th ng-click="sortBy('TeamB')">
+                                    קבוצה ב'
+                                    <span class="pull-left" ng-show="sortColumn == '-TeamB'">▼</span>
+                                    <span class="pull-left" ng-show="sortColumn == '+TeamB'">▲</span>
+                                </th>
+                                <th ng-click="sortBy('PHASE_NAME')">
+                                    שלב
+                                    <span class="pull-left" ng-show="sortColumn == '-PHASE_NAME'">▼</span>
+                                    <span class="pull-left" ng-show="sortColumn == '+PHASE_NAME'">▲</span>
+                                </th>
+                                <th ng-click="sortBy('ROUND_NAME')">
+סיבוב
+                                    <span class="pull-left" ng-show="sortColumn == '-ROUND_NAME'">▼</span>
+                                    <span class="pull-left" ng-show="sortColumn == '+ROUND_NAME'">▲</span>
+                                </th>
+                                <th ng-click="sortBy('CYCLE_NAME')">
+מחזור
+                                    <span class="pull-left" ng-show="sortColumn == '-CYCLE_NAME'">▼</span>
+                                    <span class="pull-left" ng-show="sortColumn == '+CYCLE_NAME'">▲</span>
+                                </th>
+                                <th ng-click="sortBy('GROUP_NAME')">
+בית
+                                    <span class="pull-left" ng-show="sortColumn == '-GROUP_NAME'">▼</span>
+                                    <span class="pull-left" ng-show="sortColumn == '+GROUP_NAME'">▲</span>
+                                </th>
+                                <th>
+שידור
+                                </th>
+                            </tr>
+                            <tr ng-repeat="event in events">
+                                <td>
+                                    <div class="event_sport_field" style="{{getSportFieldStyle(event.SPORT_ID)}}">
+                                          {{event.SPORT_NAME}}
+                                    </div>
+                                </td>
+                                <td>{{event.Description}}</td>
+                                <td>{{event.Date | date : 'dd/MM/yyyy'}}</td>
+                                <td>{{event.Date | date : 'HH:mm'}}</td>
+                                <td>{{event.FACILITY_NAME}}</td>
+                                <td>{{event.TeamA}}</td>
+                                <td>{{event.TeamB}}</td>
+                                <td>{{event.PHASE_NAME}}</td>
+                                <td>{{event.ROUND_NAME}}</td>
+                                <td>{{event.CYCLE_NAME}}</td>
+                                <td>{{event.GROUP_NAME}}</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                        </table -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

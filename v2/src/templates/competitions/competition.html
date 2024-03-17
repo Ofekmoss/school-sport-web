@@ -1,0 +1,550 @@
+<div class="vertical-flex" v-if="competition" v-on:mousemove="mouseMove">
+    <!--
+
+        Match competition
+
+    -->
+    <template v-if="competition.sport.match">
+        <div>
+            <div v-if="event" class="phases horizontal-flex" style="overflow-x: auto; border-bottom: 1px solid lightgrey;">
+                <div v-for="(ph, pi) in event.phases" class="phase horizontal-flex" v-bind:class="{active: ph == phase}" v-on:click="selectPhase(ph)">
+                    <span style="white-space: nowrap;">
+                        <span v-if="event.currentPhase() == ph" class="fa fa-asterisk"></span>
+                        {{ph.name}}&nbsp;
+                        <span v-if="building" class="icon fa fa-pencil" v-on:click="onEditPhase(pi, $event)"></span>
+                    </span>
+
+                </div>
+                <button class="btn btn-sm" v-if="!insertPanel && building" v-on:click="insertPhase()" v-bind:disabled="updating">+</button>
+                <div class="flex-fill"></div>
+                <div style="padding-top: 4px;">
+                    <template v-if="phase">
+                        <template v-if="event.currentPhase() == phase">
+                            <span>שלב נוכחי</span>
+                            <button v-if="event.currentPhase() != event.phases[0]" class="orange-solid-button ml-sm" v-on:click="previousPhase()" v-bind:disabled="updating">חזרה לשלב קודם</button>
+                            <button v-if="event.currentPhase() != event.phases[event.phases.length - 1]" class="green-solid-button ml-sm" v-on:click="nextPhase()" v-bind:disabled="updating">מעבר לשלב הבא</button>
+                        </template>
+                        <button v-else-if="event.phases[event.phase + 1] == phase" class="green-solid-button btn-sm ml-sm" v-on:click="nextPhase()" v-bind:disabled="updating">התחלת שלב</button>
+                        <template v-else-if="event.currentPhase().number > phase.number">
+                            <span >שלב הסתיים</span>
+                            <button v-if="event.phase > 0 && event.phases[event.phase - 1] == phase" class="orange-solid-button ml-sm" v-on:click="previousPhase()" v-bind:disabled="updating">חזרה לשלב זה</button>
+                        </template>
+                        <span v-else-if="event.currentPhase().number < phase.number">שלב טרם החל</span>
+                    </template>
+                    <button class="orange-button" v-bind:class="{active: building}" v-on:click="toggleBuilding()" v-bind:disabled="updating">עריכה</button>
+                    <button class="gray-button" v-on:click="openRuleset">
+                        <span class="fa fa-book"></span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+        <div style="position: relative;" class="flex-fill" v-bind:class="{'assigning-team': teamForAssignment != null, 'current-phase': event && event.currentPhase() == phase}">
+            <div style="position: absolute; right: 0px; width: 300px; height: 100%;" class="vertical-flex">
+                <div class="teams flex-fill vertical-flex">
+                    <div class="caption">קבוצות </div>
+                    <div v-if="phase && phase.number > 0" class="content-tabs small horizontal-flex">
+                        <div class="content-tab flex-fill" v-bind:class="{active: phaseTeams == null}" v-on:click="phaseTeams = null">
+                            אליפות
+                        </div>
+                        <div v-for="prevPhase in event.phases" v-if="prevPhase.number < phase.number" class="content-tab flex-fill" v-bind:class="{active: prevPhase == phaseTeams}"  v-on:click="phaseTeams = prevPhase">{{prevPhase.name}}</div>
+                    </div>
+                    <div class="flex-fill list pl-sm pr-sm" v-if="competition">
+                        <div>
+                            <div>
+                                <input type="text" placeholder="חיפוש" v-model="teamSearch">
+                                <div class="pull-left small btn-link"  v-on:click="toggleTeamSortByPosition()">
+                                    <span class="fa" v-bind:class="teamSortByPosition ? 'fa-sort-numeric-asc' : 'fa-sort-alpha-asc'"></span>
+                                </div>
+                            </div>
+                            <div  v-for="team in teamsList" class="team" v-bind:class="{assign: teamForAssignment == team || (teamAssignSelect && teamAssignSelect.team == team)}" v-on:mouseleave="teamAssignLeave($event, team)">
+                                <div class="name flex-fill">{{team.name}}</div>
+                                <div class="placement" v-bind:class="{empty: team.placement == null}" v-on:mouseenter="teamAssignEnter($event, team)" v-on:click="toggleForAssignment(team)">{{team.placement ? team.placement.group.formatName() + ' - ' + (team.placement.placement + 1) : (building ? "שיבוץ" : "")}}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="teamAssignSelect" style="position: absolute; right: 100%;"
+                         v-on:mouseleave="teamAssignSelect = null"
+                         v-bind:style="{top: teamAssignSelect.top + 'px', right: teamAssignSelect.right + 'px'}" class="team-assign-popup">
+                        <table>
+                            <tr v-for="(gr, i) in phase.groups" class="assign-item"
+                                v-bind:class="{assign: teamAssignSelect.group == gr}"
+                                v-on:click="assignTeam(gr)"
+                                v-on:mouseenter="teamAssignSelect.group = gr">
+                                <td>{{gr.formatName()}}</td>
+                                <td style="position: relative;">
+                                    <span class="pull-left fa fa-caret-left"></span>
+                                    <div v-if="teamAssignSelect.group == gr" style="position: absolute; right: 100%; top: 0px;">
+                                        <div class="team-assign-popup" style="margin-right: 4px;">
+                                            <div v-for="(t, ti) in gr.teams" class="assign-item" v-on:click="$event.stopPropagation(); assignTeam(gr, ti);">
+                                                מיקום {{ti + 1}}
+                                            </div>
+                                            <div class="assign-item" v-on:click="$event.stopPropagation(); assignTeam(gr);">מיקום {{gr.teams.length + 1}}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div style="position: absolute; left: 0px; right: 300px;
+                        border-bottom: 1px solid; border-color: lightgrey;" class="groups" v-if="phase"
+                v-bind:style="groupsFull ? 'height: 28%;' : 'height: 5%'">
+                <div class="pull-left action-icon" style="padding: 2px;">
+                    <span class="fa" v-bind:class="groupsFull ? 'fa-chevron-up' : 'fa-chevron-down'" v-on:click="groupsFull = !groupsFull"></span>
+                </div>
+                <template v-if="groupsFull">
+                    <div v-for="(gr, i) in phase.groups"
+                         class="group"
+                         :id="'group-' + i"
+                         v-bind:class="{active: gr == group, 'assigning-team': groupTeam}"
+                         v-on:click="selectGroup(gr)"
+                         @dragover.prevent
+                         @drop="dropTeam($event)">
+                        <div class="vertical-flex">
+                            <div class="caption">
+                                <div class="float-left pl-sm" v-if="building && i < phase.groups.length - 1" v-on:click="moveGroup(phase.groups[i], phase.groups[i + 1].number, $event)">
+                                    <span class="icon fa fa-chevron-left"></span>
+                                </div>
+                                <div class="float-right pr-sm" v-if="building && i > 0" v-on:click="moveGroup(phase.groups[i], phase.groups[i - 1].number, $event)">
+                                    <span class="icon fa fa-chevron-right"></span>
+                                </div>
+                                <div class="inline">{{gr.formatName()}}</div>
+                                <div v-if="building" class="icon fa fa-pencil" v-on:click="onEditGroup(i, $event)"></div>
+                            </div>
+                            <div class="flex-fill list">
+                                <div v-for="(t, ti) in gr.teams"
+                                     class="team"
+                                     v-bind:class="{assign: teamForAssignment && teamForAssignment.reference == t.teamReference, selected: groupTeam == t}"
+                                     :id="'grId-' + gr.id + ':teamId-' + t.team"
+                                     v-on:click="toggleGroupTeam(t); $event.stopPropagation();"
+                                >
+                                    <div class="position" v-if="!building || groupTeam != t">#{{t.position + 1}}</div>
+                                    <div draggable="true" class="flex-fill"
+                                         :data-team="t.team"
+                                         @dragstart="setData($event, t)"
+                                         @dragend="dragEnded($event, t)"
+                                         @dragover="dragOver($event, t)">{{getGroupTeamName(t)}}</div>
+                                    <template v-if="building && !updating">
+                                        <div class="team-drop" v-if="groupTeam && groupTeam != t">
+                                            <div class="action-button" v-on:click="assignTeam(gr, ti, true); $event.stopPropagation();">החלפה</div>
+                                        </div>
+                                        <div v-else-if="teamForAssignment && teamForAssignment.reference != t.teamReference" class="team-drop">
+                                            <div class="action-button" v-on:click="assignTeam(gr, ti, true); $event.stopPropagation();">החלפה</div>
+                                            <div class="action-button" v-if="!teamForAssignment.placement || gr != teamForAssignment.placement.group" v-on:click="assignTeam(gr, ti); $event.stopPropagation();">הכנסה</div>
+                                        </div>
+                                        <div v-if="t == groupTeam || (teamForAssignment && teamForAssignment.reference == t.teamReference)" class="action-button danger mr-sm" v-on:click="removeTeamFromGroup(t); $event.stopPropagation();">הסרה</div>
+                                    </template>
+                                </div>
+                                <template v-if="building && !updating">
+                                    <div v-if="teamForAssignment && (!teamForAssignment.placement || gr != teamForAssignment.placement.group)" class="team">
+                                        <div>&nbsp;</div>
+                                        <div class="position">&nbsp;</div>
+                                        <div class="team-drop">
+                                            <div class="action-button" v-on:click="assignTeam(gr); $event.stopPropagation();">הכנסה</div>
+                                        </div>
+                                    </div>
+                                    <div v-else-if="gr == group && !groupTeam" class="text-center p-sm assign-empty">
+                                        <div class="action-button light ph-md" v-on:click="assignTeam(gr); $event.stopPropagation();">הוספה</div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="building" class="add" v-on:click="groupInsert={name:''};" v-on:click="insertGroup()">
+                        <div>
+                            <span>+</span>
+                        </div>
+                    </div>
+                </template>
+                <template v-else>
+                    <div v-for="(gr, i) in phase.groups"
+                         class="tab"
+                         v-bind:class="{active: gr == group}"
+                         v-on:click="selectGroup(gr)">
+                        <div>{{gr.formatName()}}</div>
+                    </div>
+                </template>
+            </div>
+
+            <div style="position: absolute; left: 0px; right: 300px; " class="vertical-flex"
+                v-bind:style="groupsFull ? 'top: 30%; height: 70%;' : 'top: 6%; height: 94%;'">
+                <div v-if="phase && phase.groups" class="content-tabs horizontal-flex" style="border-bottom: 1px solid lightgrey; position: relative;">
+                    <div v-if="contentMode === 'games'" style="position: absolute; left: 6px; top: 2px;">
+                        <button class="btn btn-sm" v-on:click="selectColumns()" style="pointer-events: auto;">
+                            בחירת עמודות
+                        </button>
+                        <button v-if="building && matchSelection && matchSelection.matches.length > 0" class="btn btn-sm"
+                                v-on:click="editSelectedMatches()"
+                                style="pointer-events: auto;">
+                            {{this.matchSelection.matches.length == 1 ? 'עריכת משחק' : 'עריכת משחקים'}}
+                        </button>
+                        <!--
+                        <button v-if="building && matchSelection && matchSelection.matches.length > 0" class="btn btn-sm"
+                                v-on:click="deleteSelectedMatches()"
+                                style="pointer-events: auto;">
+                            {{this.matchSelection.matches.length == 1 ? 'מחיקת משחק' : 'מחיקת משחקים'}}
+                        </button>
+                        -->
+                        <button v-if="building" class="btn btn-sm" v-bind:disabled="newGameDisabledReason() != '' || updating"
+                                v-bind:title="newGameDisabledReason()" v-on:click="newGame()"
+                                style="pointer-events: auto;">
+                            + הוספת משחק
+                        </button>
+                        <button v-if="building" class="btn btn-sm" v-on:click="buildFromBoard()"
+                                v-bind:disabled="newGameDisabledReason() != '' || updating"
+                                v-bind:title="newGameDisabledReason()"
+                                style="pointer-events: auto;">
+                            בניית משחקים מלוח
+                        </button>
+                        <button v-if="building" class="btn btn-sm" v-on:click="editOrganizationLevels(phase)"
+                                v-bind:disabled="newGameDisabledReason() != '' || updating"
+                                v-bind:title="newGameDisabledReason()"
+                                style="pointer-events: auto;">
+                            סידור משחקים
+                        </button>
+                    </div>
+                    <div v-else-if="contentMode === 'ranking'" style="position: absolute; left: 6px; top: 2px;">
+                        <button v-if="rankTeam != null && rankTeam.setPosition != null" class="btn btn-sm"
+                                v-on:click="updatePosition(rankTeam, null)"
+                                style="pointer-events: auto;">
+                            &nbsp;                             ביטול דירוג ידני
+                        </button>
+                        <button v-if="rankTeam != null" v-bind:disabled="rankTeam.position <= 0" class="btn btn-sm"
+                                v-on:click="updatePosition(rankTeam, rankTeam.position - 1)"
+                                style="pointer-events: auto;">
+                            <span class="fa fa-long-arrow-up"></span>
+                            &nbsp; העלאת דירוג
+                        </button>
+                        <button v-if="rankTeam != null" v-bind:disabled="rankTeam.position >= rankTeam.group.teams.length - 1" class="btn btn-sm"
+                                v-on:click="updatePosition(rankTeam, rankTeam.position + 1)"
+                                style="pointer-events: auto;">
+                            <span class="fa fa-long-arrow-down"></span>
+                            &nbsp;                             הורדת דירוג
+                        </button>
+
+                    </div>
+                    <div class="content-tab horizontal-flex" v-bind:class="{active: contentMode === 'games'}" v-on:click="selectContentMode('games')">
+                        <div style="white-space: nowrap;">משחקים</div>
+                    </div>
+                    <div class="content-tab horizontal-flex" v-bind:class="{active: contentMode === 'ranking'}" v-on:click="selectContentMode('ranking')">
+                        <div style="white-space: nowrap;">דירוגים</div>
+                    </div>
+                </div>
+
+                <div id="group-content" class="flex-fill" style="overflow-y: auto;">
+
+
+                    <template v-if="phase && contentMode === 'games'">
+                        <div v-for="(gr, i) in phase.groups"
+                             class="matches"
+                             v-if="!group || group.id == gr.id">
+                            <div style="font-size: 20px; border-radius: 0px; border: 0;">{{gr.formatName()}}</div>
+                            <div class="vertical-flex" style="height: 100%;">
+                                <div>
+                                    <table>
+                                        <thead>
+                                        <tr>
+                                            <th v-if="building" style="width: 4%;">
+                                                <input type="checkbox" v-bind:checked="areAllGroupMatchesSelected(gr)" v-on:input="toggleAllGroupMatchesSelected(gr)">
+                                            </th>
+                                            <th v-for="col in matchColumns" v-if="col.show" v-bind:style="{width: (col.size*(building ? 92 : 100)/totalMatchColumnsSize) + '%'}">
+                                                {{col.caption}}
+                                            </th>
+                                            <th v-if="building" style="width: 4%;"></th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                                <div class="flex-fill" style="overflow-y: auto; overflow-x: hidden">
+                                    <table>
+                                        <tbody>
+                                            <template v-for="r in getGroupRounds(gr)">
+                                                <tr v-if="r.sequence.length > 0" v-bind:id="'round' + gr.id + '.' + r.sequence.join(':')">
+                                                    <td v-if="building" style="width: 4%; background-color: #ddd;" >
+                                                        <input type="checkbox" v-bind:checked="areAllRoundMatchesSelected(r)" v-on:input="toggleAllRoundMatchesSelected(r)">
+                                                    </td>
+                                                    <td v-bind:colspan="building ? visibleMatchColumns + 1 : visibleMatchColumns" class="phase-level">
+                                                        {{r.name || formatRoundName(gr, r.sequence)}}
+                                                        <span v-if="building" class="icon fa fa-pencil" v-on:click="editRound(r, gr)"></span>
+                                                    </td>
+                                                </tr>
+                                                <template v-for="m in r.matches">
+                                                    <tr v-bind:id="'match' + gr.id + '.' + m.id" v-bind:class="{'match-dragged': dragging && dragging.match == m}">
+                                                        <td v-if="building" style="width: 4%;">
+                                                            <input type="checkbox" v-bind:checked="isMatchSelected(m)" v-on:input="toggleMatchSelected(m)">
+                                                        </td>
+                                                        <template v-for="col in matchColumns" v-if="col.show">
+                                                            <td v-if="col.id == 'number'" v-bind:style="{width: (col.size*(building ? 92 : 100)/totalMatchColumnsSize) + '%'}">
+                                                                {{m.number + 1}}
+                                                            </td>
+                                                            <td v-else-if="col.id == 'opponentA'" v-bind:style="{width: (col.size*(building ? 92 : 100)/totalMatchColumnsSize) + '%'}">
+                                                                <span class="match-team" v-if="m.opponentA != null" v-bind:class="{win: m.outcome == 1 || m.outcome == 3}">{{getGroupTeamName(gr, m.opponentA)}}</span>
+                                                                <span class="match-team" v-else-if="m.matchReferenceA != null">{{getMatchTeamName(gr, m.matchReferenceA)}}</span>
+                                                            </td>
+                                                            <td v-else-if="col.id == 'opponentB'" v-bind:style="{width: (col.size*(building ? 92 : 100)/totalMatchColumnsSize) + '%'}">
+                                                                <span class="match-team" v-if="m.opponentB != null" v-bind:class="{win: m.outcome == 2 || m.outcome == (building ? 4 : 0)}">{{getGroupTeamName(gr, m.opponentB)}}</span>
+                                                                <span class="match-team" v-else-if="m.matchReferenceB != null">{{getMatchTeamName(gr, m.matchReferenceB)}}</span>
+                                                                <!--
+                                                                <competition-team class="match-team" v-bind:competition="competition" v-bind:team="m.opponentB"></competition-team>
+                                                                -->
+                                                            </td>
+                                                            <td v-else-if="col.id == 'time'" v-bind:style="{width: (col.size*(building ? 92 : 100)/totalMatchColumnsSize) + '%'}">
+                                                                {{m.time | competitionTime}}
+                                                            </td>
+                                                            <td v-else-if="col.id == 'venue'" v-bind:style="{width: (col.size*(building ? 92 : 100)/totalMatchColumnsSize) + '%'}">{{getVenueName(m.venue)}}</td>
+                                                            <td v-else-if="col.id == 'score'" v-bind:style="{width: (col.size*(building ? 92 : 100)/totalMatchColumnsSize) + '%'}">
+                                                                <div class="match-result" v-on:click="setMatchResult(m)">
+                                                                <span v-if="m.outcome == 3">
+                                                                    טכני א
+                                                                </span>
+                                                                    <span v-else-if="m.outcome == 4">
+                                                                    טכני ב
+                                                                </span>
+                                                                    <span v-else-if="m.scoreA != null || m.scoreB != null">
+                                                                    {{m.scoreB}}-{{m.scoreA}}
+                                                                </span>
+                                                                    <span v-else>&nbsp;</span>
+                                                                </div>
+                                                            </td>
+                                                            <td v-else-if="col.functionary != null" v-bind:style="{width: (col.size*(building ? 92 : 100)/totalMatchColumnsSize) + '%'}">
+                                                                <span v-if="m.functionaries">{{getFunctionaryName(m.functionaries[col.functionary])}}</span>
+                                                            </td>
+                                                        </template>
+                                                        <td v-if="building" style="width: 4%; position: relative;">
+                                                            <div style="position: absolute; left: 4px; top: 2px; width: 3em; text-align: left;">
+                                                                <div class="icon fa fa-pencil" v-on:click="onEditMatch(gr, m)"></div>
+                                                                <div class="icon fa fa-trash" v-on:click="onDeleteMatch(gr, m)"></div>
+                                                                <div class="icon fa fa-arrows-v" v-on:mousedown="startDragMatch($event, gr, m)"></div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </template>
+                                            </template>
+                                            <!--
+                                            <template v-for="(m, mi) in gr.matches">
+                                                <tr v-if="checkLevelChange(gr, mi)">
+                                                    <td v-bind:colspan="building ? visibleMatchColumns + 2 : visibleMatchColumns" class="phase-level">{{formatPhaseLevel(phase, m.sequence)}}</td>
+                                                </tr>
+                                                <tr v-bind:id="'match' + gr.id + '.' + m.id" v-bind:class="{'match-dragged': dragging && dragging.match == m}">
+                                                    <td v-if="building" style="width: 4%;">
+                                                        <input type="checkbox" v-bind:checked="isMatchSelected(m)" v-on:input="toggleMatchSelected(m)">
+                                                    </td>
+                                                    <template v-for="col in matchColumns" v-if="col.show">
+                                                        <td v-if="col.id == 'number'" v-bind:style="{width: (col.size*(building ? 92 : 100)/totalMatchColumnsSize) + '%'}">
+                                                            {{m.number + 1}}
+                                                        </td>
+                                                        <td v-else-if="col.id == 'opponentA'" v-bind:style="{width: (col.size*(building ? 92 : 100)/totalMatchColumnsSize) + '%'}">
+                                                            <span class="match-team" v-if="m.opponentA != null" v-bind:class="{win: m.outcome == 1 || m.outcome == 3}">{{getGroupTeamName(gr, m.opponentA)}}</span>
+                                                            <span class="match-team" v-else-if="m.matchReferenceA != null">{{getMatchTeamName(gr, m.matchReferenceA)}}</span>
+                                                        </td>
+                                                        <td v-else-if="col.id == 'opponentB'" v-bind:style="{width: (col.size*(building ? 92 : 100)/totalMatchColumnsSize) + '%'}">
+                                                            <span class="match-team" v-if="m.opponentB != null" v-bind:class="{win: m.outcome == 2 || m.outcome == (building ? 4 : 0)}">{{getGroupTeamName(gr, m.opponentB)}}</span>
+                                                            <span class="match-team" v-else-if="m.matchReferenceB != null">{{getMatchTeamName(gr, m.matchReferenceB)}}</span>
+                                                        </td>
+                                                        <td v-else-if="col.id == 'time'" v-bind:style="{width: (col.size*(building ? 92 : 100)/totalMatchColumnsSize) + '%'}">
+                                                            {{m.time | competitionTime}}
+                                                        </td>
+                                                        <td v-else-if="col.id == 'venue'" v-bind:style="{width: (col.size*(building ? 92 : 100)/totalMatchColumnsSize) + '%'}">{{getVenueName(m.venue)}}</td>
+                                                        <td v-else-if="col.id == 'score'" v-bind:style="{width: (col.size*(building ? 92 : 100)/totalMatchColumnsSize) + '%'}">
+                                                            <div class="match-result" v-on:click="setMatchResult(m)">
+                                                                <span v-if="m.outcome == 3">
+                                                                    טכני א
+                                                                </span>
+                                                                <span v-else-if="m.outcome == 4">
+                                                                    טכני ב
+                                                                </span>
+                                                                <span v-else-if="m.scoreA != null || m.scoreB != null">
+                                                                    {{m.scoreB}}-{{m.scoreA}}
+                                                                </span>
+                                                                <span v-else>&nbsp;</span>
+                                                            </div>
+                                                        </td>
+                                                        <td v-else-if="col.functionary != null" v-bind:style="{width: (col.size*(building ? 92 : 100)/totalMatchColumnsSize) + '%'}">
+                                                            <span v-if="m.functionaries">{{getFunctionaryName(m.functionaries[col.functionary])}}</span>
+                                                        </td>
+                                                    </template>
+                                                    <td v-if="building" style="width: 4%; position: relative;">
+                                                        <div style="position: absolute; left: 4px; top: 2px; width: 3em; text-align: left;">
+                                                            <div class="icon fa fa-pencil" v-on:click="onEditMatch(gr, m)"></div>
+                                                            <div class="icon fa fa-trash" v-on:click="onDeleteMatch(gr, m)"></div>
+                                                            <div class="icon fa fa-arrows-v" v-on:mousedown="startDragMatch($event, gr, m)"></div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                            -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <template v-if="phase && contentMode === 'ranking'">
+                        <div v-for="(gr, i) in phase.groups"
+                             class="matches"
+                             v-if="!group || group.id == gr.id">
+                            <div style="font-size: 20px; border-radius: 0px; border: 0;">{{gr.formatName()}}</div>
+                            <template v-if="selectedRankingTable == null">
+                                <div class="vertical-flex" style="height: 100%;">
+                                    <div>
+                                        <table>
+                                            <thead>
+                                            <tr>
+                                                <th style="width: 8%;">#</th>
+                                                <th style="width: 20%;">קבוצה</th>
+                                                <th style="width: 9%;">מש'	</th>
+                                                <th style="width: 9%;">נצ'</th>
+                                                <th style="width: 9%;">ת'</th>
+                                                <th style="width: 9%;">הפס'</th>
+                                                <th style="width: 9%;">ז'</th>
+                                                <th style="width: 9%;">ח'</th>
+                                                <th style="width: 9%;">יח'</th>
+                                                <th style="width: 9%;">נק'</th>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div class="flex-fill" style="overflow-y: auto; overflow-x: hidden">
+                                        <table>
+                                            <tbody>
+                                            <tr v-for="(t, index) in listTeamsByPosition(gr)" class="rank-team" v-bind:class="{active: t == rankTeam}" v-on:click="rankTeam = (rankTeam == t ? null : t)">
+                                                <td style="width: 8%;"> <div class="position" v-bind:class="{'set': t.setPosition != null}">{{t.position + 1}}</div></td>
+                                                <td style="width: 20%;"> {{getGroupTeamName(t)}} </td>
+                                                <td style="width: 9%;"> {{t.games}} </td>
+                                                <td style="width: 9%;"> {{t.wins}} </td>
+                                                <td style="width: 9%;"> {{t.ties}} </td>
+                                                <td style="width: 9%;"> {{t.losses}} </td>
+                                                <td style="width: 9%;"> {{t.points}} </td>
+                                                <td style="width: 9%;"> {{t.pointsAgainst}} </td>
+                                                <td style="width: 9%;"> {{t.ratio}} </td>
+                                                <td style="width: 9%;"> {{t.score}} </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </template>
+                            <template v-else>
+                                <div class="vertical-flex" style="height: 100%;">
+                                    <div>
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 5%;">#</th>
+                                                    <th style="width: 20%;">קבוצה</th>
+                                                    <th v-for="field in selectedRankingTable.fields"
+                                                        v-bind:style="'width: ' + (75/selectedRankingTable.fields.length) + '%;'">{{field.title}}</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div class="flex-fill" style="overflow-y: auto; overflow-x: hidden">
+                                        <table>
+                                            <tbody>
+                                            <tr v-for="(t, index) in listTeamsByPosition(gr)" class="rank-team" v-bind:class="{active: t == rankTeam}" v-on:click="rankTeam = (rankTeam == t ? null : t)">
+                                                <td style="width: 5%;"><div class="position" v-bind:class="{set: t.setPosition != null}">{{t.position + 1}}</div></td>
+                                                <td style="width: 20%;"> {{getGroupTeamName(t)}} </td>
+                                                <td v-for="field in selectedRankingTable.fields"
+                                                    v-bind:style="'width: ' + (75/selectedRankingTable.fields.length) + '%;'"> {{getTeamFieldValue(t, field)}} </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <div v-if="insertPanel" style="position: absolute; width: 100%; height: 100%; background-color: #eee;">
+                {{insertPanel.caption}}
+                <input v-model="insertPanel.name">
+                <button class="btn btn-sm" v-bind:disabled="insertPanel.name == null || insertPanel.name.length == 0" v-on:click="insertPanel.save()">הוספה</button>
+            </div>
+        </div>
+    </template>
+
+    <!--
+
+        Contest competition
+
+    -->
+
+    <template v-else>
+        <div>
+            <div class="events horizontal-flex" style="overflow-x: auto; border-bottom: 1px solid lightgrey;">
+                <select v-if="season" v-model="meeting" class="meeting">
+                    <option v-for="m in season.meetings" v-bind:value="m">{{m.name}}</option>
+                </select>
+                <div v-for="(ev, ei) in meetingEvents" class="event horizontal-flex" v-bind:class="{active: ev == event}" v-on:click="selectEvent(ev)">
+                    <span style="white-space: nowrap;">
+                        {{ev.name}}&nbsp;
+                        <span v-if="building" class="icon fa fa-pencil" v-on:click="onEditPhase(ei, $event)"></span>
+                    </span>
+
+                </div>
+                <button class="btn btn-sm" v-if="!insertPanel && building" v-on:click="newEvent()" v-bind:disabled="updating">+</button>
+                <div class="flex-fill"></div>
+                <div style="padding-top: 4px;">
+                    <button class="orange-button" v-bind:class="{active: building}" v-on:click="toggleBuilding()" v-bind:disabled="updating">עריכה</button>
+                    <button class="gray-button" v-on:click="openRuleset">
+                        <span class="fa fa-book"></span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+        <div style="position: relative;" class="flex-fill" v-if="phase">
+            <div v-for="(gr, i) in phase.groups"
+                 class="matches"
+                 v-if="!group || group.id == gr.id">
+                <div style="font-size: 20px; border-radius: 0px; border: 0;">{{gr.formatName()}}</div>
+                <div class="vertical-flex" style="height: 100%;">
+                    <div>
+                        <table>
+                            <thead>
+                            <tr>
+                                <th style="width: 4%;">#</th>
+                                <th style="width: 16%;">מספר</th>
+                                <th style="width: 25%;">שם</th>
+                                <th style="width: 25%;">קבוצה</th>
+                                <th style="width: 10%;">דירוג</th>
+                                <th style="width: 10%;">תוצאה</th>
+                                <th style="width: 10%;">ניקוד</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="flex-fill" style="overflow-y: auto; overflow-x: hidden">
+                        <table>
+                            <tbody>
+                            <template v-for="(e, ei) in listEntrantsByPosition(gr)">
+                                <tr>
+                                    <td style="width: 4%;">
+                                        {{e.number + 1}}
+                                    </td>
+                                    <td style="width: 16%;">
+                                        {{getEntrantNumber(e)}}
+                                    </td>
+                                    <td style="width: 25%;">
+                                        {{getEntrantName(e)}}
+                                    </td>
+                                    <td style="width: 25%;">
+                                        {{getEntrantTeamName(e)}}
+                                    </td>
+                                    <td style="width: 10%;">{{e.position == null ? null : e.position + 1}}</td>
+                                    <td style="width: 10%;">{{e.score}}</td>
+                                    <td style="width: 10%;">{{e.points}}</td>
+                                </tr>
+                            </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>

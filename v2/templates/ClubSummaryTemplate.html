@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+	<meta charset="utf-8">
+	<style type="text/css">
+		html,body
+		{
+			min-height: 100%;
+			margin: 0px;
+		}
+		div, body { margin: 0; padding: 0; }
+		table { margin: 0; }
+		#captions td, #tblFooter td { line-height: 12px; }
+		div, body, td, th, span, p, a { font-family: Arial,serif; font-size: 15px; text-align: center; }
+		img { border: none; }
+		h1 { margin: 0; }
+		h2 { margin: 0; padding: 0; text-decoration: underline; }
+		h3 { margin: 0; padding: 0; text-decoration: underline; }
+		.header_caption {  }
+		.dashed_border { border-style: dashed; border-width: 2px; border-color: black; }
+		#captions td { font-family: Tahoma; font-weight: bold; }
+		.teams-table { border-collapse: collapse; }
+		.teams-table th  { background-color: #e9e9e9; padding-left: 10px; padding-right: 10px; font-weight: normal; }
+		.teams-table th, .teams-table td { padding-left: 10px; padding-right: 10px; }
+        #tblGeneralDetails { width: 90%; text-align: right !important; margin-right: 5%; }
+		#tblGeneralDetails td {
+			text-align: right;
+		}
+		.strike-through { text-decoration: line-through; }
+		.removed-payment {  }
+        .region-box { position: absolute; right: 5%; border: 1px solid black; padding: 7px 7px 7px 7px; }
+        .section-header { text-align: right; margin-right: 7%; margin-top: 20px; }
+	</style>
+	<style type="text/css" media="print">
+		#btnPrint, #btnConfirm, #btnCancel { display: none; }
+	</style>
+	<title></title>
+</head>
+<body>
+<div align="right" dir="rtl" style="text-align: center;">
+	<div style="position: relative; text-align: center;">
+        <div style="margin-top: 5px;">
+            {{#page1Logos}}
+            <img src="data:image/png;base64,{{imageData}}" style=" margin-left: 10px; max-height: 120px; max-width: 25%; vertical-align: middle;" alt="{{altText}}" />
+            {{/page1Logos}}
+        </div>
+	</div>
+	<div style="clear: both;"></div>
+	<table border="0" style="width: 100%; margin-top: 5px;">
+		<tr>
+			<td align="center" style="text-align: center; position: relative;" class="header_caption">
+				<div style="text-decoration: underline;">
+					סיכום רישום מועדון –
+					{{schoolName}}
+					<span style="text-decoration: none; display: inline-block;">
+						&nbsp; ({{schoolCity}}, {{schoolSymbol}})
+					</span>
+				</div>
+				<div style="margin-top: 5px; position: relative; text-decoration: underline;">
+					<div class="region-box">
+						מחוז
+						{{schoolRegion}}
+					</div>
+					שנה"ל
+					{{season}}
+					{{year1}}-{{year2}}
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td align="right" style="text-align: right; position: relative;" class="header_caption">
+				<div class="section-header" style="text-decoration: underline;">
+					1. פרטים כללים:
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td align="right" style="text-align: right; position: relative;">
+				<table id="tblGeneralDetails" border="0" cellpadding="3" cellspacing="3" align="right">
+					<tr>
+						<td>
+							שם מנהל/ת:
+						</td>
+						<td style="border-bottom: 1px solid black;">
+							{{principalName}}
+						</td>
+						<td>&nbsp;</td>
+						<td>
+							נייד:
+						</td>
+						<td style="border-bottom: 1px solid black;">
+							{{principalPhone}}
+						</td>
+						<td>&nbsp;</td>
+						<td>
+							מייל:
+						</td>
+						<td style="border-bottom: 1px solid black;">
+							{{principalEmail}}
+						</td>
+					</tr>
+					<tr>
+						<td>
+							שם יושב/ת ראש:
+						</td>
+						<td style="border-bottom: 1px solid black;">
+							{{chairmanName}}
+						</td>
+						<td>&nbsp;</td>
+						<td>
+							נייד:
+						</td>
+						<td style="border-bottom: 1px solid black;">
+							{{chairmanPhone}}
+						</td>
+						<td>&nbsp;</td>
+						<td>
+							מייל:
+						</td>
+						<td style="border-bottom: 1px solid black;">
+							{{chairmanEmail}}
+						</td>
+					</tr>
+					<tr>
+						<td>
+							שם רכז/ת מועדון:
+						</td>
+						<td style="border-bottom: 1px solid black;">
+							{{coordinatorName}}
+						</td>
+						<td>&nbsp;</td>
+						<td>
+							נייד:
+						</td>
+						<td style="border-bottom: 1px solid black;">
+							{{coordinatorPhone}}
+						</td>
+						<td>&nbsp;</td>
+						<td>
+							מייל:
+						</td>
+						<td style="border-bottom: 1px solid black;">
+							{{coordinatorEmail}}
+						</td>
+					</tr>
+					<tr>
+						<td>
+							שם נציג/ה ברשות:
+						</td>
+						<td style="border-bottom: 1px solid black;">
+							{{representativeName}}
+						</td>
+						<td>&nbsp;</td>
+						<td>
+							נייד:
+						</td>
+						<td style="border-bottom: 1px solid black;">
+							{{representativePhone}}
+						</td>
+						<td>&nbsp;</td>
+						<td>
+							מייל:
+						</td>
+						<td style="border-bottom: 1px solid black;">
+							{{representativeEmail}}
+						</td>
+					</tr>
+					<tr>
+						<td colspan="8">
+							{{associationText}}
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td align="right" style="text-align: right; position: relative;" class="header_caption">
+                <div class="section-header">
+					2. רישום קבוצות:
+                </div>
+			</td>
+		</tr>
+		<tr>
+			<td align="center" style="text-align: center; position: relative;">
+				<center>
+					<table cellpadding="0" cellspacing="0" style="width: 80%;">
+						<tbody>
+						<tr>
+							<td align="right">
+								<table class="teams-table" cellpadding="0" cellspacing="0" border="1">
+									<tr>
+                                        <th>מס'</th>
+										<th>ענף</th>
+										<th>קטגוריה</th>
+										<th>קבוצה</th>
+										<th>לתשלום</th>
+									</tr>
+									{{#teams}}
+									<tr>
+                                        <td>{{displayIndex}}</td>
+										<td>{{sport}}</td>
+										<td>{{category}}</td>
+										<td>{{teamNumber}}</td>
+										<td>{{paymentAmountText}}</td>
+									</tr>
+									{{/teams}}
+								</table>
+							</td>
+						</tr>
+					</table>
+				</center>
+			</td>
+		</tr>
+	</table>
+
+	<center>
+	<table border="0" style="text-align: center; width: 100%;">
+		<tr>
+			<td align="right" style="text-align: right; position: relative;" class="header_caption">
+				<div class="section-header">
+                    3.	הצהרה מנהל/ת בית הספר
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td align="right" style="text-align: right; position: relative;" class="header_caption">
+				<div style="direction: rtl; text-align: right !important; margin-right: 10%; width: 80%;">
+                    באמצעות חתימותינו האלקטרוניות על גבי מסמך זה הרינו מבקשים בזאת להקים/להפעיל מועדון ספורט בית ספרי במסגרת התאחדות הספורט לבתי-הספר בישראל.<br />
+                    <br />
+                    אנו מתחייבים לפעול ולארח את המשחקים/תחרויות בהתאם לנהלים ולהוראות המפורסמים בתקנון לאירועי החנ"ג, מידע ועקרונות פעולה התאחדות הספורט לבתי הספר וכל ההוראות בחוזרי מנכ"ל, משרד החינוך והנחיות משרד התרבות והספורט (חוק הספורט).
+                    ידוע לנו כי עלינו להעמיד מתקן תקני וראוי לאירוח טורנירים/אירועים. במידה ואין באפשרותנו לארח באולם ראוי ותקני, אנו מתחייבים להתארח בכל הטורנירים/אירועים בליגת מועדוני הספורט הבית ספריים כפי שייקבע בתוכנית המשחקים של התאחדות הספורט לבתי הספר.
+                </div>
+                <div style="margin-top: 40px; direction: rtl; text-align: right !important; margin-right: 10%;">
+                    אישור מנהל/ת בית הספר:
+                    {{principalApprovalText}}
+                </div>
+			</td>
+		</tr>
+	</table>
+	</center>
+
+    <div style="width: 100%; text-align: center; padding-right: 25px; padding-left: 25px; bottom: 35px; position: absolute;">
+        <span>
+                שם מנהל/ת בית ספר:
+            </span>
+        <span style="text-decoration: underline;">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                {{principalName}}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </span>&nbsp;
+            <span>
+                חתימת מנהל/ת בית ספר:
+            </span>
+        <span style="text-decoration: underline;">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </span>&nbsp;
+        <span>
+                חותמת:
+            </span>
+        <span style="text-decoration: underline;">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                {{principalSeal}}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </span>
+    </div>
+
+	<div style="page-break-before: always; position: relative; height: 95vh;">
+        <div style="position: relative; text-align: center;">
+            <div style="margin-top: 5px;">
+                {{#page2Logos}}
+                <img src="data:image/png;base64,{{imageData}}" style=" margin-left: 10px; max-height: 120px; max-width: 25%; vertical-align: middle;" alt="{{altText}}" />
+                {{/page2Logos}}
+            </div>
+        </div>
+		<div style="margin-top: 15px;">
+            <h2>המלצת נציג/ת הרשות המקומית</h2>
+        </div>
+        <div style="margin-top: 20px; text-align: right !important; margin-right: 15%; line-height: 25px;">
+            הריני לאשר את בית הספר:
+            <span style="border-bottom: 1px solid black;">{{schoolName}}</span>
+            ברשות:
+            <span style="border-bottom: 1px solid black;">{{schoolCity}}</span>
+            לשנה"ל:
+            <span style="border-bottom: 1px solid black;">{{season}}</span>,
+            <br />
+            לפעול כמועדון בית ספרי בענפים הבאים:
+        </div>
+        <div style="margin-top: 45px; text-align: center;">
+            <center>
+                <table class="teams-table" cellpadding="0" cellspacing="0" border="1" style="text-align: center;">
+                    <tr>
+                        <th>מס'</th>
+                        <th>ענף</th>
+                        <th>קטגוריה</th>
+                        <th>קבוצה</th>
+                    </tr>
+                    {{#teams}}
+                    <tr>
+                        <td>{{displayIndex}}</td>
+                        <td>{{sport}}</td>
+                        <td>{{category}}</td>
+                        <td>{{teamNumber}}</td>
+                    </tr>
+                    {{/teams}}
+                </table>
+            </center>
+        </div>
+        <div style="margin-top: 55px; text-align: right; margin-right: 15%;">
+            אישור נציג/ת רשות מקומית:
+        </div>
+        <div style="margin-top: 15px; text-align: right; margin-right: 15%; width: 80%;">
+            אנו מתחייבים לסייע להפעלת קבוצת בית הספר ע"י העברת התמיכה הכספית המתוכננת של משרד התרבות והספורט אל בית הספר באמצעות הרשות המקומית, ומתן תמיכה כספית ו\או שוות ערך בסכום השווה לפחות לגובה תמיכת משרד התרבות והספורט.
+            <br />
+            אנו מתחייבים להעמיד לרשות בית הספר מתקני ספורט הולמים ותיקנים עפ"י חוק לצורך קיום פעילות האימון והתחרויות וציוד בסיסי הנדרש לפעילות.
+        </div>
+        <div style="margin-top: 30px; text-align: right; margin-right: 15%;">
+            הריני לאשר את כל האמור לעיל באמצעות חתימתי האלקטרונית על גבי מסמך זה.
+        </div>
+        <div style="margin-top: 45px; text-align: right; margin-right: 15%;">
+            אישור נציג/ת הרשות המקומית:
+            {{representativeApprovalText}}
+        </div>
+        <div style="width: 100%; text-align: center; padding-right: 25px; padding-left: 25px; bottom: 5px; position: absolute;">
+            <span>
+                שם נציג/ת רשות:
+            </span>
+            <span style="text-decoration: underline;">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                {{representativeName}}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </span>&nbsp;
+            <span>
+                חתימת נציג/ת רשות:
+            </span>
+            <span style="text-decoration: underline;">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </span>&nbsp;
+            <span>
+                חותמת:
+            </span>
+            <span style="text-decoration: underline;">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                {{representativeSeal}}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </span>
+        </div>
+	</div>
+</div>
+</body>
+</html>

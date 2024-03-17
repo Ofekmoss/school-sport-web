@@ -1,0 +1,47 @@
+<style type="text/css">
+    .section {
+        margin-top: 10px !important;
+    }
+
+    .image-file {
+        width: 240px;
+        height: 240px;
+    }
+
+    .file-pdf {
+        font-size: 240px;
+        color: red;
+    }
+</style>
+<div dir="rtl">
+    <div class="section_3" style="margin-top: 5px; margin-right: 10px;">
+        <h2 style="margin-top: 10px; padding-left: 10px;">
+            <span class="label label-info">{{PlayerIdNumber}}</span>
+            {{PlayerName}}
+            <div class="pull-left">{{FileTitle}}</div>
+        </h2>
+    </div>
+    <div class="modal-body">
+        <div style="text-align: center;">
+            <a href="{{FileUrl}}" target="_blank">
+                <img ng-if="!PDF" ng-src="{{FileUrl}}" class="image-file" align="center" />
+                <span ng-if="PDF" class="file-pdf fa fa-file-pdf-o"></span>
+            </a>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="pull-left">
+                    <button class="btn btn-danger btn-sm" ng-click="delete()" style="margin-left: 10px;">
+                        הסרת
+                        {{FileTitle}}
+                    </button>
+                    <button class="button button_grey" ng-click="confirm()">
+                        סגירת חלון
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

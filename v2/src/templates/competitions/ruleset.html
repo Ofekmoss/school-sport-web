@@ -1,0 +1,83 @@
+<div class="ruleset vertical-flex">
+    <div class="flex-fill horizontal-flex rule-table m-lg">
+        <div class="list">
+            <div class="item"
+                 v-for="rule in rules"
+                 v-if="shouldShowRule(rule)"
+                 v-bind:class="{active: selectedRule && selectedRule.rule == rule, disabled: changed}"
+                 v-on:click="selectRule(rule)">{{rule.name}}</div>
+        </div>
+        <div v-if="selectedRule != null" class="list vertical-flex" style="min-width: 80px;">
+            <div class="caption m-sm" style="padding-right: 4px; padding-bottom: 4px;">תחום</div>
+            <div class="flex-fill m-sm" style="overflow-y: auto;">
+                <div v-for="scope in selectedRule.scopes" class="item" v-bind:class="{active: selectedScope == scope, muted: scope.inherited}" v-on:click="selectScope(scope)">{{scope.description}}</div>
+            </div>
+        </div>
+        <div v-if="selectedRule == null" class="flex-fill rule-view disabled"></div>
+        <div v-else class="flex-fill rule-view vertical-flex" v-bind:class="{changed: changed}">
+            <div class="horizontal-flex">
+                <div class="caption m-sm">
+                    {{selectedRule.rule.name}}&nbsp;
+                    <small v-if="selectedScope">{{selectedScope.description}}</small>
+                </div>
+            </div>
+            <div class="flex-fill" style="position: relative;">
+                <div v-if="selectedRule.rule.id == 'GameScore'" class="ph-lg pv-sm">
+                    <table>
+                        <tr>
+                            <td class="pl-sm">ניצחון:</td>
+                            <td class="pl-sm"><input type="number" v-model="scopeData.win" v-on:input="onChange"></td>
+                            <td class="pl-sm">ניצחון טכני:</td>
+                            <td class="pl-sm"><input type="number" v-model="scopeData.technicalWin" v-on:input="onChange"></td>
+                        </tr>
+                        <tr>
+                            <td class="pl-sm">הפסד:</td>
+                            <td class="pl-sm"><input type="number" v-model="scopeData.loss" v-on:input="onChange"></td>
+                            <td class="pl-sm">הפסד טכני:</td>
+                            <td class="pl-sm"><input type="number" v-model="scopeData.technicalLoss" v-on:input="onChange"></td>
+                        </tr>
+                        <tr>
+                            <td class="pl-sm">שוויון:</td>
+                            <td class="pl-sm"><input type="number" v-model="scopeData.tie" v-on:input="onChange"></td>
+                        </tr>
+                    </table>
+                    <div>
+                        <input type="checkbox" v-model="scopeData.scoreByPoints" v-on:input="onChange">
+                        ניקוד לפי מערכות
+                    </div>
+                </div>
+                <div v-else-if="selectedRule.rule.id == 'TeamRanking'" class="ph-lg pv-sm">
+                    <div v-for="(ranking, index) in scopeData" class="ranking-item" v-on:click="removeRanking(index)">
+                        <span class="fa fa-check-square"></span> {{getRankingName(ranking.method, ranking.matchedOpponents)}}
+                    </div>
+                    <div v-if="scopeData.length == 0" class="text-center muted">לא נבחרו שיטות דירוג</div>
+                    <div style="height: 1px; background-color: #aaa; margin-top: 2px; margin-bottom: 2px;"></div>
+                    <div v-for="(name, method) in rankingMethods">
+                        <div v-if="!isRankingSet(method, false)" class="ranking-item" v-on:click="addRanking(method, false)"><span class="fa fa-square-o"></span> {{getRankingName(method, false)}}</div>
+                        <div v-if="!isRankingSet(method, true)" class="ranking-item" v-on:click="addRanking(method, true)"><span class="fa fa-square-o"></span> {{getRankingName(method, true)}}</div>
+                    </div>
+                </div>
+                <div v-else-if="selectedRule.rule.id == 'ScoreTable'" class="vertical-flex" style="position: absolute; left: 10px; right: 10px; top: 10px; bottom: 10px;">
+                    <div class="text-left">
+                        <div class="btn-group">
+                            <div class="inline btn-link" v-bind:class="{active: scopeData.direction == 0}" v-on:click="scopeData.direction = 0; onChanged();">עולה</div>
+                            <div class="inline btn-link" v-bind:class="{active: scopeData.direction == 1}" v-on:click="scopeData.direction = 1; onChanged();">יורד</div>
+                        </div>
+                    </div>
+                    <div class="flex-fill m-sm" style="overflow-y: auto;">
+                        <table class="score-table">
+                            <tr v-for="i in getRange(99, 0)">
+                                <td class="score" style="width: 30%;">{{i + 1}}</td>
+                                <td class="mark pl-sm"  style="width: 70%;"><input type="number" step="0.01" v-model="scopeData.scores[i]"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="actions text-left" v-if="changed">
+                <button class="btn m-sm" style="width: 5rem" v-on:click="changed = false; selectRule(selectedRule.rule);">ביטול</button>
+                <button class="btn m-sm" style="width: 5rem" v-on:click="save()">שמירה</button>
+            </div>
+        </div>
+    </div>
+</div>

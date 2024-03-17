@@ -1,0 +1,111 @@
+<style type="text/css">
+    .day_event {
+        position: absolute;
+        bottom: 3px;
+        border-radius: 50%;
+        width: 7px;
+        height: 7px;
+    }
+</style>
+<div dir="rtl">
+    <div class="modal-header">
+        <div class="modal-title">
+            <div class="modal-title-main">{{title}}</div>
+            <div class="modal-title-sub">{{subTitle}}</div>
+        </div>
+    </div>
+    <div class="modal-body">
+        <div class="bg-info" style="margin-bottom: 12px;" ng-if="info">{{info}}</div>
+        <div class="row" style="margin-bottom: 10px;">
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="text-align: left;">
+                <button type="button" class="button button_type_icon_small button_grey" style="font-weight: bold;"
+                        ng-if="calendar.prevMonth().year > 0"  ng-click="calendar.selectPrevMonth()">
+                    {{calendar.prevMonth().monthName}} {{calendar.prevMonth().year}} &nbsp;  &gt;
+                </button>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="text-align: center;">
+                {{calendar.selectedMonth.monthName}} {{calendar.selectedMonth.year}}
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="text-align: right;">
+                <button type="button" class="button button_type_icon_small button_grey" style="font-weight: bold;"
+                        ng-if="calendar.nextMonth().year > 0"  ng-click="calendar.selectNextMonth()">
+                    &lt; &nbsp; {{calendar.nextMonth().monthName}} {{calendar.nextMonth().year}}
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="calendar-month-days">
+                    <div class="calendar-days-header">
+                        <div class="calendar-day">
+                            א
+                        </div>
+                        <div class="calendar-day">
+                            ב
+                        </div>
+                        <div class="calendar-day">
+                            ג
+                        </div>
+                        <div class="calendar-day">
+                            ד
+                        </div>
+                        <div class="calendar-day">
+                            ה
+                        </div>
+                        <div class="calendar-day">
+                            ו
+                        </div>
+                        <div class="calendar-day">
+                            ש
+                        </div>
+                    </div>
+                    <div ng-repeat="week in calendar.selectedMonth.weeks" class="calendar-week" ng-if="week.currentMonth">
+                        <div class="calendar-day {{generateDayClass(day)}}" ng-repeat="day in week.days"
+                             ng-click="dayClicked(day)" title="{{day.title}}" style="position: relative;">
+                            {{day.day}}
+                            <div class="day_event" ng-repeat="event in day.events" style="{{event.style}}" title="{{event.title}}"></div>
+                        </div>
+                    </div>
+                </div>
+                <span ng-if="calendar.selectedDay && calendar.selectedDay.title">{{calendar.selectedDay.title}}</span>
+            </div>
+            <div style="display: none;"> <!-- class="col-md-4" -->
+                <strong>חודש</strong>
+                <div>
+                    <div class="calendar-year" ng-repeat="calendarYear in calendar.years">
+                        <div ng-repeat="calendarMonth in calendarYear.months"
+                             class="calendar-month-row">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="calendar-month"
+                                         ng-class="{'bg-info': !calendarMonth.currentSelection && calendarMonth.hasItems && !calendarMonth.selected, 'bg-primary': calendarMonth.selected, 'bg-success': calendarMonth.currentSelection && !calendarMonth.selected}"
+                                         ng-click="calendar.selectMonth(calendarMonth)">
+                                        <span>{{calendarMonth.monthName}}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <strong ng-if="$first">{{calendarYear.year}}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="pull-left">
+                    <button class="btn btn-warning" ng-click="cancel()">
+                        ביטול
+                    </button>
+                    <button class="button button_grey" ng-click="confirm()" ng-disabled="!calendar.selectedDay">
+                        המשך
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

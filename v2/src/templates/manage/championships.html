@@ -1,0 +1,30 @@
+<div style="padding: 3rem 1rem; overflow-y: scroll;">
+    <div class="tab-head horizontal-flex" style="justify-content: space-between; margin: 0 0 1rem 0;">
+        <div class="horizontal-flex" style="justify-content: space-between; width: 100%;">
+            <filters-championships :initFilters="initFilters" v-on:change="refresh($event)"></filters-championships>
+            <div style="display: flex">
+                <div style="display: flex; align-items: center; margin-left: 10px" class="clickable"
+                     v-on:click="removeChampionship()">
+                    <img src="img/delete.svg" style="padding: 0 10px; width: 10px; height: 10px;">
+                    <div>מחק אליפות</div>
+                </div>
+
+                <div style="display: flex; align-items: center;" class="clickable"
+                     v-on:click="newChampionship()">
+                    <img src="img/plus.svg" style="padding: 0 10px; border-right: 1px solid; border-color: #b4b4b4;">
+                    <div>הוסף אליפות</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: flex">
+        <div class="tab-content">
+            <data-table2 :records="records"
+                         :columns="columns"
+                         v-on:record-more-info="onMoreInfo($event)"
+                         v-on:record-select="onRecordSelect($event)">
+            </data-table2>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+<div class="dialog wide">
+    <div class="caption">
+        בחר סוג טאב
+    </div>
+    <div class="pb-md" class="add-tab-container">
+        <div v-for="type of types" class="tab-card"
+             v-on:click="select(type)">
+            <div>
+                {{type.title}}
+            </div>
+            <img v-bind:src="type.image" style="width: 20px;">
+        </div>
+    </div>
+</div>

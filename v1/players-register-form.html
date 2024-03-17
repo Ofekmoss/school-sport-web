@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<!--[if IE 9 ]><html class="ie9" lang="en" ng-app="sport.home"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html lang="en" ng-app="sport"><!--<![endif]-->
+<head>
+	<title>טופס רישום קבוצתי</title>
+    <meta charset="utf-8">
+<script type="text/javascript">
+	function Print() {
+		document.getElementById("btnPrint").style.display = "none";
+		document.getElementById("btnCancel").style.display = "none";
+		window.print();
+		document.getElementById("btnCancel").style.display = "";
+		document.getElementById("btnPrint").style.display = "";
+    	window.close();
+	}
+</script>
+<style type="text/css">
+    #go-to-top { display: none; }
+	div, body { margin: 0; padding: 0; }
+	table { margin: 0; }
+	div, body, td, th, span, p, a { font-family: Arial; font-size: 12px; text-align: center; }
+	img { border: none; }
+	h2 { margin: 0; padding: 0; text-decoration: underline; }
+	.header_caption { font-weight: bold; }
+	.dashed_border { border-style: dashed; border-width: 2px; border-color: black; }
+	#captions td { font-family: Tahoma; font-size: 15px; font-weight: bold; }
+	#players { width: 100%; border-width: 3px; border-color: black; border-style: solid; }
+	#players th { background-color: #e9e9e9; padding: 0px 0px 5px 0px; }
+	#players th, #players td { width: 14%; border-style: solid; border-width: 1px; border-color: black; }
+</style>
+<style type="text/css" media="print">
+	#btnPrint, #btnConfirm, #btnCancel { display: none; }
+</style>
+</head>
+<body>
+<div ng-controller="PlayerRegisterFormController as main">
+    <div align="right" dir="rtl" style="text-align: center; color: red; font-weight: bold;" ng-if="error">
+        {{error}}
+    </div>
+<div align="right" dir="rtl" style="text-align: center;" ng-if="!error">
+<table border="0" style="width: 100%">
+	<tr>
+		<td align="center" style="text-align: center;" class="header_caption">
+			<img src="images/register-form-top-header.png" style="width: 100%; max-height: 140px;"
+                 alt="משרד החינוך המזכירות הפדגוגית הפיקוח הארצי על החינוך הגופני"  />
+		</td>
+	</tr>
+    <tr>
+        <td align="center" style="text-align: center;" class="header_caption">
+            <h1 style="text-decoration: underline;">
+                טופס רישום קבוצתי למשתתפים
+            </h1>
+        </td>
+    </tr>
+</table>
+<table border="0" id="captions" style="width: 100%;">
+	<tr>
+		<td style="width: 25%;">
+			ענף -
+            "{{team.CHAMPIONSHIP_NAME}}"
+             ב
+            {{team.SPORT_NAME}}
+		</td>
+		<td style="width: 25%;">
+			מין -
+            {{team.CategoryGender}}
+		</td>
+		<td style="width: 25%;">
+			כיתות -
+            {{team.CategoryGrades}}
+		</td>
+		<td style="width: 25%;">
+			שנה -
+            {{team.SEASON_NAME}}
+		</td>		
+	</tr>
+</table>
+<table border="0" style="width: 90%;" cellpadding="1">
+	<tr>
+		<td align="right" style="text-align: right;">
+			שם בית הספר:
+            {{team.SCHOOL_NAME}}
+		</td>
+		<td align="left" style="text-align: left;">
+				המחוז+סימול בית הספר:
+		</td>
+		<td align="left" style="text-align: right; border: 2px solid black; width: 150px;">
+			<b>{{team.REGION_NAME}} {{team.SCHOOL_SYMBOL}}</b>
+		</td>
+	</tr>
+	<tr>
+		<td align="right" style="text-align: right;" colspan="3">
+			כתובת בית הספר + מיקוד:
+            {{team.ADDRESS}} {{team.ZIP_CODE}}
+		</td>
+	</tr>
+	<tr>
+		<td align="right" style="text-align: right;">
+			טלפון בית הספר:
+            {{team.PHONE}}
+		</td>
+		<td align="center" style="text-align: center;">
+			פקס בית הספר:
+            {{team.FAX}}
+		</td>
+		<td align="left" style="text-align: left;">
+			דואר אלקט.
+            {{team.EMAIL}}
+		</td>
+	</tr>
+	<tr>
+		<td align="right" style="text-align: right;">
+			שם המורה לחינוך גופני:
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		</td>
+		<td align="center" style="text-align: center;">
+			טלפון נייד:
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		</td>
+		<td align="left" style="text-align: left;">
+			דואר אלקט.
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		</td>
+	</tr>
+	<tr>
+		<td align="right" style="text-align: right;">
+			שם המאמן/ת:
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		</td>
+		<td align="center" style="text-align: center;">
+			טלפון נייד: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		</td>
+		<td align="left" style="text-align: left;">
+			דואר אלקט. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		</td>
+	</tr>	
+</table>
+<table border="0" style="width: 90%;">
+<tr>
+	<td style="width: 30%;">&nbsp;</td>
+	<td style="width: 40%; font-size: 18px; font-weight: bold;">
+		שמות המשתתפים
+	</td>
+	<td class="dashed_border" dir="ltr" style="text-align: center; width: 30%; font-weight: bold;">
+		כל הפרטים מחייבים הדפסה
+	</td>
+</tr>
+</table>
+<table id="players" cellpadding="0" cellspacing="0">
+	<tr>
+		<th style="text-decoration: underline;">מס' סידורי</th>
+		<th>מס' חולצה</th>
+		<th>שם פרטי</th>
+		<th>שם משפחה</th>
+		<th>תאריך לידה</th>
+		<th>מס' ת.ז.</th>
+		<th>כיתה</th>
+	</tr>
+	<tr ng-repeat="player in team.Players">
+		<td style="font-weight: bold;">{{$index + 1}}</td>
+		<td>{{player.TEAM_NUMBER}}</td>
+		<td>{{player.FIRST_NAME}}</td>
+		<td>{{player.LAST_NAME}}</td>
+		<td>{{player.BIRTH_DATE}}</td>
+		<td>{{player.ID_NUMBER}}</td>
+		<td>{{player.GRADE_NAME}}</td>
+	</tr>
+</table>
+<table border="0" style="width: 100%;">
+	<tr>
+		<td align="right" style="text-align: right; width: 10px;">
+			א.
+		</td>
+		<td align="right" style="text-align: right; width: 100%; padding-right: 10px;">
+			הריני מאשר/ת בזאת שהרשומים לעיל הם תלמידי/ות בית ספרנו העונים לדרישות התקנון לאירועי החינוך הגופני ולהוראות בחוזרי מנכ"ל.
+		</td>
+	</tr>	
+	<tr>
+		<td align="right" style="text-align: right; width: 10px;">
+			ב.
+		</td>
+		<td align="right" style="text-align: right; width: 100%; padding-right: 10px;">
+			התלמידים/ות הרשומים/ות בטופס מבוטחים
+			 <span style="font-weight: bold; text-decoration: underline;">בביטוח תאונות אישיות</span>
+			  (חוזר מנכ"ל עד' / 1).
+		</td>
+	</tr>
+	<tr>
+		<td align="right" style="text-align: right; width: 10px;">
+			ג.
+		</td>
+		<td align="right" style="text-align: right; width: 100%; padding-right: 10px;">
+			כל הפרטים המופיעים בטופס זה נבדקו על ידי והם נכונים.
+		</td>
+	</tr>
+	<tr>
+		<td align="right" style="text-align: right; width: 10px;">
+			ד.
+		</td>
+		<td align="right" style="text-align: right; width: 100%; padding-right: 10px;">
+			הריני מאשר/ת כי יש בידי אישורי ההורים/אפוטרופוס המאשרים לצלם את התלמידים דלעיל עבור שידורי טלוויזיה, אתרי אינטרנט, עיתונות ואמצעי המדיה השונים.
+		</td>
+	</tr>
+	<tr>
+		<td align="right" style="text-align: right; width: 10px;">
+			ה.
+		</td>
+		<td align="right" style="text-align: right; width: 100%; padding-right: 10px;">
+            השתתפות התלמידים/ות הרשומים/ות בטופס מותנת בהצהרת ההורים על בריאות ילדם שנמסרה למוסד החינוכי(ראו הוראת קבע מס' 0081 בחוזר עח/6). במקרה של הצהרת הורה על מחלה יש צורך באישור מרופא לביצוע פעילות ספורטיבית תחרותית , טופס זה תקף לשנה או עד עדכון על ידי ההורים.
+		</td>
+	</tr>
+	<tr>
+		<td align="right" style="text-align: right; width: 10px;">
+			ו.
+		</td>
+		<td align="right" style="text-align: right; width: 100%; padding-right: 10px;">
+			ידוע לי שנבחרת בית-הספר חייבת להופיע
+			<span style="font-weight: bold;">
+				בתלבושת ייצוגית מלאה ואחידה (מכנסיים וחולצה).
+			</span>
+		</td>
+	</tr>
+	<tr>
+		<td align="right" style="text-align: right; width: 10px;">
+			ז.
+		</td>
+		<td align="right" style="text-align: right; width: 100%; padding-right: 10px;">
+			אני מאשר שמאמן/ת הנבחרת הוא מורה לחינוך גופני או מאמן שעבר השתלמות למאמנים שאינם מורים במערכת החינוך בהתאם  להנחיות חוזר מנכ"ל תשס"ט/10.
+		</td>
+	</tr>
+	<tr>
+		<td align="right" style="text-align: right; width: 10px;">
+			ח.
+		</td>
+		<td align="right" style="text-align: right; width: 100%; padding-right: 10px;">
+			ידוע לי כי במסגרת אליפות עולם לבתי ספר (ISF)  מותרת השתתפותם/ן של תלמידים/ות אך ורק על פי גיל המשתתפים הנקבע ע"י ה-ISF ומפורסם בחוזר המנכ"ל.
+		</td>
+	</tr>
+</table>
+<table border="0" style="width: 90%;">
+	<tr>
+		<td align="right" style="text-align: right; width: 60%;">
+			מנהל/ת בית הספר:
+            {{team.MANAGER_NAME}}
+		</td>
+		<td align="right" style="text-align: right; width: 40%;">
+			חתימת המנהל/ת:
+			<span style="text-decoration: underline;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+		</td>
+	</tr>
+	<tr><td colspan="2">&nbsp;</td></tr>	
+	<tr>
+		<td align="right" style="text-align: right; width: 60%;">
+			חותמת בית הספר:
+			<span style="text-decoration: underline;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+		</td>
+		<td align="right" style="text-align: right; width: 40%;">
+			תאריך:
+            {{now | date : 'dd/MM/yyyy'}}
+		</td>
+	</tr>
+</table>
+<table border="0" style="width: 100%;">
+	<tr>
+		<td align="right" style="text-align: right;">
+			<button type="button" id="btnPrint" onclick="Print();">
+                הדפסת טופס רישום
+            </button>
+		</td>
+		<td align="center" style="text-align: center;">
+			<button type="button" id="btnCancel" onclick="window.close();">ביטול</button>
+		</td>		
+		<td align="left" style="text-align: left;">
+			&nbsp;
+		</td>
+	</tr>
+</table>
+</div>
+</div>
+<!--scripts include-->
+<script src="js/jquery-2.1.0.min.js" defer></script>
+<script src="js/plugins.min.js" defer></script>
+<script src="js/vendor.min.js" defer></script>
+<script src="js/sport.min.js" defer></script>
+</body>
+</html>
