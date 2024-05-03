@@ -3,12 +3,9 @@ var isProduction = process.env.NODE_ENV === 'production';
 module.exports = {
     protocol: 'http',
     sqlConfig: {
-        //user: 'mir',
-        //password: 'a9ern$Deta',
-        //server: '10.1.1.111',
-        user: 'sa',
-        password: 'a9ernAmo',
-        server: 'localhost',
+        user: process.env.DB_USER || 'sa',
+        password: process.env.DB_PASSWORD || 'a9ernAmo',
+        server: process.env.DB_URL || 'localhost',
         database: 'SchoolSportWeb',
         options: {
 //            encrypt: true
@@ -26,27 +23,18 @@ module.exports = {
         Version: '1.431'
     },
     sportFlowersDb: {
-        //user: 'mir',
-        //password: 'a9ern$Deta',
-        //server: '10.1.1.111',
-        user: 'sa',
-        password: 'a9ernAmo',
-        server: 'localhost',
+        user: process.env.DB_USER || 'sa',
+        password: process.env.DB_PASSWORD || 'a9ernAmo',
+        server: process.env.DB_URL || 'localhost',
         database: 'SportFlowers',
         options: {
 
         }
     },
     sportsmanDb: {
-        /*
-        user: 'SchoolSportService2',
-        password: 'mir5869Amo',
-        server: '192.168.0.2',
-        database: 'SchoolSportDb',
-        */
-        user: 'sa',
-        password: 'a9ernAmo',
-        server: 'localhost',
+        user: process.env.DB_USER || 'sa',
+        password: process.env.DB_PASSWORD || 'a9ernAmo',
+        server: process.env.DB_URL || 'localhost',
         database: 'SchoolSportDb',
         options: {
 
@@ -54,9 +42,9 @@ module.exports = {
         MinuteOffset: 0
     },
     competitionsDb: {
-        user: 'SchoolSportWebUser',
-        password: 'schoolSport123456',
-        server: '192.168.0.2',
+        user: process.env.DB_USER || 'sa',
+        password: process.env.DB_PASSWORD || 'a9ernAmo',
+        server: process.env.DB_URL || 'localhost',
         database: 'Competitions',
         options: {
             tdsVersion: "7_1"
@@ -76,8 +64,8 @@ module.exports = {
         host: "mail.smtp2go.com",
         port: 465,
         secure: true,
-        username: "schoolsportfeedback",
-        password: "cTN0ZzJobXIydHMz",
+        username: process.env.MAIL_USER || "schoolsportfeedback",
+        password: process.env.MAIL_PASSWORD || "cTN0ZzJobXIydHMz",
         address: "yahav@mir.co.il",  //"isa@isa2000.org.il"
         name: "התאחדות הספורט לבתי ספר בישראל",
         subject: "משוב מאתר ההתאחדות",
@@ -174,8 +162,8 @@ module.exports = {
         }
     },
     onePaymentPerCategorySports: [74, 76, 18],
-    contentSiteBaseUrl: 'http://127.0.0.1:4200/#/',
-    siteBaseUrl: 'http://127.0.0.1:5000',
+    contentSiteBaseUrl: process.env.CONTENT_SITE_BASE_URL || 'http://127.0.0.1:4200/#/',
+    siteBaseUrl: process.env.SITE_BASE_URL || 'http://127.0.0.1:5000',
     firstRegistrationSeason: 69,
     firstGameResultsSeason: 69,
     useChampionshipNameSportFields: [18],
