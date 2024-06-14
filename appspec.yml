@@ -21,5 +21,5 @@ permissions:
 
 hooks:
   ApplicationStart:
-    - location: aws/application-start.sh
+    - location: ci-cd/application-start.sh
       timeout: 3600
