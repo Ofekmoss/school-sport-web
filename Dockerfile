@@ -1,7 +1,5 @@
 FROM --platform=linux/amd64 node:16 as build
-ARG ENV_NAME=dev
 
-ENV ENV_NAME=$ENV_NAME
 WORKDIR /app
 COPY . /app
 
@@ -11,12 +9,11 @@ RUN echo "deb [arch=amd64,arm64,armhf] https://packages.microsoft.com/debian/12/
 RUN npm i
 
 FROM --platform=linux/amd64 node:16 
-ARG ENV_NAME=dev
 
 WORKDIR /app
 
 COPY --from=build /app /app
-COPY ./$ENV_NAME.settings.js /app/settings.js
+COPY ./settings.js /app/settings.js
 
 EXPOSE 5000 5443
 CMD ["npm", "start"]
