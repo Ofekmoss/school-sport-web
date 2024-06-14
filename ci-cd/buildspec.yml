@@ -7,8 +7,8 @@ phases:
   build:
     commands:
       - echo Build started on `date`
-      - cp envs/.env.$ENV_NAME ./.env
-      - sed -i "s/@@DB_PASSWORD@@/$DB_PASSWORD" ./.env
+      - cp ci-cd/.env.$ENV_NAME ./.env
+      - sed -i "s/@@DB_PASSWORD@@/$DB_PASSWORD/g" ./.env
   post_build:
     commands:
       - echo Build completed on `date`
