@@ -2,16 +2,9 @@ version: '2'
 services:
   nodejs:
     build: .
-    # command: npm run dev
-    # volumes:
-      # - .:/usr/app/
-      # - /usr/app/node_modules
     ports:
       - "5000:5000"
       - "5433:5433"
-    environment:
-      # NODE_TLS_REJECT_UNAUTHORIZED: 0
-      DB_USER: "admin"
-      DB_PASSWORD: "asdfasdfasdf"
-      DB_URL: "asdfasdf"
-      DISABLE_LOGGING_TO_FILE: true
+    env_file:
+      - path: ./.env
+        required: true

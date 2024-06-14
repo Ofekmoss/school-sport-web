@@ -1,0 +1,19 @@
+version: 0.2
+env:
+  shell: bash
+  exported-variables:
+    - DB_PASSWORD
+phases:
+  build:
+    commands:
+      - echo Build started on `date`
+      - cp envs/.env.$ENV_NAME ./.env
+      - sed -i "s/@@DB_PASSWORD@@/$DB_PASSWORD" ./.env
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - printf '[{"Build ID":"%s"}]' $CODEBUILD_BUILD_ID > buildinfo.json
+      - printf '[{"Build commit":"%s"}]' $CODEBUILD_RESOLVED_SOURCE_VERSION > buildinfo.json
+artifacts:
+  files:
+     - '**/*'

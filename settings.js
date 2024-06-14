@@ -6,7 +6,7 @@ module.exports = {
         user: process.env.DB_USER || 'sa',
         password: process.env.DB_PASSWORD || 'a9ernAmo',
         server: process.env.DB_URL || 'localhost',
-        database: 'SchoolSportWeb',
+        database: process.env.WEB_DB_NAME || 'SchoolSportWeb',
         options: {
 //            encrypt: true
 //        trustedConnection: 'Yes'
@@ -35,7 +35,7 @@ module.exports = {
         user: process.env.DB_USER || 'sa',
         password: process.env.DB_PASSWORD || 'a9ernAmo',
         server: process.env.DB_URL || 'localhost',
-        database: 'SchoolSportDb',
+        database: process.env.SPORTSMAN_DB_NAME || 'SchoolSportDb',
         options: {
 
         },
