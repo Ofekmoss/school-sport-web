@@ -77,8 +77,8 @@ module.exports = {
         RedirectRegistration: false,
         PlayerFilesFolder: '/data/pictures',
         PdfPreviewFolder: 'C:\\MIR\\SchoolSportWeb\\PDF',
-        DataGatewayUrl: 'https://schoolsport.org.il/api/common/sportsman-data',
-        RawDataGatewayUrl: 'https://schoolsport.org.il:8080/GetData.aspx',
+        DataGatewayUrl: process.env.DATA_GATEWAY_URL || 'https://schoolsport.org.il/api/common/sportsman-data',
+        RawDataGatewayUrl: process.env.RAW_DATA_GATEWAY_URL || 'https://schoolsport.org.il:8080/GetData.aspx',
         FootballSportFieldIds: [16, 17, 18, 79]
     },
     contentMapping: {
