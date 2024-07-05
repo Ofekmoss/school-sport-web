@@ -121,7 +121,7 @@ function createPDF(templateName, pdfFileName, dataObject, contentFolder) {
 				//return the buffer
 				fulfil(pdfBuffer);
 			}
-		}, {});
+		}, {}, {args: ["--no-sandbox"]});
     });
 }
 

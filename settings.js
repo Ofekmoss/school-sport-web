@@ -6,18 +6,18 @@ module.exports = {
         user: process.env.DB_USER || 'sa',
         password: process.env.DB_PASSWORD || 'a9ernAmo',
         server: process.env.DB_URL || 'localhost',
-        database: 'SchoolSportWeb',
+        database: process.env.WEB_DB_NAME || 'SchoolSportWeb',
         options: {
 //            encrypt: true
 //        trustedConnection: 'Yes'
         }
     },
     logFile: 'D:\\BitBucket\\school-sport-web\\logs\\schoolsportweb.log',
-    contentRoot: 'C:\\MIR\\SchoolSportWeb\\content',
-    excelRoot: 'C:\\MIR\\SchoolSportWeb\\Excel',
+    contentRoot: '/data/content',
+    excelRoot: '/data/content/Excel',
     flowersAttachmentsFolder: 'C:\\MIR\\SportFlowers\\content\\attachments',
-    schoolContent: 'C:\\MIR\\Testing\\SchoolSportWeb\\schools',
-    cityContent: 'C:\\MIR\\Testing\\SchoolSportWeb\\cities',
+    schoolContent: '/data/v2/schools',
+    cityContent: '/data/v2/cities',
     sportsmanLatestVersion: {
         Link: 'https://www.schoolsport.org.il/content/Files/106/Sportsman%201.431.exe',
         Version: '1.431'
@@ -35,7 +35,7 @@ module.exports = {
         user: process.env.DB_USER || 'sa',
         password: process.env.DB_PASSWORD || 'a9ernAmo',
         server: process.env.DB_URL || 'localhost',
-        database: 'SchoolSportDb',
+        database: process.env.SPORTSMAN_DB_NAME || 'SchoolSportDb',
         options: {
 
         },
@@ -75,10 +75,10 @@ module.exports = {
     Sportsman: {
         UserOffset: 90000,
         RedirectRegistration: false,
-        PlayerFilesFolder: 'D:\\BitBucket\\SchoolSport\\SportServices\\Pictures',
+        PlayerFilesFolder: '/data/pictures',
         PdfPreviewFolder: 'C:\\MIR\\SchoolSportWeb\\PDF',
-        DataGatewayUrl: 'http://localhost/api/common/sportsman-data',
-        RawDataGatewayUrl: 'http://localhost:52318/GetData.aspx',
+        DataGatewayUrl: process.env.DATA_GATEWAY_URL || 'https://schoolsport.org.il/api/common/sportsman-data',
+        RawDataGatewayUrl: process.env.RAW_DATA_GATEWAY_URL || 'https://schoolsport.org.il:8080/GetData.aspx',
         FootballSportFieldIds: [16, 17, 18, 79]
     },
     contentMapping: {

@@ -1,0 +1,13 @@
+version: '2'
+services:
+  nodejs:
+    build: .
+    ports:
+      - "5000:5000"
+      - "5433:5433"
+    env_file:
+      - path: ./.env
+        required: true
+    volumes:
+       - /var/www/html/data:/data
+    restart: always

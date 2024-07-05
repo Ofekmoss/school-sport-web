@@ -1,0 +1,25 @@
+version: 0.0
+os: linux
+files:
+  - source: .
+    destination: /var/www/html/school-sport-web
+    file_exists_behavior: OVERWRITE
+permissions:
+  - object: /var/www/html/school-sport-web
+    pattern: "**"
+    owner: ubuntu
+    group: ubuntu
+    type:
+      - directory
+  - object: /
+    pattern: "**"
+    owner: ubuntu
+    group: ubuntu
+    mode: 664
+    type:
+      - file
+
+hooks:
+  ApplicationStart:
+    - location: ci-cd/application-start.sh
+      timeout: 3600
