@@ -33,6 +33,9 @@ router.get('/', util.requireRole('admin', 'supervisor', 'finance'), function (re
         if (req.query.sport) {
             options.sport = parseInt(req.query.sport);
         }
+        if (req.query.numOfRows) {
+            options.numOfRows = parseInt(req.query.numOfRows);
+        }
         Season.current(req.session.user, function(currentSeason) {
             var season = currentSeason;
             if (req.query.season)

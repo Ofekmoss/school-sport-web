@@ -11,7 +11,7 @@ Players.prototype.list = function (season, options, callback) {
         .then(
             function (connection) {
                 //console.log('region: ' + options.region + ', clubs? ' + options.clubs + ', league? ' + options.league);
-                var qs = "Select pr.[Student], " +
+                var qs = "Select " + (options.numOfRows ? "top " + options.numOfRows : "" ) + " pr.[Student], " +
                     "   pr.[Approved], " +
                     "   sc.SCHOOL_ID, " +
                     "   sc.SYMBOL, " +
@@ -57,7 +57,7 @@ Players.prototype.list = function (season, options, callback) {
                     (options.championship ? " and c.CHAMPIONSHIP_ID = @championship" : "") +
                     (options.sport ? " and c.SPORT_ID = @sport" : "") +
                     " union all " +
-                    "Select p.STUDENT_ID as \"Student\", " +
+                    "Select " + (options.numOfRows ? "top " + options.numOfRows : "" ) + " p.STUDENT_ID as \"Student\", " +
                     "   null as \"Approved\", " +
                     "   sc.SCHOOL_ID, " +
                     "   sc.SYMBOL, " +
