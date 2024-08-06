@@ -11,7 +11,7 @@ Players.prototype.list = function (season, options, callback) {
         .then(
             function (connection) {
                 //console.log('region: ' + options.region + ', clubs? ' + options.clubs + ', league? ' + options.league);
-                var qs = "Select pr.[Student], " +
+                var qs = "Select " + (options.numOfRows ? "top " + options.numOfRows : "" ) + " pr.[Student], " +
                     "   pr.[Approved], " +
                     "   sc.SCHOOL_ID, " +
                     "   sc.SYMBOL, " +
@@ -22,6 +22,7 @@ Players.prototype.list = function (season, options, callback) {
                     "   st.BIRTH_DATE, " +
                     "   st.ID_NUMBER, " +
                     "   st.GRADE as \"Grade\", " +
+                    "   st.SEX_TYPE as \"Gender\", " +
                     "   tr.Id as \"TeamId\", " +
                     "   tr.Team as \"TeamTeam\", " +
                     "   dbo.GetTeamNumber(t.TEAM_INDEX, tr.TeamNumber) as \"TeamNumber\", " +
@@ -57,7 +58,7 @@ Players.prototype.list = function (season, options, callback) {
                     (options.championship ? " and c.CHAMPIONSHIP_ID = @championship" : "") +
                     (options.sport ? " and c.SPORT_ID = @sport" : "") +
                     " union all " +
-                    "Select p.STUDENT_ID as \"Student\", " +
+                    "Select " + (options.numOfRows ? "top " + options.numOfRows : "" ) + " p.STUDENT_ID as \"Student\", " +
                     "   null as \"Approved\", " +
                     "   sc.SCHOOL_ID, " +
                     "   sc.SYMBOL, " +
@@ -68,6 +69,7 @@ Players.prototype.list = function (season, options, callback) {
                     "   st.BIRTH_DATE, " +
                     "   st.ID_NUMBER, " +
                     "   st.GRADE as \"Grade\", " +
+                    "   st.SEX_TYPE as \"Gender\", " +
                     "   tr.Id as \"TeamId\", t.TEAM_ID as \"TeamTeam\", " +
                     "   dbo.GetTeamNumber(t.TEAM_INDEX, tr.TeamNumber) as \"TeamNumber\", " +
                     "   r.REGION_NAME, " +
@@ -128,7 +130,8 @@ Players.prototype.list = function (season, options, callback) {
                                 lastName: record['LAST_NAME'],
                                 birthDate: record['BIRTH_DATE'],
                                 idNumber: record['ID_NUMBER'],
-                                grade: record.Grade == null ? null : (season - parseInt(record.Grade))
+                                grade: record.Grade == null ? null : (season - parseInt(record.Grade)),
+                                gender: record.Gender
                             },
                             team: {
                                 id: record.TeamId,
