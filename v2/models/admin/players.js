@@ -22,6 +22,7 @@ Players.prototype.list = function (season, options, callback) {
                     "   st.BIRTH_DATE, " +
                     "   st.ID_NUMBER, " +
                     "   st.GRADE as \"Grade\", " +
+                    "   st.SEX_TYPE as \"Gender\", " +
                     "   tr.Id as \"TeamId\", " +
                     "   tr.Team as \"TeamTeam\", " +
                     "   dbo.GetTeamNumber(t.TEAM_INDEX, tr.TeamNumber) as \"TeamNumber\", " +
@@ -68,6 +69,7 @@ Players.prototype.list = function (season, options, callback) {
                     "   st.BIRTH_DATE, " +
                     "   st.ID_NUMBER, " +
                     "   st.GRADE as \"Grade\", " +
+                    "   st.SEX_TYPE as \"Gender\", " +
                     "   tr.Id as \"TeamId\", t.TEAM_ID as \"TeamTeam\", " +
                     "   dbo.GetTeamNumber(t.TEAM_INDEX, tr.TeamNumber) as \"TeamNumber\", " +
                     "   r.REGION_NAME, " +
@@ -128,7 +130,8 @@ Players.prototype.list = function (season, options, callback) {
                                 lastName: record['LAST_NAME'],
                                 birthDate: record['BIRTH_DATE'],
                                 idNumber: record['ID_NUMBER'],
-                                grade: record.Grade == null ? null : (season - parseInt(record.Grade))
+                                grade: record.Grade == null ? null : (season - parseInt(record.Grade)),
+                                gender: record.Gender
                             },
                             team: {
                                 id: record.TeamId,
