@@ -161,7 +161,8 @@ module.exports = {
             lastPaymentDate: '28.12.2019'
         }
     },
-    onePaymentPerCategorySports: [74, 76, 18],
+    onePaymentPerCategorySports: [74, 76],
+    // onePaymentPerCategorySports: [74, 76, 18],
     contentSiteBaseUrl: process.env.CONTENT_SITE_BASE_URL || 'http://127.0.0.1:4200/#/',
     siteBaseUrl: process.env.SITE_BASE_URL || 'http://127.0.0.1:5000',
     firstRegistrationSeason: 69,
