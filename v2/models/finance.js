@@ -208,9 +208,10 @@ function getAllAccounts(db, options, callback) {
                 '   r.REGION_ID, r.REGION_NAME, ' +
                 '   cit.CITY_ID, cit.CITY_NAME, ' +
                 '   cc.CATEGORY As "category", ' +
+                '   c.IS_CLUBS As IsClubs, ' +
+                '   c.IS_LEAGUE As IsLeague, ' +
                 '   IsNull(tc.Amount, ch.PRICE) As TeamCharge, ' +
                 '   Sum(IsNull(tp.Amount, 0)) As TeamPayment ' +
-                '   c.IS_LEAGUE As IsLeague ' +
                 'From PaymentRequests pr Inner Join TeamRegistrations tr On tr.Payment=pr.Id ' +
                 '   Inner Join CHAMPIONSHIP_CATEGORIES cc On tr.Competition=cc.CHAMPIONSHIP_CATEGORY_ID And cc.DATE_DELETED Is Null ' +
                 '   Inner Join CHAMPIONSHIPS c On cc.CHAMPIONSHIP_ID=c.CHAMPIONSHIP_ID And c.DATE_DELETED Is Null ' +
@@ -226,7 +227,7 @@ function getAllAccounts(db, options, callback) {
                 'Where pr.CancelTime Is Null And c.SEASON=@season ' + extraConditions +
                 'Group By pr.Id, pr.TotalAmount, pr.PayerName, pr.[Time], pr.AccountId, tr.Id, tr.Competition, cm.CATEGORY_NAME, ' +
                 '   c.CHAMPIONSHIP_ID, c.CHAMPIONSHIP_NAME, sp.SPORT_ID, sp.SPORT_NAME, s.SCHOOL_ID, s.SCHOOL_NAME, s.SYMBOL, ' +
-                '   r.REGION_ID, r.REGION_NAME, cit.CITY_ID, cit.CITY_NAME, cc.CATEGORY, tc.Amount, ch.PRICE';
+                '   r.REGION_ID, r.REGION_NAME, cit.CITY_ID, cit.CITY_NAME, cc.CATEGORY, tc.Amount, ch.PRICE, c.IS_LEAGUE, c.IS_CLUBS';
             var queryParams = {
                 season: options.season,
                 region: options.region
@@ -249,6 +250,7 @@ function getAllAccounts(db, options, callback) {
                             school: utils.getBasicEntity(record, 'SCHOOL_', null, ['symbol']),
                             city: utils.getBasicEntity(record, 'CITY_'),
                             isLeague: record.IsLeague,
+                            isClubs: record.IsClubs,
                             teams: []
                         };
                         paymentRequestMapping[key] = paymentRequest;
