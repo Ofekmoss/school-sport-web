@@ -126,7 +126,7 @@ router.get('/team-players', util.requireRole('admin', 'supervisor', 'finance'), 
             var season = currentSeason;
             if (req.query.season)
                 season = parseInt(req.query.season);
-            Players.list(season, options, function (err, result) {
+            Players.listTeamPlayers(season, options, function (err, result) {
                 if (!err) {
                     var players = [];
                     for (var pi = 0; pi < result.length; pi++) {
