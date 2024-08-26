@@ -177,6 +177,132 @@ Players.prototype.list = function (season, options, callback) {
         );
 };
 
+Players.prototype.listTeamPlayers = function (season, options, callback) {
+    var self = this;
+    var activeSeason = Season.active();
+    this.db.connect()
+        .then(
+            function (connection) {
+                //console.log('region: ' + options.region + ', clubs? ' + options.clubs + ', league? ' + options.league);
+                var qs = "Select " + (options.numOfRows ? "top " + options.numOfRows : "" ) + " pr.[Student], " +
+                    "   pr.[Approved], " +
+                    "   sc.SCHOOL_ID, " +
+                    "   sc.SYMBOL, " +
+                    "   sc.SCHOOL_NAME, " +
+                    "   dbo.BuildTeamName(sc.SCHOOL_NAME, ci.CITY_NAME, t.TEAM_INDEX, DEFAULT, DEFAULT) As TeamFullName, " +
+                    "   st.FIRST_NAME, " +
+                    "   st.LAST_NAME, " +
+                    "   st.BIRTH_DATE, " +
+                    "   st.ID_NUMBER, " +
+                    "   st.GRADE as \"Grade\", " +
+                    "   st.SEX_TYPE as \"Gender\", " +
+                    "   tr.Id as \"TeamId\", " +
+                    "   tr.Team as \"TeamTeam\", " +
+                    "   dbo.GetTeamNumber(t.TEAM_INDEX, tr.TeamNumber) as \"TeamNumber\", " +
+                    "   r.REGION_NAME, " +
+                    "   c.CHAMPIONSHIP_NAME, " +
+                    "   cc.CHAMPIONSHIP_CATEGORY_ID, " +
+                    "   cc.CATEGORY, " +
+                    "   cm.CATEGORY_NAME, " +
+                    "   c.REGION_ID, " +
+                    "   c.SPORT_ID, " +
+                    "   cc.MAX_STUDENT_BIRTHDAY, " +
+                    "   sp.SPORT_NAME, " +
+                    "   p.PLAYER_ID as \"Player\", p.STATUS as \"PlayerStatus\", " +
+                    "   pr.CreatedAt as \"CreatedAt\", " +
+                    "   sdp.[DeletedAt] as \"DeletedAt\" " +
+                    "From PlayerRegistrations pr Inner Join TeamRegistrations tr On pr.[Team]=tr.Id " +
+                    "   Inner Join SCHOOLS sc On tr.[School]=sc.SCHOOL_ID And sc.DATE_DELETED Is Null " +
+                    "   Inner Join STUDENTS st On pr.[Student]=st.STUDENT_ID And st.DATE_DELETED Is Null " +
+                    "   Inner Join CHAMPIONSHIP_CATEGORIES cc On tr.Competition=cc.CHAMPIONSHIP_CATEGORY_ID And cc.DATE_DELETED Is Null " +
+                    "   Inner Join CHAMPIONSHIPS c On cc.CHAMPIONSHIP_ID=c.CHAMPIONSHIP_ID And c.DATE_DELETED Is Null " +
+                    "   Inner Join REGIONS r On c.REGION_ID=r.REGION_ID And r.DATE_DELETED Is Null " +
+                    "   Inner Join SPORTS sp On c.SPORT_ID=sp.SPORT_ID And sp.DATE_DELETED Is Null " +
+                    "   Left Outer Join TEAMS t On tr.[Team]=t.TEAM_ID And t.DATE_DELETED Is Null " +
+                    "   Left Outer Join PLAYERS as p On tr.Team = p.TEAM_ID and pr.Student = p.STUDENT_ID and p.DATE_DELETED IS NULL " +
+                    "   Left Join SchoolDeletedPlayers sdp On tr.Team=sdp.Team and p.PLAYER_ID=sdp.Player " +
+                    "   Left Join CATEGORY_MAPPING cm On cc.[CATEGORY]=cm.RAW_CATEGORY " +
+                    "   Left Join CITIES ci On sc.CITY_ID=ci.CITY_ID And ci.DATE_DELETED Is Null " +
+                    "where c.SEASON = @season and c.DATE_DELETED IS NULL and cc.DATE_DELETED IS NULL " +
+                    (options.region ? " and c.REGION_ID = @region" : "") +
+                    (options.clubs ? " and c.IS_CLUBS = 1" : "") +
+                    (options.league ? " and c.IS_LEAGUE= 1" : "") +
+                    (options.competition ? " and cc.CHAMPIONSHIP_CATEGORY_ID = @competition" : "") +
+                    (options.championship ? " and c.CHAMPIONSHIP_ID = @championship" : "") +
+                    (options.sport ? " and c.SPORT_ID = @sport" : "");
+                var queryParameters = {
+                    season: season,
+                    region: options.region,
+                    competition: options.competition,
+                    championship: options.championship,
+                    sport: options.sport
+                };
+                connection.request(qs, queryParameters).then(function (records) {
+                    connection.complete();
+                    var result = [];
+                    var currentSeason = season;
+                    for (var i = 0; i < records.length; i++) {
+                        var record = records[i];
+                        var player = {
+                            id: record.Student,
+                            approved: record['Approved'],
+                            player: record.Player,
+                            playerStatus: record.PlayerStatus,
+                            createdAt: record.CreatedAt,
+                            deletedAt: record.DeletedAt,
+                            maxStudentAge: record['MAX_STUDENT_BIRTHDAY'],
+                            student: {
+                                firstName: record['FIRST_NAME'],
+                                lastName: record['LAST_NAME'],
+                                birthDate: record['BIRTH_DATE'],
+                                idNumber: record['ID_NUMBER'],
+                                grade: record.Grade == null ? null : (season - parseInt(record.Grade)),
+                                gender: record.Gender
+                            },
+                            team: {
+                                id: record.TeamId,
+                                name: record.TeamFullName,
+                                team: record.TeamTeam,
+                                number: record.TeamNumber
+                            },
+                            school: {
+                                id: record['SCHOOL_ID'],
+                                name: record['SCHOOL_NAME'],
+                                symbol: record['SYMBOL']
+                            },
+                            championship: {
+                                name: record['CHAMPIONSHIP_NAME'] + ' ' + record['CATEGORY_NAME'],
+                                region: {
+                                    id: record['REGION_ID'],
+                                    name: record['REGION_NAME']
+                                },
+                                sport: {
+                                    id: record['SPORT_ID'],
+                                    name: record['SPORT_NAME']
+                                },
+                                category: {
+                                    id: record['CHAMPIONSHIP_CATEGORY_ID'],
+                                    category: record['CATEGORY'],
+                                    name: record['CATEGORY_NAME']
+                                }
+                            }
+                        };
+                        result.push(player);
+                    }
+
+                    callback(null, result);
+                }, function (err) {
+                    connection.complete();
+                    callback(err);
+
+                });
+            },
+            function (err) {
+                callback(err);
+            }
+        );
+};
+
 Players.prototype.listTransferRequests = function (season, options, callback) {
     var activeSeason = Season.active();
     this.db.connect()
