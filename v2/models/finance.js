@@ -210,6 +210,7 @@ function getAllAccounts(db, options, callback) {
                 '   cc.CATEGORY As "category", ' +
                 '   IsNull(tc.Amount, ch.PRICE) As TeamCharge, ' +
                 '   Sum(IsNull(tp.Amount, 0)) As TeamPayment ' +
+                '   c.IS_LEAGUE As IsLeague ' +
                 'From PaymentRequests pr Inner Join TeamRegistrations tr On tr.Payment=pr.Id ' +
                 '   Inner Join CHAMPIONSHIP_CATEGORIES cc On tr.Competition=cc.CHAMPIONSHIP_CATEGORY_ID And cc.DATE_DELETED Is Null ' +
                 '   Inner Join CHAMPIONSHIPS c On cc.CHAMPIONSHIP_ID=c.CHAMPIONSHIP_ID And c.DATE_DELETED Is Null ' +
@@ -247,6 +248,7 @@ function getAllAccounts(db, options, callback) {
                             region: utils.getBasicEntity(record, 'REGION_'),
                             school: utils.getBasicEntity(record, 'SCHOOL_', null, ['symbol']),
                             city: utils.getBasicEntity(record, 'CITY_'),
+                            isLeague: record.IsLeague,
                             teams: []
                         };
                         paymentRequestMapping[key] = paymentRequest;
