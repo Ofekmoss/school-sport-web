@@ -925,6 +925,8 @@ Finance.prototype.getPaymentRequests = function (options, callback) {
                     region: account.region,
                     school: account.school,
                     city: account.city,
+                    isClubs: paymentRequest.isClubs,
+                    isLeague: paymentRequest.isLeague,
                     remainingAmount: paymentRequest.amountToPay - paymentRequest.paidAmount
                 };
             }));
