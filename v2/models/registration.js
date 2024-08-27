@@ -2266,18 +2266,28 @@ function insertNextPayment(transaction, time, school, payments, season, callback
     var payment = payments[0];
     payments.splice(0, 1);
     transaction.request(
-        "insert into PaymentRequests(Id, Method, TotalAmount, PayerName, Details, \"Order\", Time, Season) " +
-        "values(@id, @method, @totalAmount, @payerName, @details, @order, @time, @season)",
-        {
-            id: payment.id,
-            method: payment.method,
-            totalAmount: payment.totalAmount,
-            payerName: payment.payerName,
-            details: JSON.stringify(payment.details),
-            order: payment.order,
-            time: time,
-            season: season
-        })
+        "select a.ACCOUNT_ID as account_id from ACCOUNTS a WHERE a.SCHOOL_ID = @school",
+        {school: school}
+    )
+        .then(
+            function (account) {
+                transaction.request(
+                    "insert into PaymentRequests(Id, Method, TotalAmount, PayerName, Details, \"Order\", Time, Season, AccountId) " +
+                    "values(@id, @method, @totalAmount, @payerName, @details, @order, @time, @season, @account)",
+                    {
+                        id: payment.id,
+                        method: payment.method,
+                        totalAmount: payment.totalAmount,
+                        payerName: payment.payerName,
+                        details: JSON.stringify(payment.details),
+                        order: payment.order,
+                        time: time,
+                        season: season,
+                        account: account[0]?.account_id || ""
+                    }
+                )
+            }
+        )
         .then(
             function () {
                 var teams = [];
