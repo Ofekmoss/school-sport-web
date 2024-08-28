@@ -122,6 +122,9 @@ router.get('/team-players', util.requireRole('admin', 'supervisor', 'finance'), 
         if (req.query.numOfRows) {
             options.numOfRows = parseInt(req.query.numOfRows);
         }
+        if (req.query.school) {
+            options.school = parseInt(req.query.school);
+        }
         Season.current(req.session.user, function(currentSeason) {
             var season = currentSeason;
             if (req.query.season)

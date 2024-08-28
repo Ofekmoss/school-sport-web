@@ -224,6 +224,7 @@ Players.prototype.listTeamPlayers = function (season, options, callback) {
                     "   Left Join CATEGORY_MAPPING cm On cc.[CATEGORY]=cm.RAW_CATEGORY " +
                     "   Left Join CITIES ci On sc.CITY_ID=ci.CITY_ID And ci.DATE_DELETED Is Null " +
                     "where c.SEASON = @season and c.DATE_DELETED IS NULL and cc.DATE_DELETED IS NULL " +
+                    (options.school ? " and sc.SCHOOL_ID = @school" : "") +
                     (options.region ? " and c.REGION_ID = @region" : "") +
                     (options.clubs ? " and c.IS_CLUBS = 1" : "") +
                     (options.league ? " and c.IS_LEAGUE= 1" : "") +
@@ -235,7 +236,8 @@ Players.prototype.listTeamPlayers = function (season, options, callback) {
                     region: options.region,
                     competition: options.competition,
                     championship: options.championship,
-                    sport: options.sport
+                    sport: options.sport,
+                    school: options.school
                 };
                 connection.request(qs, queryParameters).then(function (records) {
                     connection.complete();
@@ -334,12 +336,13 @@ Players.prototype.listTransferRequests = function (season, options, callback) {
                     "  left outer join CITIES cci On cs.CITY_ID=cci.CITY_ID And cci.DATE_DELETED Is Null " +
                     "  left outer join CATEGORY_MAPPING cm On cc.[CATEGORY]=cm.RAW_CATEGORY " +
                     "where c.SEASON = @season and tr.TransferDate is null " + // Don't query already transferred
+                    (options.school ? " and sc.SCHOOL_ID = @school" : "") +
                     (options.region ? " and sc.REGION_ID = @region" : "") +
                     (options.sport ? " and c.SPORT_ID = @sport" : "") +
                     (options.championship ? " and c.CHAMPIONSHIP_ID = @championship" : "") +
                     (options.clubs ? " and c.IS_CLUBS = 1" : "") +
                     (options.league ? " and c.IS_LEAGUE= 1" : ""),
-                    {season: season, region: options.region, sport: options.sport, championship: options.championship})
+                    {season: season, region: options.region, sport: options.sport, championship: options.championship, school: options.school})
                     .then(
                         function (records) {
                             connection.complete();
