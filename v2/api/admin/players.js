@@ -119,6 +119,9 @@ router.get('/team-players', util.requireRole('admin', 'supervisor', 'finance'), 
         if (req.query.sport) {
             options.sport = parseInt(req.query.sport);
         }
+        if (req.query.school) {
+            options.school = parseInt(req.query.school);
+        }
         if (req.query.numOfRows) {
             options.numOfRows = parseInt(req.query.numOfRows);
         }
