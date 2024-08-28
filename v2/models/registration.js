@@ -2943,7 +2943,7 @@ Registration.prototype.getTransferRequests = function(user, teamId, callback) {
                         "  join SCHOOLS as sc on tr.School = sc.SCHOOL_ID " +
                         "  join STUDENTS as st ON tr.IdNumber = st.ID_NUMBER " +
                         "  left join SCHOOLS as csc ON st.SCHOOL_ID = csc.SCHOOL_ID " +
-                        "where tr.Team = @teamId", { teamId: teamId }).then(function(records) {
+                        "where tr.Team = @teamId and tr.TransferDate is null", { teamId: teamId }).then(function(records) {
                         connection.complete();
                         var result = records.map(function(record) {
                             var transfer = {
