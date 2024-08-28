@@ -82,7 +82,7 @@ async function Read(db, filters, possibleConditions, baseSQL, recordMapper, call
     }
     catch (err) {
         console.log('general error while reading');
-        console.log('Base SQL is: ' + baseSQL);
+        console.log('Base SQL is: ' + qs);
         console.log('Filters: ');
         console.log(filters);
         console.log('Possible conditions: ');
@@ -2026,32 +2026,29 @@ Manage.prototype.getPlayers = function (options, user, callback) {
             '   Left Join SCHOOLS sc On st.SCHOOL_ID=sc.SCHOOL_ID And sc.DATE_DELETED Is Null ' +
             '   Left Join REGIONS sr On sc.REGION_ID=sr.REGION_ID And sr.DATE_DELETED Is NULL ' +
             '   Left Join CITIES cit On sc.CITY_ID=cit.CITY_ID And cit.DATE_DELETED Is Null ' +
-            'Where c.SEASON=@season ' + leagueClause + ' ';
-        if (teamId) {
-            baseSQL += '' +
-                'Union All ' +
-                'Select pr.Team, Null As "TeamId", pr.Student As StudentId, pr.Approved, pr.CreatedAt, pr.Player As "PlayerId",  ' +
-                '   p.REGISTRATION_DATE As PlayerRegistrationDate, p.[STATUS] As PlayerAdminStatus, p.TEAM_NUMBER As PlayerShirtNumber, ' +
-                '   tr.TeamNumber, sc.CITY_ID, cit.CITY_NAME, pr.Approved, cc.CHAMPIONSHIP_CATEGORY_ID, ' +
-                '   c.CHAMPIONSHIP_ID, c.CHAMPIONSHIP_NAME, sp.SPORT_ID, sp.SPORT_NAME, cm.RAW_CATEGORY, cm.CATEGORY_NAME,  ' +
-                '   st.ID_NUMBER As StudentIdNumber, st.FIRST_NAME As StudentFirstName, st.LAST_NAME As StudentLastName, ' +
-                '   st.BIRTH_DATE As StudentBirthDate, st.SCHOOL_ID As StudentSchoolId, sc.SCHOOL_NAME As StudentSchoolName, ' +
-                '   sc.SYMBOL As StudentSchoolSymbol, st.GRADE As StudentGrade, st.SEX_TYPE As StudentGender, ' +
-                '   sr.REGION_ID As StudentRegionId, sr.REGION_NAME As StudentRegionName, p.DATE_LAST_MODIFIED, ' +
-                '   p.REMARKS, p.GOT_STICKER, c.SEASON, r.REGION_ID, r.REGION_NAME ' +
-                'From PlayerRegistrations pr Inner Join TeamRegistrations tr On pr.Team=tr.Id ' +
-                '   Inner Join CHAMPIONSHIP_CATEGORIES cc On tr.Competition=cc.CHAMPIONSHIP_CATEGORY_ID And cc.DATE_DELETED Is Null ' +
-                '   Inner Join CHAMPIONSHIPS c On cc.CHAMPIONSHIP_ID=c.CHAMPIONSHIP_ID And c.DATE_DELETED Is Null ' +
-                '   Inner Join REGIONS r On c.REGION_ID=r.REGION_ID And r.DATE_DELETED Is NULL ' +
-                '   Inner Join SPORTS sp On c.SPORT_ID=sp.SPORT_ID And sp.DATE_DELETED Is Null ' +
-                '   Left Join CATEGORY_MAPPING cm On cm.RAW_CATEGORY=cc.CATEGORY ' +
-                '   Left Join PLAYERS p On pr.Player=p.PLAYER_ID And p.DATE_DELETED Is Null ' +
-                '   Left Join STUDENTS st On pr.Student=st.STUDENT_ID And st.DATE_DELETED Is Null ' +
-                '   Left Join SCHOOLS sc On st.SCHOOL_ID=sc.SCHOOL_ID And sc.DATE_DELETED Is Null ' +
-                '   Left Join REGIONS sr On sc.REGION_ID=sr.REGION_ID And sr.DATE_DELETED Is NULL ' +
-                '   Left Join CITIES cit On sc.CITY_ID=cit.CITY_ID And cit.DATE_DELETED Is Null ' +
-                'Where c.SEASON=@season ' + leagueClause;
-        }
+            'Where c.SEASON=@season ' + leagueClause + ' ' +
+            'Union All ' +
+            'Select pr.Team, Null As "TeamId", pr.Student As StudentId, pr.Approved, pr.CreatedAt, pr.Player As "PlayerId",  ' +
+            '   p.REGISTRATION_DATE As PlayerRegistrationDate, p.[STATUS] As PlayerAdminStatus, p.TEAM_NUMBER As PlayerShirtNumber, ' +
+            '   tr.TeamNumber, sc.CITY_ID, cit.CITY_NAME, pr.Approved, cc.CHAMPIONSHIP_CATEGORY_ID, ' +
+            '   c.CHAMPIONSHIP_ID, c.CHAMPIONSHIP_NAME, sp.SPORT_ID, sp.SPORT_NAME, cm.RAW_CATEGORY, cm.CATEGORY_NAME,  ' +
+            '   st.ID_NUMBER As StudentIdNumber, st.FIRST_NAME As StudentFirstName, st.LAST_NAME As StudentLastName, ' +
+            '   st.BIRTH_DATE As StudentBirthDate, st.SCHOOL_ID As StudentSchoolId, sc.SCHOOL_NAME As StudentSchoolName, ' +
+            '   sc.SYMBOL As StudentSchoolSymbol, st.GRADE As StudentGrade, st.SEX_TYPE As StudentGender, ' +
+            '   sr.REGION_ID As StudentRegionId, sr.REGION_NAME As StudentRegionName, p.DATE_LAST_MODIFIED, ' +
+            '   p.REMARKS, p.GOT_STICKER, c.SEASON, r.REGION_ID, r.REGION_NAME ' +
+            'From PlayerRegistrations pr Inner Join TeamRegistrations tr On pr.Team=tr.Id ' +
+            '   Inner Join CHAMPIONSHIP_CATEGORIES cc On tr.Competition=cc.CHAMPIONSHIP_CATEGORY_ID And cc.DATE_DELETED Is Null ' +
+            '   Inner Join CHAMPIONSHIPS c On cc.CHAMPIONSHIP_ID=c.CHAMPIONSHIP_ID And c.DATE_DELETED Is Null ' +
+            '   Inner Join REGIONS r On c.REGION_ID=r.REGION_ID And r.DATE_DELETED Is NULL ' +
+            '   Inner Join SPORTS sp On c.SPORT_ID=sp.SPORT_ID And sp.DATE_DELETED Is Null ' +
+            '   Left Join CATEGORY_MAPPING cm On cm.RAW_CATEGORY=cc.CATEGORY ' +
+            '   Left Join PLAYERS p On pr.Player=p.PLAYER_ID And p.DATE_DELETED Is Null ' +
+            '   Left Join STUDENTS st On pr.Student=st.STUDENT_ID And st.DATE_DELETED Is Null ' +
+            '   Left Join SCHOOLS sc On st.SCHOOL_ID=sc.SCHOOL_ID And sc.DATE_DELETED Is Null ' +
+            '   Left Join REGIONS sr On sc.REGION_ID=sr.REGION_ID And sr.DATE_DELETED Is NULL ' +
+            '   Left Join CITIES cit On sc.CITY_ID=cit.CITY_ID And cit.DATE_DELETED Is Null ' +
+            'Where c.SEASON=@season ' + leagueClause;
 
         console.log(baseSQL);
         console.log(filters);
@@ -2082,18 +2079,8 @@ Manage.prototype.getPlayers = function (options, user, callback) {
             return player;
         };
         var possibleConditions = {
-            'id': ['pr.Player', 'p.PLAYER_ID'],
-            'team': ['pr.Team', 'p.TEAM_ID'],
-            'student': 'p.STUDENT_ID',
-            'championship': 'c.CHAMPIONSHIP_ID',
-            'category': 'cc.CHAMPIONSHIP_CATEGORY_ID',
-            'school': ['tr.School', 't.SCHOOL_ID'],
-            'region': 'r.REGION_ID',
-            'sport': 'sp.SPORT_ID'
+            'team': ['pr.Team', 'tr.Team'],
         };
-        if (teamId) {
-            possibleConditions['team'].push('tr.Team');
-        }
         Read(db,filters, possibleConditions, baseSQL, recordMapper, callback);
     });
 };
