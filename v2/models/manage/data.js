@@ -71,7 +71,10 @@ async function Read(db, filters, possibleConditions, baseSQL, recordMapper, call
             if (conditions.length > 0)
                 qs = ApplyConditions(qs, conditions);
         }
+        console.log("========================= LOOK HERE =========================")
         console.log(qs);
+        console.log("==================================================")
+        console.log(filters);
         var records = await connection.request(qs, filters);
         var dataItems = [];
         for (var i = 0; i < records.length; i++) {
@@ -780,8 +783,8 @@ Manage.prototype.getTeams = function (options, user, callback) {
                 ConfirmationDate: row['ConfirmationDate'],
                 PlayerNumberFrom: row['PLAYER_NUMBER_FROM'],
                 PlayerNumberTo: row['PLAYER_NUMBER_TO'],
-                ActivityTimes: rawActivity == null ? null : JSON.parse(rawActivity),
-                HostingHours: rawHostingHours == null ? null : JSON.parse(rawHostingHours),
+                ActivityTimes: rawActivity ? JSON.parse(rawActivity) : null,
+                HostingHours: rawHostingHours ? JSON.parse(rawHostingHours) : null,
                 Championship: manageUtils.buildSimpleObject(row, 'CHAMPIONSHIP_ID', 'CHAMPIONSHIP_NAME'),
                 Category: manageUtils.buildSimpleObject(row, 'Competition', 'CATEGORY_NAME'),
                 Sport: manageUtils.buildSimpleObject(row, 'SPORT_ID', 'SPORT_NAME'),
