@@ -41,6 +41,41 @@ function getTokens(user, callback) {
     }
 }
 
+function getOrCreateTokens(user, callback) {
+    var school = user.schoolID;
+    var currentSeason = user.season;
+    if (school) {
+        db.connect().then(function (connection) {
+            var qs = 'Select Token, Identifier, Email ' +
+                'From TokenLogins ' +
+                'Where dbo.ExtractBetweenDelimeters(Identifier, \'-\', \'-\')=@school ' +
+                '   And dbo.ExtractBetweenDelimeters(Identifier, \'\', \'-\')=@season';
+                //'   And Expiration>GetDate()';
+            var queryParams = {
+                school: school,
+                season: currentSeason
+            };
+            connection.request(qs, queryParams).then(function (records) {
+                var tokens = [];
+                for (var i = 0; i < records.length; i++) {
+                    var record = records[i];
+                    tokens.push({
+                        type: record['Identifier'].split('-')[0],
+                        token: record['Token']
+                    });
+                }
+                callback(null, tokens);
+            }, function(err) {
+                callback(err);
+            });
+        }, function(err) {
+            callback(err);
+        });
+    } else {
+        callback(null, []);
+    }
+}
+
 function generateToken() {
     return Math.floor(Math.random() * 1000000000000000).toString(36) +
         Math.floor(Math.random() * 1000000000000000).toString(36) +
@@ -163,6 +198,7 @@ module.exports = {
     },
     generateLogin: generateLogin,
     getTokens: getTokens,
+    getOrCreateTokens: getOrCreateTokens,
     login: function (params, callback) {
         function GetUserData(username, password, userid) {
             return new Promise(function (fulfil, reject) {
