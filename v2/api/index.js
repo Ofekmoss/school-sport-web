@@ -148,10 +148,10 @@ router.get('/tokens', function (req, res) {
 
 // must be get or create tokens
 router.post('/tokens/get-or-create', function (req, res) {
-    var schoolID = req.params.schoolID;
     var user = {
         schoolID: req.body.schoolID,
-        season: req.body.season
+        season: req.body.season,
+        users: req.body.users
     };
     Access.getOrCreateTokens(user, function (err, tokens) {
         if (err) {

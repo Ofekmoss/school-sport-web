@@ -57,14 +57,69 @@ function getOrCreateTokens(user, callback) {
             };
             connection.request(qs, queryParams).then(function (records) {
                 var tokens = [];
-                for (var i = 0; i < records.length; i++) {
-                    var record = records[i];
-                    tokens.push({
-                        type: record['Identifier'].split('-')[0],
-                        token: record['Token']
-                    });
+                if (records.length > 0) {
+                    for (var i = 0; i < records.length; i++) {
+                        var record = records[i];
+                        tokens.push({
+                            type: record['Identifier'].split('-')[0],
+                            token: record['Token']
+                        });
+                    }
+                    callback(null, tokens);
+                } else {
+                    var users = user.users.length > 0 ? user.users : [];
+                    var query = "insert into TokenLogins(Token, Code, Identifier, Email, Expiration, UserDetails, Status) values ";
+                    for (var i = 0; i < users.length; i++) {
+                        var newToken = generateToken();
+                        var el = users[i];
+                        query += `('${newToken}', 
+                        '${el.phone}', 
+                        '${el.type == 1 ? "principal" : "representative"}-${school}-${currentSeason}', 
+                        '${el.email}', 
+                        '2035-06-30 00:00:00.000', 
+                        '${JSON.stringify({
+                            displayName: "Name",
+                            schoolID: school,
+                            regionID: el.region,
+                            defaultRoute: el.type == 1 ? "principal-approval/teams" : "representative-approval/teams",
+                            roles: el.type == 1 ? ["principal-approval"] : ["representative-approval"]
+                        })}', 
+                        0)`;
+                        if (i == users.length - 1) {
+                            query += ";";
+                        } else {
+                            query += ", "
+                        }
+                    }
+                    console.log("================ GET OR CREATE TOKENS QUERY ================");
+                    console.log(query);
+
+                    if (users.length > 0) {
+                        connection.request(query).then(function () {
+                            var qs = 'Select Token, Identifier, Email ' +
+                                'From TokenLogins ' +
+                                'Where dbo.ExtractBetweenDelimeters(Identifier, \'-\', \'-\')=@school ' +
+                                '   And dbo.ExtractBetweenDelimeters(Identifier, \'\', \'-\')=@season';
+                                //'   And Expiration>GetDate()';
+                            var queryParams = {
+                                school: school,
+                                season: currentSeason
+                            };
+                            return connection.request(qs, queryParams);
+                        }).then(function (newTokens) {
+                            for (var i = 0; i < newTokens.length; i++) {
+                                var record = newTokens[i];
+                                tokens.push({
+                                    type: record['Identifier'].split('-')[0],
+                                    token: record['Token']
+                                });
+                            }
+                            callback(null, tokens);
+                        })
+                    } else {
+                        callback(null, []);
+                    }
                 }
-                callback(null, tokens);
             }, function(err) {
                 callback(err);
             });
