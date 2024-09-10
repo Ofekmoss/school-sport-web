@@ -167,6 +167,26 @@ router.post('/tokens/get-or-create', function (req, res) {
     });
 });
 
+router.post('/tokens/update-token', function (req, res) {
+    var user = {
+        schoolID: req.body.schoolID,
+        season: req.body.season,
+        users: req.body.users
+    };
+    Access.updateTokens(user, function (err, tokens) {
+        if (err) {
+            if (err.status) {
+                res.status(err.status).send(err.message);
+            }
+            else {
+                res.status(500).send(err);
+            }
+        } else {
+            res.status(200).send(tokens);
+        }
+    });
+});
+
 //
 router.get('/useChampionshipNameSportFields', function (req, res) {
     var sportFields = settings.useChampionshipNameSportFields;
