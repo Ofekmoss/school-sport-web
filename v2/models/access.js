@@ -131,6 +131,47 @@ function getOrCreateTokens(user, callback) {
     }
 }
 
+function updateTokens(user, callback) {
+    const school = user.schoolID;
+    const currentSeason = user.season;
+
+    if (school) {
+        db.connect().then(function (connection) {
+            const users = user.users.length > 0 ? user.users : [];
+            const queryPromises = [];
+
+            for (let i = 0; i < users.length; i++) {
+                const el = users[i];
+                let query;
+                if (el.type == 1) {
+                    query = `update TokenLogins set Code = '${el.phone}' where Identifier = 'principal-${school}-${currentSeason}';`;
+                } else if (el.type == 2) {
+                    query = `update TokenLogins set Code = '${el.phone}' where Identifier = 'representative-${school}-${currentSeason}';`;
+                }
+
+                if (query) {
+                    queryPromises.push(connection.request(query));
+                }
+            }
+
+            // Wait for all queries to finish
+            Promise.all(queryPromises)
+                .then(() => {
+                    callback(null, true);
+                })
+                .catch(err => {
+                    console.error('Query error:', err);
+                    callback(err);
+                });
+        }).catch(err => {
+            console.error('Database connection error:', err);
+            callback(err);
+        });
+    } else {
+        callback(null, []);
+    }
+}
+
 function generateToken() {
     return Math.floor(Math.random() * 1000000000000000).toString(36) +
         Math.floor(Math.random() * 1000000000000000).toString(36) +
@@ -254,6 +295,7 @@ module.exports = {
     generateLogin: generateLogin,
     getTokens: getTokens,
     getOrCreateTokens: getOrCreateTokens,
+    updateTokens: updateTokens,
     login: function (params, callback) {
         function GetUserData(username, password, userid) {
             return new Promise(function (fulfil, reject) {
