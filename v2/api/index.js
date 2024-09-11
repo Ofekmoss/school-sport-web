@@ -119,6 +119,26 @@ router.get('/login', function (req, res) {
     }
 });
 
+router.post('/find-user', function (req, res) {
+    if (req.body.details) {
+        Access.findUser(req.body.details, function (foundUser) {
+            res.status(200).send(foundUser[0]);
+        })    
+    } else {
+        res.status(404).end();
+    }
+});
+
+router.post('/edit-user', function (req, res) {
+    if (req.body.details) {
+        Access.editUser(req.body.details, function () {
+            res.status(200).send({user_updated: true});
+        })    
+    } else {
+        res.status(404).end();
+    }
+});
+
 router.get('/season', function (req, res) {
     if (req.session.user) {
         Season.current(req.session.user, function(currentSeason) {
