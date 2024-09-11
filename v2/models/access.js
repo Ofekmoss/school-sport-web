@@ -76,7 +76,7 @@ function getOrCreateTokens(user, callback) {
                         '${el.phone}', 
                         '${el.type == 1 ? "principal" : "representative"}-${school}-${currentSeason}', 
                         '${el.email}', 
-                        '2035-06-30 00:00:00.000', 
+                        '2035-06-30 01:00:00.000', 
                         '${JSON.stringify({
                             displayName: "Name",
                             schoolID: school,
@@ -137,32 +137,98 @@ function updateTokens(user, callback) {
 
     if (school) {
         db.connect().then(function (connection) {
-            const users = user.users.length > 0 ? user.users : [];
-            const queryPromises = [];
+            var qs = 'Select Token, Identifier, Email ' +
+                'From TokenLogins ' +
+                'Where dbo.ExtractBetweenDelimeters(Identifier, \'-\', \'-\')=@school ' +
+                '   And dbo.ExtractBetweenDelimeters(Identifier, \'\', \'-\')=@season';
+                //'   And Expiration>GetDate()';
+            var queryParams = {
+                school: school,
+                season: currentSeason
+            };
+            connection.request(qs, queryParams).then(function (records) {
+                var tokens = [];
+                const users = user.users.length > 0 ? user.users : [];
+                const queryPromises = [];
+                var query = "";
 
-            for (let i = 0; i < users.length; i++) {
-                const el = users[i];
-                let query;
-                if (el.type == 1) {
-                    query = `update TokenLogins set Code = '${el.phone}' where Identifier = 'principal-${school}-${currentSeason}';`;
-                } else if (el.type == 2) {
-                    query = `update TokenLogins set Code = '${el.phone}' where Identifier = 'representative-${school}-${currentSeason}';`;
+                if (records.length > 0) {
+                    for (var i = 0; i < users.length; i++) {
+                        const el = users[i];
+                        if (el.type == 1) {
+                            query = `update TokenLogins set Code = '${el.phone}' where Identifier = 'principal-${school}-${currentSeason}';`;
+                        } else if (el.type == 2) {
+                            query = `update TokenLogins set Code = '${el.phone}' where Identifier = 'representative-${school}-${currentSeason}';`;
+                        }
+        
+                        if (query) {
+                            queryPromises.push(connection.request(query));
+                        }
+                    }
+                } else {
+                    query = "insert into TokenLogins(Token, Code, Identifier, Email, Expiration, UserDetails, Status) values ";
+                    for (var i = 0; i < users.length; i++) {
+                        let newToken = generateToken();
+                        var el = users[i];
+                        query += `('${newToken}', 
+                        '${el.phone}', 
+                        '${el.type == 1 ? "principal" : "representative"}-${school}-${currentSeason}', 
+                        '${el.email}', 
+                        '2035-06-30 01:00:00.000', 
+                        '${JSON.stringify({
+                            displayName: "Name",
+                            schoolID: school,
+                            regionID: el.region,
+                            defaultRoute: el.type == 1 ? "principal-approval/teams" : "representative-approval/teams",
+                            roles: el.type == 1 ? ["principal-approval"] : ["representative-approval"]
+                        })}', 
+                        0)`;
+                        if (i == users.length - 1) {
+                            query += ";";
+                        } else {
+                            query += ", "
+                        }
+
+                    }
+
+                    if (query) {
+                        queryPromises.push(connection.request(query));
+                    }
                 }
 
-                if (query) {
-                    queryPromises.push(connection.request(query));
+                if (users.length > 0) {
+                    // Wait for all queries to finish
+                    Promise.all(queryPromises)
+                        .then(() => {
+                                var qs = 'Select Token, Identifier, Email ' +
+                                    'From TokenLogins ' +
+                                    'Where dbo.ExtractBetweenDelimeters(Identifier, \'-\', \'-\')=@school ' +
+                                    '   And dbo.ExtractBetweenDelimeters(Identifier, \'\', \'-\')=@season';
+                                    //'   And Expiration>GetDate()';
+                                var queryParams = {
+                                    school: school,
+                                    season: currentSeason
+                                };
+                                return connection.request(qs, queryParams);
+                        })
+                        .then(function (newTokens) {
+                            for (var i = 0; i < newTokens.length; i++) {
+                                var record = newTokens[i];
+                                tokens.push({
+                                    type: record['Identifier'].split('-')[0],
+                                    token: record['Token']
+                                });
+                            }
+                            callback(null, tokens);
+                        })
+                        .catch(err => {
+                            console.error('Query error:', err);
+                            callback(err);
+                        });
+                } else {
+                    callback(null, []);
                 }
-            }
-
-            // Wait for all queries to finish
-            Promise.all(queryPromises)
-                .then(() => {
-                    callback(null, true);
-                })
-                .catch(err => {
-                    console.error('Query error:', err);
-                    callback(err);
-                });
+            })
         }).catch(err => {
             console.error('Database connection error:', err);
             callback(err);
