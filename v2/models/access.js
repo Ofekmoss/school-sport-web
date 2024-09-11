@@ -152,7 +152,34 @@ function updateTokens(user, callback) {
                 const queryPromises = [];
                 var query = "";
 
-                if (records.length > 0) {
+                if (records.length === 1) {
+                    for (var i = 0; i < users.length; i++) {
+                        const el = users[i];
+                        if (el.type == 1) {
+                            query = `update TokenLogins set Code = '${el.phone}' where Identifier = 'principal-${school}-${currentSeason}'; `;
+                        } else if (el.type == 2) {
+                            let newToken = generateToken();
+                            query = `insert into TokenLogins (Token, Code, Identifier, Email, Expiration, UserDetails, Status) 
+                            values ('${newToken}', 
+                                '${el.phone}', 
+                                'representative-${school}-${currentSeason}', 
+                                '${el.email}', 
+                                '2035-06-30 01:00:00.000', 
+                                '${JSON.stringify({
+                                    displayName: "Name",
+                                    schoolID: school,
+                                    regionID: el.region,
+                                    defaultRoute: "representative-approval/teams",
+                                    roles: ["representative-approval"]
+                                })}', 
+                                0); `;
+                        }
+        
+                        if (query) {
+                            queryPromises.push(connection.request(query));
+                        }
+                    }
+                } else if (records.length === 2) {
                     for (var i = 0; i < users.length; i++) {
                         const el = users[i];
                         if (el.type == 1) {
