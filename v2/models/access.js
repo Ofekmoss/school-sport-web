@@ -271,7 +271,7 @@ function updateTokens(user, callback) {
                         const el = users[i];
                         if (el.type == 1) {
                             query = `update TokenLogins set Code = '${el.phone}' where Identifier = 'principal-${school}-${currentSeason}'; `;
-                        } else if (el.type == 2) {
+                        } else {
                             let newToken = generateToken();
                             query = `insert into TokenLogins (Token, Code, Identifier, Email, Expiration, UserDetails, Status) 
                             values ('${newToken}', 
@@ -298,7 +298,7 @@ function updateTokens(user, callback) {
                         const el = users[i];
                         if (el.type == 1) {
                             query = `update TokenLogins set Code = '${el.phone}' where Identifier = 'principal-${school}-${currentSeason}';`;
-                        } else if (el.type == 2) {
+                        } else {
                             query = `update TokenLogins set Code = '${el.phone}' where Identifier = 'representative-${school}-${currentSeason}';`;
                         }
         
