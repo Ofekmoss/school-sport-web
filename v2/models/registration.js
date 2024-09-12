@@ -95,7 +95,7 @@ Registration.prototype.getRegistrationStatus = async function (entity, callback)
 
                 // Reading league teams
                 records = await connection.request(
-                    "select t.TEAM_ID as \"Team\", tr.Id as \"Id\", cc.CATEGORY as \"Category\", s.SPORT_NAME as \"SportName\" " +
+                    "select t.TEAM_ID as \"Team\", tr.Id as \"Id\", cc.CATEGORY as \"Category\", s.SPORT_NAME as \"SportName\", c.CHAMPIONSHIP_ID " +
                     "from TEAMS as t " +
                     "  join CHAMPIONSHIP_CATEGORIES as cc on t.CHAMPIONSHIP_CATEGORY_ID = cc.CHAMPIONSHIP_CATEGORY_ID " +
                     "  join CHAMPIONSHIPS as c on c.CHAMPIONSHIP_ID = cc.CHAMPIONSHIP_ID " +
@@ -111,7 +111,11 @@ Registration.prototype.getRegistrationStatus = async function (entity, callback)
                     var link = "registration/league/league?team=" + record.Team;
                     leagueLinks.push({name: name, route: link, enabled: true});
                     if (record.Id != null) {
-                        active.push({name: 'ליגות תיכוניים - ' + name, route: link});
+                        if (record.CHAMPIONSHIP_ID == 8131) {
+                            active.push({name: 'ליגת חמ"ד - ' + name, route: link})
+                        } else {
+                            active.push({name: 'ליגות תיכוניים - ' + name, route: link});
+                        }
                     }
 
                 }
