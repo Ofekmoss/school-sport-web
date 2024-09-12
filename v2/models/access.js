@@ -101,16 +101,19 @@ function findUser(details, callback) {
 }
 
 function editUser(details, callback) {
-    const {int_login_id, username, name, region_id, school_id, newPassword, email} = details;
+    const {int_login_id, username, name = "", region_id = "", school_id = "", newPassword = "", email = ""} = details;
     const encoded_password = encode_to_bin(newPassword);
     db.connect().then(function (connection) {
-        var query = `update USERS set USER_LOGIN = '${username}', 
-            USER_FIRST_NAME = '${name}', 
-            REGION_ID = '${region_id}',
-            SCHOOL_ID = '${school_id}',
-            USER_PASSWORD = '${encoded_password}',
-            USER_EMAIL = '${email}'
+        var query = `update USERS set 
+            USER_LOGIN = '${username}'
+            ${name && `, USER_FIRST_NAME = '${name}'`} 
+            ${region_id && `, REGION_ID = '${region_id}'`} 
+            ${school_id && `, SCHOOL_ID = '${school_id}'`} 
+            ${encoded_password && `, USER_PASSWORD = '${encoded_password}'`} 
+            ${email && `, USER_EMAIL = '${email}'`} 
             where USER_ID = ${int_login_id}`;
+            console.log(details);
+            console.log(query);
         connection.request(query).then(function () {
             callback();
         }).catch(function (err) {
