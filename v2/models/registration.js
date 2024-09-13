@@ -112,7 +112,7 @@ Registration.prototype.getRegistrationStatus = async function (entity, callback)
                     leagueLinks.push({name: name, route: link, enabled: true});
                     if (record.Id != null) {
                         if ([8131, 8132].includes(record.CHAMPIONSHIP_ID)) {
-                            active.push({name: 'ליגת חמ"ד - ' + name, route: link})
+                            active.push({name: 'ליגת החמ"ד - ' + name, route: link})
                         } else {
                             active.push({name: 'ליגות תיכוניים - ' + name, route: link});
                         }
