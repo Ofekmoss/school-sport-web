@@ -251,7 +251,7 @@ function getAllAccounts(db, options, callback) {
                             city: utils.getBasicEntity(record, 'CITY_'),
                             isLeague: record.IsLeague,
                             isClubs: record.IsClubs,
-                            teams: []
+                            teams: [],
                         };
                         paymentRequestMapping[key] = paymentRequest;
                     }
@@ -270,6 +270,7 @@ function getAllAccounts(db, options, callback) {
                 readCharges().then(function(chargeMapping) {
                     //when editing payment request, amount is defined per team.
                     paymentRequests.forEach(paymentRequest => {
+                        var totalRequestTeams = 0;
                         var totalAmountToPay = 0;
                         var nonEmptyTeamCharges = 0;
                         var chargeKey = paymentRequest.id.toString();
@@ -289,10 +290,12 @@ function getAllAccounts(db, options, callback) {
                             if (team.amountPaid != null) {
                                 paymentRequest.paidAmount += parseInt(team.amountPaid, 10);
                             }
+                            totalRequestTeams += 1;
                         });
                         if (nonEmptyTeamCharges === paymentRequest.teams.length) {
                             paymentRequest.amountToPay = totalAmountToPay;
                         }
+                        paymentRequest.totalRequestTeams = totalRequestTeams;
                     });
                     //console.log(paymentRequests);
                     fulfil(paymentRequests);
@@ -930,7 +933,8 @@ Finance.prototype.getPaymentRequests = function (options, callback) {
                     city: account.city,
                     isClubs: paymentRequest.isClubs,
                     isLeague: paymentRequest.isLeague,
-                    remainingAmount: paymentRequest.amountToPay - paymentRequest.paidAmount
+                    remainingAmount: paymentRequest.amountToPay - paymentRequest.paidAmount,
+                    totalRequestTeams: paymentRequest?.teams?.length,
                 };
             }));
         });
