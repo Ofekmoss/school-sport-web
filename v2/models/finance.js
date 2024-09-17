@@ -373,6 +373,7 @@ function getAllAccounts(db, options, callback) {
                         //apply sports, championships, and categories from payment requests to accounts to enable filters
                         for (var accountId in accounts) {
                             if (accounts.hasOwnProperty(accountId)) {
+                                var totalTeams = 0;
                                 var account = accounts[accountId];
                                 var sportMapping = {};
                                 account.paymentRequests.forEach(paymentRequest => {
@@ -423,6 +424,7 @@ function getAllAccounts(db, options, callback) {
                                         }
                                         category.totalAmount += amountToPay;
                                         category.paidAmount += amountPaid;
+                                        totalTeams += 1;
                                     });
                                 });
                                 account.remainingAmount = account.totalAmount - account.paidAmount;
@@ -439,6 +441,7 @@ function getAllAccounts(db, options, callback) {
                                         });
                                     });
                                 });
+                                account.totalTeams = totalTeams;
                             }
                         }
 
