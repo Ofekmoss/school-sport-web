@@ -1,8 +1,8 @@
 version: 0.2
 env:
   shell: bash
-  exported-variables:
-    - DB_PASSWORD
+  parameter-store:
+    DB_PASSWORD: "/school-sport-web/db-password" 
 phases:
   build:
     commands:
