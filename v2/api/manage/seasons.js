@@ -15,7 +15,7 @@ router.use(function(req, res, next) {
     next();
 });
 
-router.get('/', util.requireRole('admin', 'school', 'city', 'sport-admin'), function (req, res) {
+router.get('/', util.requireRole('admin', 'school', 'city', 'sport-admin', 'supervisor'), function (req, res) {
     Data.getSeasons(function(err, seasons) {
         if (err) {
             res.status(500).send(err);

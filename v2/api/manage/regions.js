@@ -15,7 +15,7 @@ router.use(function(req, res, next) {
     next();
 });
 
-router.get('/', util.requireRole('admin'), function (req, res) {
+router.get('/', util.requireRole('admin', 'supervisor'), function (req, res) {
     var options = {};
     if (req.query.withchampionships === '1' || req.query.withchampionships === 'true')
         options.withChampionships = true;
@@ -28,7 +28,7 @@ router.get('/', util.requireRole('admin'), function (req, res) {
     });
 });
 
-router.get('/:id', util.requireRole('admin'), function (req, res) {
+router.get('/:id', util.requireRole('admin', 'supervisor'), function (req, res) {
     Data.getRegions({region: req.params.id}, req.session.user, function(err, regions) {
         if (err) {
             res.status(500).send(err);

@@ -16,7 +16,7 @@ router.use(function(req, res, next) {
     next();
 });
 
-router.get('/', util.requireRole('admin'), function (req, res) {
+router.get('/', util.requireRole('admin', 'supervisor'), function (req, res) {
     /* if (req.query.championship == null && req.query.category == null) {
         res.status(400).send('must provide championship or category');
         return;
@@ -38,7 +38,7 @@ router.get('/', util.requireRole('admin'), function (req, res) {
     });
 });
 
-router.get('/:category/:school/team-numbers', util.requireRole('admin'), function (req, res) {
+router.get('/:category/:school/team-numbers', util.requireRole('admin', 'supervisor'), function (req, res) {
     Data.getTeamNumbers(req.params.category, req.params.school, function (err, teamNumbers) {
         if (err) {
             res.status(500).send(err);
@@ -48,7 +48,7 @@ router.get('/:category/:school/team-numbers', util.requireRole('admin'), functio
     });
 });
 
-router.get('/:id', util.requireRole('admin'), function (req, res) {
+router.get('/:id', util.requireRole('admin', 'supervisor'), function (req, res) {
     if (req.params.id === 'counts') {
         Data.getTeamCounts({}, req.session.user, function (err, teamCounts) {
             if (err) {
@@ -68,7 +68,7 @@ router.get('/:id', util.requireRole('admin'), function (req, res) {
     }
 });
 
-router.post('/', util.requireRole('admin'), function (req, res) {
+router.post('/', util.requireRole('admin', 'supervisor'), function (req, res) {
     Data.addTeam(req.session.user.seq || req.session.user.id, req.body, function(err, newTeam) {
         if (err) {
             var status = err.toString().toLowerCase().indexOf('error') === 0 ? 500 : 400;
@@ -84,7 +84,7 @@ router.post('/', util.requireRole('admin'), function (req, res) {
     });
 });
 
-router.put('/', util.requireRole('admin'), function (req, res) {
+router.put('/', util.requireRole('admin', 'supervisor'), function (req, res) {
     Data.editTeam(req.session.user.seq || req.session.user.id,req.body, function(err, resp) {
         if (err) {
             var status = err.toString().toLowerCase().indexOf('error') === 0 ? 500 : 400;
@@ -95,7 +95,7 @@ router.put('/', util.requireRole('admin'), function (req, res) {
     });
 });
 
-router.delete('/', util.requireRole('admin'), function (req, res) {
+router.delete('/', util.requireRole('admin', 'supervisor'), function (req, res) {
     var registrationId = req.query.Id;
     var teamId = req.query.TeamId;
     var confirmed = req.query.confirmed;

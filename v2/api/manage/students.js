@@ -15,7 +15,7 @@ router.use(function(req, res, next) {
     next();
 });
 
-router.get('/', util.requireRole('admin'), util.requireQueryStringParams('school'), function (req, res) {
+router.get('/', util.requireRole('admin', 'supervisor'), util.requireQueryStringParams('school'), function (req, res) {
     Data.getStudents(null, req.query.idNumber, req.query.school, req.query.grade, function(err, students) {
         if (err) {
             res.status(500).send(err);
@@ -25,7 +25,7 @@ router.get('/', util.requireRole('admin'), util.requireQueryStringParams('school
     });
 });
 
-router.get('/:id', util.requireRole('admin'), function (req, res) {
+router.get('/:id', util.requireRole('admin', 'supervisor'), function (req, res) {
     Data.getStudents(req.params.id, function(err, students) {
         if (err) {
             res.status(500).send(err);
