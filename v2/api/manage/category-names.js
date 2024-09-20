@@ -15,7 +15,7 @@ router.use(function(req, res, next) {
     next();
 });
 
-router.get('/', util.requireRole('admin'), function (req, res) {
+router.get('/', util.requireRole('admin', 'supervisor'), function (req, res) {
     Data.getCategoryNames(req.query.season, req.query.sport, req.query.region, function(err, categoryNames) {
         if (err) {
             res.status(500).send(err);

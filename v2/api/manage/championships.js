@@ -15,7 +15,7 @@ router.use(function(req, res, next) {
     next();
 });
 
-router.get('/', util.requireRole('admin'), function (req, res) {
+router.get('/', util.requireRole('admin', 'supervisor'), function (req, res) {
     Data.getChampionships({season: req.query.season, sport: req.query.sport, region: req.query.region}, req.session.user, function(err, championships) {
         if (err) {
             res.status(500).send(err);
@@ -25,7 +25,7 @@ router.get('/', util.requireRole('admin'), function (req, res) {
     });
 });
 
-router.get('/:id', util.requireRole('admin'), function (req, res) {
+router.get('/:id', util.requireRole('admin', 'supervisor'), function (req, res) {
     Data.getChampionships({id: req.params.id}, req.session.user, function(err, championships) {
         if (err) {
             res.status(500).send(err);

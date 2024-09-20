@@ -15,7 +15,7 @@ router.use(function(req, res, next) {
     next();
 });
 
-router.get('/', util.requireRole('admin'), function (req, res) {
+router.get('/', util.requireRole('admin', 'supervisor'), function (req, res) {
     Data.getFacilities(null, req.query.region, req.query.school, req.query.city, req.query.number, function(err, facilities) {
         if (err) {
             res.status(500).send(err);
@@ -25,7 +25,7 @@ router.get('/', util.requireRole('admin'), function (req, res) {
     });
 });
 
-router.get('/:id', util.requireRole('admin'), function (req, res) {
+router.get('/:id', util.requireRole('admin', 'supervisor'), function (req, res) {
     Data.getFacilities(req.params.id, function(err, facilities) {
         if (err) {
             res.status(500).send(err);

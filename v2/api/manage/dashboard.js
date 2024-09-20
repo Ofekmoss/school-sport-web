@@ -13,7 +13,7 @@ router.use(function(req, res, next) {
     next();
 });
 
-router.get('/', util.requireRole('admin'), function (req, res) {
+router.get('/', util.requireRole('admin', 'supervisor'), function (req, res) {
     var season = req.query.season;
     var region = req.query.region;
     var sport = req.query.sport;
@@ -59,7 +59,7 @@ router.get('/', util.requireRole('admin'), function (req, res) {
     }
 });
 
-router.get('/unconfirmed-data', util.requireRole('admin'), function (req, res) {
+router.get('/unconfirmed-data', util.requireRole('admin', 'supervisor'), function (req, res) {
     var token = req.query.token;
     if (!token) {
         res.status(400).send('No token');
@@ -74,7 +74,7 @@ router.get('/unconfirmed-data', util.requireRole('admin'), function (req, res) {
     });
 });
 
-router.get('/pele/:filter', util.requireRole('admin'), function (req, res) {
+router.get('/pele/:filter', util.requireRole('admin', 'supervisor'), function (req, res) {
     var projectId = req.query.type && req.query.type > 10 ? req.query.type - 10 : null;
     Data.getPeleData(req.query.season, req.params.filter, req.query.region, req.query.sport, projectId, function(err, peleData) {
         if (err) {

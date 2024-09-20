@@ -15,7 +15,7 @@ router.use(function(req, res, next) {
     next();
 });
 
-router.get('/', util.requireRole('admin'), function (req, res) { //util.requireQueryStringParams('team'),
+router.get('/', util.requireRole('admin', 'supervisor'), function (req, res) { //util.requireQueryStringParams('team'),
     function buildStudentFilePath(player, fName) {
         var idNumber = player.Student.IdNumber;
         var schoolId = player.Student.School.Id;
@@ -64,7 +64,7 @@ router.get('/', util.requireRole('admin'), function (req, res) { //util.requireQ
     });
 });
 
-router.get('/:id', util.requireRole('admin'), function (req, res) {
+router.get('/:id', util.requireRole('admin', 'supervisor'), function (req, res) {
     var options = {
         id: req.params.id
     };
@@ -77,7 +77,7 @@ router.get('/:id', util.requireRole('admin'), function (req, res) {
     });
 });
 
-router.get('/:team/:student', util.requireRole('admin'), function (req, res) {
+router.get('/:team/:student', util.requireRole('admin', 'supervisor'), function (req, res) {
     var options = {
         team: req.params.team,
         student: req.params.student,
@@ -92,7 +92,7 @@ router.get('/:team/:student', util.requireRole('admin'), function (req, res) {
     });
 });
 
-router.delete('/', util.requireRole('admin'), function (req, res) {
+router.delete('/', util.requireRole('admin', 'supervisor'), function (req, res) {
     var playerId = req.query.player;
     var registrationTeam = req.query.team;
     var studentId = req.query.student;

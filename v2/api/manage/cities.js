@@ -15,7 +15,7 @@ router.use(function(req, res, next) {
     next();
 });
 
-router.get('/', util.requireRole('admin'), function (req, res) {
+router.get('/', util.requireRole('admin', 'supervisor'), function (req, res) {
     Data.getCities(null, req.query.region, function(err, cities) {
         if (err) {
             res.status(500).send(err);
@@ -25,7 +25,7 @@ router.get('/', util.requireRole('admin'), function (req, res) {
     });
 });
 
-router.get('/:id', util.requireRole('admin'), function (req, res) {
+router.get('/:id', util.requireRole('admin', 'supervisor'), function (req, res) {
     Data.getCities(req.params.id, null, function(err, cities) {
         if (err) {
             res.status(500).send(err);

@@ -15,7 +15,7 @@ router.use(function(req, res, next) {
     next();
 });
 
-router.get('/', util.requireRole('admin'), util.requireQueryStringParams('championship'), function (req, res) {
+router.get('/', util.requireRole('admin', 'supervisor'), util.requireQueryStringParams('championship'), function (req, res) {
     Data.getCategories({season: req.query.season, championship: req.query.championship}, req.session.user, function(err, categories) {
         if (err) {
             res.status(500).send(err);
@@ -25,7 +25,7 @@ router.get('/', util.requireRole('admin'), util.requireQueryStringParams('champi
     });
 });
 
-router.post('/', util.requireRole('admin'), function (req, res) {
+router.post('/', util.requireRole('admin', 'supervisor'), function (req, res) {
     Data.editCategory(req.body, function(err, resp) {
         if (err) {
             res.status(500).send(err);
@@ -35,7 +35,7 @@ router.post('/', util.requireRole('admin'), function (req, res) {
     });
 });
 
-router.get('/season/:season/sport/:sport', util.requireRole('admin'), function (req, res) {
+router.get('/season/:season/sport/:sport', util.requireRole('admin', 'supervisor'), function (req, res) {
     var options = {
         season: req.params.season,
         sport: req.params.sport
@@ -49,7 +49,7 @@ router.get('/season/:season/sport/:sport', util.requireRole('admin'), function (
     });
 });
 
-router.get('/:id', util.requireRole('admin'), function (req, res) {
+router.get('/:id', util.requireRole('admin', 'supervisor'), function (req, res) {
     Data.getCategories({id: req.params.id}, req.session.user, function(err, categories) {
         if (err) {
             res.status(500).send(err);

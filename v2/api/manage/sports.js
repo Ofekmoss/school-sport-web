@@ -15,7 +15,7 @@ router.use(function(req, res, next) {
     next();
 });
 
-router.get('/', util.requireRole('admin'), function (req, res) {
+router.get('/', util.requireRole('admin', 'supervisor'), function (req, res) {
     var options = {
         id: null,
         type: req.query.type,
@@ -32,7 +32,7 @@ router.get('/', util.requireRole('admin'), function (req, res) {
     });
 });
 
-router.get('/:id', util.requireRole('admin'), function (req, res) {
+router.get('/:id', util.requireRole('admin', 'supervisor'), function (req, res) {
     Data.getSports({id: req.params.id, type: null}, req.session.user, function(err, sports) {
         if (err) {
             res.status(500).send(err);

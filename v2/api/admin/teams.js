@@ -49,7 +49,7 @@ router.get('/', util.requireRole('admin', 'supervisor', 'finance'), function (re
     }
 });
 
-router.post('/status', util.requireRole('admin'), function (req, res) {
+router.post('/status', util.requireRole('admin', 'supervisor'), function (req, res) {
     Teams.setTeamsStatus(req.body.teams, req.body.status, function (err, result) {
         util.sendResult(res, err, result);
     });
@@ -78,7 +78,7 @@ router.post('/status/supervisor', util.requireRole('supervisor'), function (req,
 });
 
 
-router.put('/:id', util.requireRole('admin'), function (req, res) {
+router.put('/:id', util.requireRole('admin', 'supervisor'), function (req, res) {
     Teams.updateTeam(req.body, function (err, result) {
         util.sendResult(res, err, result);
     });
