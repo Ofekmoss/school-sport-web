@@ -94,6 +94,18 @@ router.get('/teams', util.requireSchoolLogin, function (req, res) {
     });
 });
 
+router.get('/teams-info', function (req, res) {
+    Registration.getClubTeamsInfo({user: {
+        schoolID: req.query.school,
+        season: req.query.season
+    }}, function (err, result) {
+        // Set teams players files
+        if (result == null || !result)
+            result = [];
+        util.sendResult(res, err, result);
+    });
+});
+
 router.post('/teams', util.requireSchoolLogin, function (req, res) {
     Registration.insertClubTeam(req.session.user.schoolID, req.body, function (err, result) {
         util.sendResult(res, err, result);
