@@ -968,6 +968,67 @@ Registration.prototype.getClubTeams = function (options, callback) {
     });
 };
 
+Registration.prototype.getClubTeamsInfo = function (options, callback) {
+    var user = options.user;
+    var school = user.schoolID;
+    var server = this;
+    var season = user.season;
+    server.db.connect()
+        .then(
+            function (connection) {
+                var teams = {};
+                var registrationPrices = {};
+                readTeams(connection, school, {club: true, reg: true, season: season}, teams)
+                    .then(function () {
+                        return getClubRegistrationPrices(connection, season, registrationPrices);
+                    })
+                    .then(function() {
+                        var streetBallTeams = {};
+                        for (var teamId in teams) {
+                            if (teams.hasOwnProperty(teamId)) {
+                                var team = teams[teamId];
+                                var sport = team.sport;
+                                var school = team.school.id;
+                                var price = null;
+                                var sportPrices = registrationPrices[sport.toString()] || registrationPrices['0'];
+                                if (sportPrices) {
+                                    price = sportPrices[school.toString()] || sportPrices['0'];
+                                }
+                                if (price == 1)
+                                    price = 0;
+                                team.price = price;
+                                if (settings.onePaymentPerCategorySports && settings.onePaymentPerCategorySports.indexOf(team.sport) >= 0) {
+                                    var key = [team.competition, team.categoryName].join('_');
+                                    if (streetBallTeams[key]) {
+                                        team.removePayment = true;
+                                    } else {
+                                        streetBallTeams[key] = true;
+                                    }
+                                }
+                            }
+                        }
+                        //console.log(teams);
+                        return readTeamPlayers(connection, user, school, {club: true, reg: true, season: season}, teams);
+                    })
+                    .then(function () {
+                            connection.complete();
+                            var result = [];
+                            for (var key in teams) {
+                                result.push(teams[key]);
+                            }
+                            callback(null, result);
+                        },
+                        function (err) {
+                            connection.complete();
+                            callback(err);
+                        });
+            },
+            function (err) {
+                callback(err);
+            }
+        );
+};
+
 Registration.prototype.getClubTeam = function (user, teamId, callback) {
     var school = user.schoolID;
     var server = this;
