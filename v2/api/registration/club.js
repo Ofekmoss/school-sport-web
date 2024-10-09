@@ -124,6 +124,19 @@ router.put('/teams/:id', util.requireSchoolLogin, function (req, res) {
     });
 });
 
+router.put('/teams-edit', function (req, res) {
+    var school = req.body.school;
+    var team = req.body.team;
+    var payload = req.body.payload;
+    if (school && team) {
+        Registration.updateClubTeam(school, parseInt(team), payload, function (err, result) {
+            util.sendResult(res, err, result);
+        });
+    } else {
+        util.sendResult(_, {status: 400, message: "Missing school or team ids"});
+    }
+});
+
 router.post('/teams/:id/status', function (req, res) {
     Registration.changeClubTeamStatus(parseInt(req.params.id), req.body.status, function (err, result) {
         util.sendResult(res, err, result);
@@ -135,6 +148,18 @@ router.delete('/teams/:id', util.requireSchoolLogin, function (req, res) {
     Registration.deleteClubTeam(req.session.user.schoolID, parseInt(req.params.id), function (err, result) {
         util.sendResult(res, err, result);
     });
+});
+
+router.delete('/teams-delete', function (req, res) {
+    var school = req.query.school;
+    var team = req.query.team;
+    if (school && team) {
+        Registration.deleteClubTeam(school, parseInt(team), function (err, result) {
+            util.sendResult(res, err, result);
+        });
+    } else {
+        util.sendResult(_, {status: 400, message: "Missing school or team ids"});
+    }
 });
 
 router.post('/teams/approve', util.requireSchoolLogin, function (req, res) {
