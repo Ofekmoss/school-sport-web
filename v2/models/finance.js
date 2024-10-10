@@ -72,6 +72,7 @@ function getExtraConditions(options, prefix) {
             break;
         case 2:
             extraConditions += 'And $p.IS_LEAGUE=1 ';
+            break;
         case 3:
             extraConditions += 'And $p.IS_CLUBS=0 ';
             extraConditions += 'And $p.IS_LEAGUE=1 ';
