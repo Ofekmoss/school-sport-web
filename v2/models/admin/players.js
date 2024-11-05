@@ -320,7 +320,7 @@ Players.prototype.listTransferRequests = function (season, options, callback) {
                     "  st.BIRTH_DATE as \"BirthDate\", st.GRADE as \"Grade\", st.SEX_TYPE as \"Gender\", " +
                     "  cs.SCHOOL_ID as \"CurrentSchool\", cs.SCHOOL_NAME as \"CurrentSchoolName\", cs.SYMBOL as \"CurrentSchoolSymbol\", " +
                     "  cs.REGION_ID as \"CurrentSchoolRegion\", ci.CITY_NAME as \"CityName\", cci.CITY_NAME as \"CurrentCityName\", " +
-                    "  c.CHAMPIONSHIP_NAME, cm.CATEGORY_NAME, c.REGION_ID, reg.REGION_NAME, s.SPORT_NAME " +
+                    "  c.CHAMPIONSHIP_NAME, cm.CATEGORY_NAME, c.REGION_ID, reg.REGION_NAME, s.SPORT_NAME, pr.CreatedAt as createdAt " +
                     "from TransferRequests as tr " +
                     "  join TeamRegistrations as t on tr.Team = t.Id " +
                     "  join TEAMS tea on t.Team=tea.TEAM_ID And tea.DATE_DELETED Is Null " +
@@ -335,6 +335,7 @@ Players.prototype.listTransferRequests = function (season, options, callback) {
                     "  left outer join CITIES ci On sc.CITY_ID=ci.CITY_ID And ci.DATE_DELETED Is Null " +
                     "  left outer join CITIES cci On cs.CITY_ID=cci.CITY_ID And cci.DATE_DELETED Is Null " +
                     "  left outer join CATEGORY_MAPPING cm On cc.[CATEGORY]=cm.RAW_CATEGORY " +
+                    "  left outer join PlayerRegistrations pr On st.STUDENT_ID = pr.Student " + 
                     "where c.SEASON = @season and tr.TransferDate is null " + // Don't query already transferred
                     (options.school ? " and sc.SCHOOL_ID = @school" : "") +
                     (options.region ? " and sc.REGION_ID = @region" : "") +
@@ -352,6 +353,7 @@ Players.prototype.listTransferRequests = function (season, options, callback) {
                             for (var i = 0; i < records.length; i++) {
                                 var record = records[i];
                                 var student = {
+                                    createdAt: record.createdAt,
                                     team: record.Team,
                                     sport: record.Sport,
                                     competition: record.Competition,
