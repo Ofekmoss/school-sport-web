@@ -2009,7 +2009,7 @@ Manage.prototype.getPlayers = function (options, user, callback) {
         if (parseInt(options.region, 10) === 0) {
             leagueClause = ' And c.IS_LEAGUE=1 And c.IS_CLUBS=0 And c.IS_OPEN=0 ';
         }
-        var baseSQL = 'Select pr.Team, Null As "TeamId", pr.Student As StudentId, pr.Approved, pr.CreatedAt, pr.Player As "PlayerId",  ' +
+        var baseSQL = 'Select pr.Team, Null As "TeamId", pr.Student As StudentId, pr.Approved, pr.CreatedAt, p.PLAYER_ID As "PlayerId",  ' +
             '   p.REGISTRATION_DATE As PlayerRegistrationDate, p.[STATUS] As PlayerAdminStatus, p.TEAM_NUMBER As PlayerShirtNumber, ' +
             '   tr.TeamNumber, sc.CITY_ID, cit.CITY_NAME, pr.Approved, cc.CHAMPIONSHIP_CATEGORY_ID, ' +
             '   c.CHAMPIONSHIP_ID, c.CHAMPIONSHIP_NAME, sp.SPORT_ID, sp.SPORT_NAME, cm.RAW_CATEGORY, cm.CATEGORY_NAME,  ' +
@@ -2024,14 +2024,14 @@ Manage.prototype.getPlayers = function (options, user, callback) {
             '   Inner Join REGIONS r On c.REGION_ID=r.REGION_ID And r.DATE_DELETED Is NULL ' +
             '   Inner Join SPORTS sp On c.SPORT_ID=sp.SPORT_ID And sp.DATE_DELETED Is Null ' +
             '   Left Join CATEGORY_MAPPING cm On cm.RAW_CATEGORY=cc.CATEGORY ' +
-            '   Left Join PLAYERS p On pr.Player=p.PLAYER_ID And p.DATE_DELETED Is Null ' +
+            '   Left Join PLAYERS as p On tr.Team = p.TEAM_ID and pr.Student = p.STUDENT_ID and p.DATE_DELETED IS NULL ' +
             '   Left Join STUDENTS st On pr.Student=st.STUDENT_ID And st.DATE_DELETED Is Null ' +
             '   Left Join SCHOOLS sc On st.SCHOOL_ID=sc.SCHOOL_ID And sc.DATE_DELETED Is Null ' +
             '   Left Join REGIONS sr On sc.REGION_ID=sr.REGION_ID And sr.DATE_DELETED Is NULL ' +
             '   Left Join CITIES cit On sc.CITY_ID=cit.CITY_ID And cit.DATE_DELETED Is Null ' +
             'Where c.SEASON=@season ' + leagueClause + ' ' +
-            'Union All ' +
-            'Select pr.Team, Null As "TeamId", pr.Student As StudentId, pr.Approved, pr.CreatedAt, pr.Player As "PlayerId",  ' +
+            'Union ' +
+            'Select pr.Team, Null As "TeamId", pr.Student As StudentId, pr.Approved, pr.CreatedAt, p.PLAYER_ID As "PlayerId",  ' +
             '   p.REGISTRATION_DATE As PlayerRegistrationDate, p.[STATUS] As PlayerAdminStatus, p.TEAM_NUMBER As PlayerShirtNumber, ' +
             '   tr.TeamNumber, sc.CITY_ID, cit.CITY_NAME, pr.Approved, cc.CHAMPIONSHIP_CATEGORY_ID, ' +
             '   c.CHAMPIONSHIP_ID, c.CHAMPIONSHIP_NAME, sp.SPORT_ID, sp.SPORT_NAME, cm.RAW_CATEGORY, cm.CATEGORY_NAME,  ' +
@@ -2046,7 +2046,7 @@ Manage.prototype.getPlayers = function (options, user, callback) {
             '   Inner Join REGIONS r On c.REGION_ID=r.REGION_ID And r.DATE_DELETED Is NULL ' +
             '   Inner Join SPORTS sp On c.SPORT_ID=sp.SPORT_ID And sp.DATE_DELETED Is Null ' +
             '   Left Join CATEGORY_MAPPING cm On cm.RAW_CATEGORY=cc.CATEGORY ' +
-            '   Left Join PLAYERS p On pr.Player=p.PLAYER_ID And p.DATE_DELETED Is Null ' +
+            '   Left Join PLAYERS as p On tr.Team = p.TEAM_ID and pr.Student = p.STUDENT_ID and p.DATE_DELETED IS NULL ' +
             '   Left Join STUDENTS st On pr.Student=st.STUDENT_ID And st.DATE_DELETED Is Null ' +
             '   Left Join SCHOOLS sc On st.SCHOOL_ID=sc.SCHOOL_ID And sc.DATE_DELETED Is Null ' +
             '   Left Join REGIONS sr On sc.REGION_ID=sr.REGION_ID And sr.DATE_DELETED Is NULL ' +
