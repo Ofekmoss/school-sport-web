@@ -2027,7 +2027,7 @@ Manage.prototype.getPlayers = function (options, user, callback) {
             '   Left Join REGIONS sr On sc.REGION_ID=sr.REGION_ID And sr.DATE_DELETED Is NULL ' +
             '   Left Join CITIES cit On sc.CITY_ID=cit.CITY_ID And cit.DATE_DELETED Is Null ' +
             'Where c.SEASON=@season ' + leagueClause + ' ' +
-            'Union ' +
+            'Union All ' +
             'Select pr.Team, Null As "TeamId", pr.Student As StudentId, pr.Approved, pr.CreatedAt, p.PLAYER_ID As "PlayerId",  ' +
             '   p.REGISTRATION_DATE As PlayerRegistrationDate, p.[STATUS] As PlayerAdminStatus, p.TEAM_NUMBER As PlayerShirtNumber, ' +
             '   tr.TeamNumber, sc.CITY_ID, cit.CITY_NAME, pr.Approved, cc.CHAMPIONSHIP_CATEGORY_ID, ' +
