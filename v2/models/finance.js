@@ -948,7 +948,10 @@ Finance.prototype.getPaymentRequests = function (options, callback) {
 Finance.prototype.getReceipts = function (options, callback) {
     function getQueryFilters(accounts) {
         return new Promise(function(fulfil, reject) {
-            if (options.account) {
+            if (options.receipt_ids) {
+                const sqlPart = Array.isArray(options.receipt_ids) ? options.receipt_ids.join(', ') : options.receipt_ids;
+                fulfil(`r.RECEIPT_ID In (${sqlPart})`);
+            } else if (options.account) {
                 var filter = 'r.ACCOUNT_ID=@account And ' +
                     'r.RECEIPT_DATE Between dbo.GetSeasonStart(@season) And dbo.GetSeasonEnd(@season)';
                 fulfil(filter);

@@ -253,6 +253,9 @@ router.get('/receipts', util.requireRole('finance', 'admin'), function (req, res
         if (req.query.type != null) {
             options.type = util.cleanNonsense(req.query.type);
         }
+        if (req.query.receipt_ids != null) {
+            options.receipt_ids = req.query.receipt_ids;
+        }
         //console.log(options);
         Finance.getReceipts(options, function (err, receipts) {
             util.sendResult(res, err, filterSportEntities(receipts, req.query));
