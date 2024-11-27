@@ -5,6 +5,31 @@ var Season = require('./season');
 
 var db = require('./db');
 
+const easyCoachRoles = {
+    "37": "2",
+    "39": "1",
+    "40": "3",
+}
+
+const easyCoachPermissions = {
+    "37": "0",
+    "39": "31",
+    "40": "20",
+}
+
+function formatDate(date) {
+    const pad = (n) => n.toString().padStart(2, '0'); // Ensures two-digit format
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1); // Months are zero-indexed
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    const seconds = pad(date.getSeconds());
+    const milliseconds = date.getMilliseconds().toString().padStart(3, '0');
+  
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
+  }
+
 function encode_to_bin(rawValue) {
     const ENCODING_BITS = 16;
     const CAESAR_ZERO_COUNT = "a";
@@ -119,6 +144,36 @@ function editUser(details, callback) {
         }).catch(function (err) {
             callback(err)
         })
+    })
+}
+
+function createUser(details, callback) {
+    const {
+        username,
+        name = "",
+        regionId = null,
+        schoolId = null,
+        password = "",
+        email = "",
+        roleId
+    } = details;
+    const encoded_password = encode_to_bin(password);
+    const user_type = easyCoachRoles[roleId];
+    const user_permissions = easyCoachPermissions[roleId];
+    db.connect().then(function (connection) {
+        var query = `insert into USERS 
+            (USER_LOGIN, USER_FIRST_NAME, REGION_ID, SCHOOL_ID, USER_PASSWORD, USER_EMAIL, USER_TYPE, USER_PERMISSIONS, DATE_LAST_MODIFIED) 
+            output inserted.USER_ID as 'user_id' 
+            values ('${username}', '${name}', ${regionId}, ${schoolId}, '${encoded_password}', '${email}', '${user_type}', '${user_permissions}', '${formatDate(new Date())}')`;
+            console.log(details);
+            console.log(query);
+        connection.request(query).then(function (res) {
+            callback(res);
+        }).catch(function (err) {
+            callback(err)
+        })
+    }).catch(function (err) {
+        callback(err)
     })
 }
 
@@ -504,6 +559,7 @@ module.exports = {
     },
     findUser: findUser,
     editUser: editUser,
+    createUser: createUser,
     generateLogin: generateLogin,
     getTokens: getTokens,
     getOrCreateTokens: getOrCreateTokens,

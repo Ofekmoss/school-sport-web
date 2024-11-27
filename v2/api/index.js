@@ -139,6 +139,16 @@ router.post('/edit-user', function (req, res) {
     }
 });
 
+router.post('/create-user', function (req, res) {
+    if (req.body.details) {
+        Access.createUser(req.body.details, function (userRes) {
+            res.status(200).send({status: "ok", user_id: userRes[0]?.user_id});
+        })    
+    } else {
+        res.status(404).end();
+    }
+});
+
 router.get('/season', function (req, res) {
     if (req.session.user) {
         Season.current(req.session.user, function(currentSeason) {
