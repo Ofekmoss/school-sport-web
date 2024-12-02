@@ -149,6 +149,16 @@ router.post('/create-user', function (req, res) {
     }
 });
 
+router.post('/create-school', function (req, res) {
+    if (req.body.details) {
+        Access.createSchool(req.body.details, function (schoolRes) {
+            res.status(200).send({status: "ok", school_id: schoolRes[0]?.school_id});
+        })    
+    } else {
+        res.status(404).end();
+    }
+});
+
 router.get('/season', function (req, res) {
     if (req.session.user) {
         Season.current(req.session.user, function(currentSeason) {
