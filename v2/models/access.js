@@ -209,7 +209,45 @@ function createSchool(details, callback) {
         console.log(query);
         console.log(params);
         connection.request(query, params).then(function (res) {
+            if (res[0]?.school_id) {
+                getOrCreateSchoolRegistration({
+                    school: res[0]?.school_id,
+                    season: details.season || Season.current(),
+                    schoolName: details.schoolName || "",
+                })
+            }
             callback(res);
+        }).catch(function (err) {
+            callback(err)
+        })
+    }).catch(function (err) {
+        callback(err)
+    })
+}
+
+function getOrCreateSchoolRegistration(details, callback) {
+    db.connect().then(function (connection) {
+        var query = "select count(*) as \"Count\" " +
+            "from SchoolRegistrations " +
+            "where School = @school and Season = @season and Club = 1";
+        const params = {
+            school: details.school,
+            season: details.season || Season.current(),
+        }
+        connection.request(query, params).then(function (res) {
+            if (res[0].Count == 0) {
+                var createQuery = `insert into SchoolRegistrations 
+                    (School, Season, Name, Type, Club) 
+                    values (@school, @season, @schoolName, '2', '1')`;
+                const createParams = {
+                    school: details.school,
+                    season: details.season || Season.current(),
+                    schoolName: details.schoolName || "",
+                };
+                connection.request(createQuery, createParams);
+                callback({status: "ok", message: "exists"});
+            }
+            callback({status: "ok", message: "created"});
         }).catch(function (err) {
             callback(err)
         })
