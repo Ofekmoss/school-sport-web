@@ -177,6 +177,47 @@ function createUser(details, callback) {
     })
 }
 
+function createSchool(details, callback) {
+    db.connect().then(function (connection) {
+        var query = `insert into SCHOOLS 
+            (SYMBOl, SCHOOL_NAME, CITY_ID, ADDRESS, MAIL_ADDRESS, MAIL_CITY_ID, ZIP_CODE, EMAIL, PHONE, FAX, MANAGER_NAME, MANAGER_CELL_PHONE, 
+                FROM_GRADE, TO_GRADE, SUPERVISION_TYPE, SECTOR_TYPE, REGION_ID, CLUB_STATUS, DATE_LAST_MODIFIED) 
+            output inserted.SCHOOL_ID as 'school_id' 
+            values (@symbol, @schoolName, @cityId, @address, @mailAddress, @mailCityId, @zipCode, @email, @phoneNumber, @fax, @managerName, @managerPhone, 
+                @fromGrade, @toGrade, @supervisionType, @sectorType, @regionId, @clubStatus, '${formatDate(new Date())}')`;
+        const params = {
+            symbol: details.symbol,
+            schoolName: details.schoolName || "",
+            cityId: details.cityId || null,
+            address: details.address,
+            mailAddress: details.mailAddress,
+            zipCode: details.zipCode,
+            email: details.email,
+            phoneNumber: details.phoneNumber,
+            fax: details.fax,
+            managerName: details.managerName,
+            managerPhone: details.managerPhone,
+            supervisionType: details.supervisionType || 3,
+            sectorType: details.sectorType || null,
+            clubStatus: details.clubStatus || 1,
+            mailCityId: details.mailCityId || null,
+            regionId: details.regionId || null,
+            fromGrade: details.fromGrade || null,
+            toGrade: details.toGrade || null,
+        };
+        console.log(details);
+        console.log(query);
+        console.log(params);
+        connection.request(query, params).then(function (res) {
+            callback(res);
+        }).catch(function (err) {
+            callback(err)
+        })
+    }).catch(function (err) {
+        callback(err)
+    })
+}
+
 function getTokens(user, callback) {
     var school = user.schoolID;
     if (school) {
@@ -560,6 +601,7 @@ module.exports = {
     findUser: findUser,
     editUser: editUser,
     createUser: createUser,
+    createSchool: createSchool,
     generateLogin: generateLogin,
     getTokens: getTokens,
     getOrCreateTokens: getOrCreateTokens,
