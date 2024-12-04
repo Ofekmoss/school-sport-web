@@ -120,4 +120,30 @@ Championships.prototype.list = function (season, options, callback) {
         );
 };
 
+Championships.prototype.getRaw = function (options, callback) {
+    this.db.connect()
+        .then(
+            function (connection) {
+                var qs = "Select * From CHAMPIONSHIPS c " +
+                    (options.season ? " Where c.SEASON = @season " : "");
+                console.log(qs);
+                console.log(options);
+
+                connection.request(qs, options).then(
+                    function (records) {
+                        connection.complete();
+                        callback(null, records);
+                    },
+                    function (err) {
+                        connection.complete();
+                        callback(err);
+                    }
+                );
+            },
+            function (err) {
+                callback(err);
+            }
+        );
+};
+
 module.exports = new Championships(require('../db'));
