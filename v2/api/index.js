@@ -22,6 +22,7 @@ try {
     router.use('/finance', require('./finance'));
     router.use('/document', require('./document'));
     router.use('/admin', require('./admin'));
+    router.use('/admin/data', require('./admin/data'));
     router.use('/manage/categories', require('./manage/categories'));
     router.use('/manage/category-names', require('./manage/category-names'));
     router.use('/manage/seasons', require('./manage/seasons'));
