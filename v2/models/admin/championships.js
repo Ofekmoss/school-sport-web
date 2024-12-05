@@ -146,4 +146,163 @@ Championships.prototype.getRaw = function (options, callback) {
         );
 };
 
+Championships.prototype.getRawChampionshipsDetails = function (options, callback) {
+    const getDefaultQuery = (tableName, options) => {
+        return `Select ${tableName}.*, c.SEASON From ${tableName}
+                JOIN CHAMPIONSHIP_CATEGORIES cc ON ${tableName}.CHAMPIONSHIP_CATEGORY_ID = cc.CHAMPIONSHIP_CATEGORY_ID 
+                JOIN CHAMPIONSHIPS c ON cc.CHAMPIONSHIP_ID = c.CHAMPIONSHIP_ID 
+                ${(options.season ? " Where c.SEASON = @season " : "")}`;
+    }
+    this.db.connect()
+        .then(
+            function (connection) {
+                var cyclesQuery = getDefaultQuery('CHAMPIONSHIP_CYCLES', options);
+                connection.request(cyclesQuery, options).then(
+                    function (cyclesResult) {
+                        var groupsQuery = getDefaultQuery('CHAMPIONSHIP_GROUPS', options);
+                        connection.request(groupsQuery, options).then(
+                            function (groupsResult) {
+                                var groupTeamsQuery = getDefaultQuery('CHAMPIONSHIP_GROUP_TEAMS', options);
+                                connection.request(groupTeamsQuery, options).then(
+                                    function (groupTeamsResult) {
+                                        var matchesQuery = getDefaultQuery('CHAMPIONSHIP_MATCHES', options);
+                                        connection.request(matchesQuery, options).then(
+                                            function (matchesResult) {
+                                                var matchFuncQuery = getDefaultQuery('CHAMPIONSHIP_MATCH_FUNCTIONARIES', options);
+                                                connection.request(matchFuncQuery, options).then(
+                                                    function (matchFuncResult) {
+                                                        var phasesQuery = getDefaultQuery('CHAMPIONSHIP_PHASES', options);
+                                                        connection.request(phasesQuery, options).then(
+                                                            function (phasesResult) {
+                                                                var phaseDefinitionsQuery = getDefaultQuery('CHAMPIONSHIP_PHASE_DEFINITIONS', options);
+                                                                connection.request(phaseDefinitionsQuery, options).then(
+                                                                    function (phaseDefinitionsResult) {
+                                                                        var roundsQuery = getDefaultQuery('CHAMPIONSHIP_ROUNDS', options);
+                                                                        connection.request(roundsQuery, options).then(
+                                                                            function (roundsResult) {
+                                                                                var tournamentsQuery = getDefaultQuery('CHAMPIONSHIP_TOURNAMENTS', options);
+                                                                                connection.request(tournamentsQuery, options).then(
+                                                                                    function (tournamentsResult) {
+                                                                                        connection.complete();
+                                                                                        const details = {
+                                                                                            cycles: cyclesResult,
+                                                                                            groups: groupsResult,
+                                                                                            groupTeams: groupTeamsResult,
+                                                                                            matches: matchesResult,
+                                                                                            matchFunc: matchFuncResult,
+                                                                                            phases: phasesResult,
+                                                                                            phaseDefinitions: phaseDefinitionsResult,
+                                                                                            rounds: roundsResult,
+                                                                                            tournaments: tournamentsResult
+                                                                                        }
+                                                                                        callback(null, details);
+                                                                                    },
+                                                                                    function (err) {
+                                                                                        connection.complete();
+                                                                                        callback(err);
+                                                                                    }
+                                                                                );
+                                                                            },
+                                                                            function (err) {
+                                                                                connection.complete();
+                                                                                callback(err);
+                                                                            }
+                                                                        );
+                                                                    },
+                                                                    function (err) {
+                                                                        connection.complete();
+                                                                        callback(err);
+                                                                    }
+                                                                );
+                                                            },
+                                                            function (err) {
+                                                                connection.complete();
+                                                                callback(err);
+                                                            }
+                                                        );
+                                                    },
+                                                    function (err) {
+                                                        connection.complete();
+                                                        callback(err);
+                                                    }
+                                                );
+                                            },
+                                            function (err) {
+                                                connection.complete();
+                                                callback(err);
+                                            }
+                                        );
+                                    },
+                                    function (err) {
+                                        connection.complete();
+                                        callback(err);
+                                    }
+                                );
+                            },
+                            function (err) {
+                                connection.complete();
+                                callback(err);
+                            }
+                        );
+                    },
+                    function (err) {
+                        connection.complete();
+                        callback(err);
+                    }
+                );
+            },
+            function (err) {
+                callback(err);
+            }
+        );
+};
+
+Championships.prototype.getRawCategoryNames = function (callback) {
+    this.db.connect()
+        .then(
+            function (connection) {
+                var qs = "Select * From CATEGORY_MAPPING cm";
+
+                connection.request(qs).then(
+                    function (records) {
+                        connection.complete();
+                        callback(null, records);
+                    },
+                    function (err) {
+                        connection.complete();
+                        callback(err);
+                    }
+                );
+            },
+            function (err) {
+                callback(err);
+            }
+        );
+};
+
+Championships.prototype.getRawCategories = function (options, callback) {
+    this.db.connect()
+        .then(
+            function (connection) {
+                var qs = "Select cc.*, c.SEASON From CHAMPIONSHIP_CATEGORIES cc " + 
+                    " JOIN CHAMPIONSHIPS c ON cc.CHAMPIONSHIP_ID = c.CHAMPIONSHIP_ID " + 
+                    (options.season ? " Where c.SEASON = @season " : "");
+
+                connection.request(qs, options).then(
+                    function (records) {
+                        connection.complete();
+                        callback(null, records);
+                    },
+                    function (err) {
+                        connection.complete();
+                        callback(err);
+                    }
+                );
+            },
+            function (err) {
+                callback(err);
+            }
+        );
+};
+
 module.exports = new Championships(require('../db'));
