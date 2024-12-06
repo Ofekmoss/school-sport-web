@@ -35,6 +35,16 @@ router.get("/championships-details", util.requireRole("admin"), function (req, r
   }
 });
 
+router.get("/sports", util.requireRole("admin"), function (req, res) {
+  if (req.session.user) {
+    Championships.getRawSports(function (err, result) {
+      util.sendResult(res, err, result);
+    });
+  } else {
+    util.sendResult(res, { status: 403 });
+  }
+});
+
 router.get("/category-names", util.requireRole("admin"), function (req, res) {
   if (req.session.user) {
     Championships.getRawCategoryNames(function (err, result) {
