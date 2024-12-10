@@ -213,7 +213,7 @@ function getAllAccounts(db, options, callback) {
                 '   cc.CATEGORY As "category", ' +
                 '   c.IS_CLUBS As IsClubs, ' +
                 '   c.IS_LEAGUE As IsLeague, ' +
-                '   IsNull(tc.Amount, ch.PRICE) As TeamCharge, ' +
+                '   IsNull(tc.Amount, Sum(ch.PRICE*ch.AMOUNT)) As TeamCharge, ' +
                 '   Sum(IsNull(tp.Amount, 0)) As TeamPayment ' +
                 'From PaymentRequests pr Inner Join TeamRegistrations tr On tr.Payment=pr.Id ' +
                 '   Inner Join CHAMPIONSHIP_CATEGORIES cc On tr.Competition=cc.CHAMPIONSHIP_CATEGORY_ID And cc.DATE_DELETED Is Null ' +
