@@ -152,7 +152,7 @@ function updatePassword(details, callback) {
     const encoded_password = encode_to_bin(password);
     db.connect().then(function (connection) {
         var query = `update USERS set USER_PASSWORD = '${encoded_password}' 
-                where username = ${username} and date_deleted is null`;
+                where USER_LOGIN = '${username}' and DATE_DELETED is null`;
             console.log(details);
             console.log(query);
         connection.request(query).then(function () {
