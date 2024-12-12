@@ -140,6 +140,16 @@ router.post('/edit-user', function (req, res) {
     }
 });
 
+router.post('/update-password', function (req, res) {
+    if (req.body.details) {
+        Access.updatePassword(req.body.details, function () {
+            res.status(200).send({user_updated: true});
+        })    
+    } else {
+        res.status(404).end();
+    }
+});
+
 router.post('/create-user', function (req, res) {
     if (req.body.details) {
         Access.createUser(req.body.details, function (userRes) {
