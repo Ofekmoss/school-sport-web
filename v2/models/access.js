@@ -241,6 +241,51 @@ function createSchool(details, callback) {
     })
 }
 
+function findSchool(details, callback) {
+    var symbol = details.symbol;
+    db.connect().then(function (connection) {
+        var query = `Select top 1 * from SCHOOLS where SYMBOL = '${symbol}' AND DATE_DELETED is null`;
+        connection.request(query).then(function (school) {
+            callback(school);
+        }).catch(function (err) {
+            callback(err)
+        })
+    })
+}
+
+function editSchool(details, callback) {
+    const { intSchoolId, schoolName = "", address = "", mailAddress = "", email = "",
+        zipCode = "", phoneNumber = "", fax = "", managerName = "", managerPhone = "", 
+        regionId = null, cityId = null, mailCityId = null, 
+        fromGrade = null, toGrade = null } = details;
+    db.connect().then(function (connection) {
+        var query = `update SCHOOLS set 
+            DATE_LAST_MODIFIED = '${formatDate(new Date())}' 
+            ${schoolName && `, SCHOOL_NAME = '${schoolName}'`} 
+            ${address && `, ADDRESS = '${address}'`} 
+            ${mailAddress && `, MAIL_ADDRESS = '${mailAddress}'`} 
+            ${email && `, EMAIL = '${email}'`} 
+            ${zipCode && `, ZIP_CODE = '${zipCode}'`} 
+            ${phoneNumber && `, PHONE = '${phoneNumber}'`} 
+            ${fax && `, FAX = '${fax}'`} 
+            ${managerName && `, MANAGER_NAME = '${managerName}'`} 
+            ${managerPhone && `, MANAGER_CELL_PHONE = '${managerPhone}'`} 
+            ${regionId && `, REGION_ID = '${regionId}'`} 
+            ${cityId && `, CITY_ID = '${cityId}'`} 
+            ${mailCityId && `, MAIL_CITY_ID = '${mailCityId}'`} 
+            ${fromGrade && `, FROM_GRADE = '${fromGrade}'`} 
+            ${toGrade && `, TO_GRADE = '${toGrade}'`} 
+            where SCHOOL_ID = ${intSchoolId}`;
+            console.log(details);
+            console.log(query);
+        connection.request(query).then(function () {
+            callback();
+        }).catch(function (err) {
+            callback(err)
+        })
+    })
+}
+
 function getOrCreateSchoolRegistration(details, callback) {
     db.connect().then(function (connection) {
         var query = "select count(*) as \"Count\" " +
@@ -656,6 +701,8 @@ module.exports = {
     editUser: editUser,
     updatePassword: updatePassword,
     createUser: createUser,
+    findSchool: findSchool,
+    editSchool: editSchool,
     createSchool: createSchool,
     generateLogin: generateLogin,
     getTokens: getTokens,
