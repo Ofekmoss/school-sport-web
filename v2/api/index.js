@@ -160,6 +160,26 @@ router.post('/create-user', function (req, res) {
     }
 });
 
+router.post('/find-school', function (req, res) {
+    if (req.body.details) {
+        Access.findSchool(req.body.details, function (foundSchool) {
+            res.status(200).send(foundSchool[0]);
+        })    
+    } else {
+        res.status(404).end();
+    }
+});
+
+router.post('/edit-school', function (req, res) {
+    if (req.body.details) {
+        Access.editSchool(req.body.details, function () {
+            res.status(200).send({updated: true});
+        })    
+    } else {
+        res.status(404).end();
+    }
+});
+
 router.post('/create-school', function (req, res) {
     if (req.body.details) {
         Access.createSchool(req.body.details, function (schoolRes) {
