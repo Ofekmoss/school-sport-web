@@ -109,7 +109,7 @@ function getAllAccounts(db, options, callback) {
             var qs = 'Select c.ACCOUNT_ID, r.RECEIPT_ID, Sum(c.CREDIT) As TotalPaid ' +
                 'From CREDITS c Inner Join RECEIPTS r On c.RECEIPT_ID=r.RECEIPT_ID And r.DATE_DELETED Is Null ' +
                 '   Left Join TeamPayments tp On tp.ReceiptId=r.RECEIPT_ID ' +
-                'Where c.DATE_DELETED Is Null And r.RECEIPT_DATE Between dbo.GetSeasonStart(@season) And dbo.GetSeasonEnd(@season) ' +
+                'Where c.DATE_DELETED Is Null And (r.SEASON = @season OR r.RECEIPT_DATE Between dbo.GetSeasonStart(@season) And dbo.GetSeasonEnd(@season)) ' +
                 'Group By c.ACCOUNT_ID, r.RECEIPT_ID ' +
                 'Having Sum(IsNull(tp.Amount, 0))=0 And Sum(c.CREDIT)>0';
             connection.request(qs, {season: options.season}).then(function (records) {
@@ -953,7 +953,7 @@ Finance.prototype.getReceipts = function (options, callback) {
                 fulfil(`r.RECEIPT_ID In (${sqlPart})`);
             } else if (options.account) {
                 var filter = 'r.ACCOUNT_ID=@account And ' +
-                    'r.RECEIPT_DATE Between dbo.GetSeasonStart(@season) And dbo.GetSeasonEnd(@season)';
+                    '(r.SEASON = @season OR r.RECEIPT_DATE Between dbo.GetSeasonStart(@season) And dbo.GetSeasonEnd(@season))';
                 fulfil(filter);
             } else {
                 if (options.receipt) {
