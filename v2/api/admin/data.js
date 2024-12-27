@@ -63,7 +63,7 @@ router.get("/categories", util.requireRole("admin"), function (req, res) {
 
 router.get("/rules", util.requireRole("admin"), function (req, res) {
   if (req.session.user) {
-    Championships.getRawRules(options, function (err, result) {
+    Championships.getRawRules(function (err, result) {
       util.sendResult(res, err, result);
     });
   } else {
@@ -73,7 +73,7 @@ router.get("/rules", util.requireRole("admin"), function (req, res) {
 
 router.get("/rule-sets", util.requireRole("admin"), function (req, res) {
   if (req.session.user) {
-    Championships.getRawRuleSets(options, function (err, result) {
+    Championships.getRawRuleSets(function (err, result) {
       util.sendResult(res, err, result);
     });
   } else {
@@ -83,7 +83,7 @@ router.get("/rule-sets", util.requireRole("admin"), function (req, res) {
 
 router.get("/sport-fields", util.requireRole("admin"), function (req, res) {
   if (req.session.user) {
-    Championships.getRawSportFields(options, function (err, result) {
+    Championships.getRawSportFields(function (err, result) {
       util.sendResult(res, err, result);
     });
   } else {
@@ -93,7 +93,7 @@ router.get("/sport-fields", util.requireRole("admin"), function (req, res) {
 
 router.get("/sport-field-types", util.requireRole("admin"), function (req, res) {
   if (req.session.user) {
-    Championships.getRawSportFieldTypes(options, function (err, result) {
+    Championships.getRawSportFieldTypes(function (err, result) {
       util.sendResult(res, err, result);
     });
   } else {
