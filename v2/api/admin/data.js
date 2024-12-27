@@ -61,6 +61,46 @@ router.get("/categories", util.requireRole("admin"), function (req, res) {
   }
 });
 
+router.get("/rules", util.requireRole("admin"), function (req, res) {
+  if (req.session.user) {
+    Championships.getRawRules(options, function (err, result) {
+      util.sendResult(res, err, result);
+    });
+  } else {
+    util.sendResult(res, { status: 403 });
+  }
+});
+
+router.get("/rule-sets", util.requireRole("admin"), function (req, res) {
+  if (req.session.user) {
+    Championships.getRawRuleSets(options, function (err, result) {
+      util.sendResult(res, err, result);
+    });
+  } else {
+    util.sendResult(res, { status: 403 });
+  }
+});
+
+router.get("/sport-fields", util.requireRole("admin"), function (req, res) {
+  if (req.session.user) {
+    Championships.getRawSportFields(options, function (err, result) {
+      util.sendResult(res, err, result);
+    });
+  } else {
+    util.sendResult(res, { status: 403 });
+  }
+});
+
+router.get("/sport-field-types", util.requireRole("admin"), function (req, res) {
+  if (req.session.user) {
+    Championships.getRawSportFieldTypes(options, function (err, result) {
+      util.sendResult(res, err, result);
+    });
+  } else {
+    util.sendResult(res, { status: 403 });
+  }
+});
+
 router.get("/players", util.requireRole("admin"), function (req, res) {
   if (req.session.user) {
     var options = {};
