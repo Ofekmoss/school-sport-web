@@ -637,4 +637,53 @@ Players.prototype.approveTransferRequests = function (transfers, callback) {
         );
 };
 
+Players.prototype.getRawPlayers = function (options, callback) {
+    this.db.connect()
+        .then(
+            function (connection) {
+                var qs = "Select p.*, c.SEASON From PLAYERS p " + 
+                    " JOIN TEAMS t ON p.TEAM_ID = t.TEAM_ID " + 
+                    " JOIN CHAMPIONSHIPS c ON t.CHAMPIONSHIP_ID = c.CHAMPIONSHIP_ID " +
+                    (options.season ? " Where c.SEASON = @season " : "");
+
+                connection.request(qs, options).then(
+                    function (records) {
+                        connection.complete();
+                        callback(null, records);
+                    },
+                    function (err) {
+                        connection.complete();
+                        callback(err);
+                    }
+                );
+            },
+            function (err) {
+                callback(err);
+            }
+        );
+};
+
+Players.prototype.getRawStudents = function (options, callback) {
+    this.db.connect()
+        .then(
+            function (connection) {
+                var qs = "Select s.* From STUDENTS s " + 
+                    (options.minBirthDate ? " Where s.BIRTH_DATE >= @minBirthDate " : "");
+                connection.request(qs, options).then(
+                    function (records) {
+                        connection.complete();
+                        callback(null, records);
+                    },
+                    function (err) {
+                        connection.complete();
+                        callback(err);
+                    }
+                );
+            },
+            function (err) {
+                callback(err);
+            }
+        );
+};
+
 module.exports = new Players(require('../db'));
