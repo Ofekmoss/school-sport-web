@@ -310,6 +310,98 @@ Championships.prototype.getRawSports = function (callback) {
         );
 };
 
+Championships.prototype.getRawRules = function (callback) {
+    this.db.connect()
+        .then(
+            function (connection) {
+                var qs = "Select * From RULES ";
+
+                connection.request(qs).then(
+                    function (records) {
+                        connection.complete();
+                        callback(null, records);
+                    },
+                    function (err) {
+                        connection.complete();
+                        callback(err);
+                    }
+                );
+            },
+            function (err) {
+                callback(err);
+            }
+        );
+};
+
+Championships.prototype.getRawRuleSets = function (callback) {
+    this.db.connect()
+        .then(
+            function (connection) {
+                var qs = "Select * From RULESETS ";
+
+                connection.request(qs).then(
+                    function (records) {
+                        connection.complete();
+                        callback(null, records);
+                    },
+                    function (err) {
+                        connection.complete();
+                        callback(err);
+                    }
+                );
+            },
+            function (err) {
+                callback(err);
+            }
+        );
+};
+
+Championships.prototype.getRawSportFields = function (callback) {
+    this.db.connect()
+        .then(
+            function (connection) {
+                var qs = "Select * From SPORT_FIELDS ";
+
+                connection.request(qs).then(
+                    function (records) {
+                        connection.complete();
+                        callback(null, records);
+                    },
+                    function (err) {
+                        connection.complete();
+                        callback(err);
+                    }
+                );
+            },
+            function (err) {
+                callback(err);
+            }
+        );
+};
+
+Championships.prototype.getRawSportFieldTypes = function (callback) {
+    this.db.connect()
+        .then(
+            function (connection) {
+                var qs = "Select * From SPORT_FIELD_TYPES ";
+
+                connection.request(qs).then(
+                    function (records) {
+                        connection.complete();
+                        callback(null, records);
+                    },
+                    function (err) {
+                        connection.complete();
+                        callback(err);
+                    }
+                );
+            },
+            function (err) {
+                callback(err);
+            }
+        );
+};
+
 Championships.prototype.getRawCategoryNames = function (callback) {
     this.db.connect()
         .then(
