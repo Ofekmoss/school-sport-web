@@ -225,7 +225,7 @@ Players.prototype.listTeamPlayers = function (season, options, callback) {
                     "   Left Join CITIES ci On sc.CITY_ID=ci.CITY_ID And ci.DATE_DELETED Is Null " +
                     "where c.SEASON = @season and c.DATE_DELETED IS NULL and cc.DATE_DELETED IS NULL " +
                     (options.school ? " and sc.SCHOOL_ID = @school" : "") +
-                    (options.region ? " and c.REGION_ID = @region" : "") +
+                    (options.region ? " and (c.REGION_ID = @region or sc.REGION_ID = @region)" : "") +
                     (options.clubs ? " and c.IS_CLUBS = 1" : "") +
                     (options.league ? " and c.IS_LEAGUE= 1" : "") +
                     (options.competition ? " and cc.CHAMPIONSHIP_CATEGORY_ID = @competition" : "") +
